@@ -8,8 +8,8 @@ namespace qrk
 {
 
     SsaoShader::SsaoShader()
-        : Shader(ShaderPath("E://VS//Opengl//Defer_3//assets//shaders//builtin//screen_quad.vert"),
-                 ShaderPath("E://VS//Opengl//Defer_3//assets//shaders//builtin//ssao.frag")) {}
+        : Shader(ShaderPath("assets//shaders//builtin//screen_quad.vert"),
+                 ShaderPath("assets//shaders//builtin//ssao.frag")) {}
 
     SsaoKernel::SsaoKernel(float radius, float bias, int kernelSize,
                            int noiseTextureSideLength)

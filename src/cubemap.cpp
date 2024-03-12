@@ -40,8 +40,8 @@ namespace qrk
     }
 
     EquirectCubemapShader::EquirectCubemapShader()
-        : Shader(ShaderPath("E://VS//Opengl//Defer_3//assets//shaders//builtin//cubemap.vert"),
-                 ShaderPath("E://VS//Opengl//Defer_3//assets//shaders//builtin//equirect_cubemap.frag")) {}
+        : Shader(ShaderPath("assets//shaders//builtin//cubemap.vert"),
+                 ShaderPath("assets//shaders//builtin//equirect_cubemap.frag")) {}
 
     EquirectCubemapConverter::EquirectCubemapConverter(int width, int height,
                                                        bool generateMips)

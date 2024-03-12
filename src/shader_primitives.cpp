@@ -6,8 +6,8 @@
 namespace qrk 
 {
     SkyboxShader::SkyboxShader()
-        : Shader(ShaderPath("E://VS//Opengl//Defer_3//assets//shaders//builtin//skybox.vert"),
-                 ShaderPath("E://VS//Opengl//Defer_3//assets//shaders//builtin//skybox.frag")) {}
+        : Shader(ShaderPath("assets//shaders//builtin//skybox.vert"),
+                 ShaderPath("assets//shaders//builtin//skybox.frag")) {}
 
     void SkyboxShader::activate()
     {
@@ -38,19 +38,19 @@ namespace qrk
     }
 
     ScreenShader::ScreenShader()
-        : Shader(ShaderPath("E://VS//Opengl//Defer_3//assets//shaders//builtin//screen_quad.vert"),
-                 ShaderPath("E://VS//Opengl//Defer_3//assets//shaders//builtin//screen_quad.frag")) {}
+        : Shader(ShaderPath("assets//shaders//builtin//screen_quad.vert"),
+                 ShaderPath("assets//shaders//builtin//screen_quad.frag")) {}
 
     ScreenShader::ScreenShader(const ShaderSource& fragmentSource)
-        : Shader(ShaderPath("E://VS//Opengl//Defer_3//assets//shaders//builtin//screen_quad.vert"),
+        : Shader(ShaderPath("assets//shaders//builtin//screen_quad.vert"),
                  fragmentSource) {}
 
     ScreenLodShader::ScreenLodShader()
-        : ScreenShader(ShaderPath("E://VS//Opengl//Defer_3//assets//shaders//builtin//screen_quad_lod.frag")) {
+        : ScreenShader(ShaderPath("assets//shaders//builtin//screen_quad_lod.frag")) {
     }
 
     ShadowMapShader::ShadowMapShader()
-        : Shader(ShaderPath("E://VS//Opengl//Defer_3//assets//shaders//builtin//shadow_map.vert"),
-                 ShaderPath("E://VS//Opengl//Defer_3//assets//shaders//builtin//shadow_map.frag")) {}
+        : Shader(ShaderPath("assets//shaders//builtin//shadow_map.vert"),
+                 ShaderPath("assets//shaders//builtin//shadow_map.frag")) {}
 
 }  // namespace qrk

@@ -467,7 +467,7 @@ std::unique_ptr<qrk::Model> loadModelOrDefault()
     //}
 
     // Default to the gltf DamagedHelmet.
-    auto helmet = std::make_unique<qrk::Model>("E://VS//Opengl//Defer_2//assets//models//DamagedHelmet/DamagedHelmet.gltf");
+    auto helmet = std::make_unique<qrk::Model>("assets//models//DamagedHelmet/DamagedHelmet.gltf");
     return helmet;
 }
 
@@ -482,25 +482,25 @@ void loadSkyboxImage(
     switch (skyboxImage)
     {
     case SkyboxImage::ALEXS_APT:
-        hdrPath = "E://VS//Opengl//Defer_3//assets//models//ibl/AlexsApt.hdr";
+        hdrPath = "assets//models//ibl/AlexsApt.hdr";
         break;
     case SkyboxImage::FROZEN_WATERFALL:
-        hdrPath = "E://VS//Opengl//Defer_3//assets//models//ibl//FrozenWaterfall.hdr";
+        hdrPath = "assets//models//ibl//FrozenWaterfall.hdr";
         break;
     case SkyboxImage::KLOPPENHEIM:
-        hdrPath = "E://VS//Opengl//Defer_3//assets//models//ibl//Kloppenheim.hdr";
+        hdrPath = "assets//models//ibl//Kloppenheim.hdr";
         break;
     case SkyboxImage::MILKYWAY:
-        hdrPath = "E://VS//Opengl//Defer_3//assets//models//ibl//Milkyway.hdr";
+        hdrPath = "assets//models//ibl//Milkyway.hdr";
         break;
     case SkyboxImage::MON_VALLEY:
-        hdrPath = "E://VS//Opengl//Defer_3//assets//models//ibl//MonValley.hdr";
+        hdrPath = "assets//models//ibl//MonValley.hdr";
         break;
     case SkyboxImage::UENO_SHRINE:
-        hdrPath = "E://VS//Opengl//Defer_3//assets//models//ibl//UenoShrine.hdr";
+        hdrPath = "assets//models//ibl//UenoShrine.hdr";
         break;
     case SkyboxImage::WINTER_FOREST:
-        hdrPath = "E://VS//Opengl//Defer_3//assets//models//ibl//WinterForest.hdr";
+        hdrPath = "assets//models//ibl//WinterForest.hdr";
         break;
     }
 
@@ -593,10 +593,10 @@ int main(int argc, char** argv)
 
     qrk::ScreenQuadMesh screenQuad;
     qrk::ScreenShader gBufferVisShader(
-        qrk::ShaderPath("E://VS//Opengl//Defer_3//assets//model_shaders//gbuffer_vis.frag"));
+        qrk::ShaderPath("assets//model_shaders//gbuffer_vis.frag"));
 
     qrk::ScreenShader lightingPassShader(
-        qrk::ShaderPath("E://VS//Opengl//Defer_3//assets//model_shaders//lighting_pass.frag"));
+        qrk::ShaderPath("assets//model_shaders//lighting_pass.frag"));
     lightingPassShader.addUniformSource(camera);
     lightingPassShader.addUniformSource(lightingTextureRegistry);
     lightingPassShader.addUniformSource(lightRegistry);
@@ -634,7 +634,7 @@ int main(int argc, char** argv)
     auto postprocessTextureRegistry = std::make_shared<qrk::TextureRegistry>();
     postprocessTextureRegistry->addTextureSource(bloomPass);
     qrk::ScreenShader postprocessShader(
-        qrk::ShaderPath("E://VS//Opengl//Defer_3//assets//model_shaders//post_processing.frag"));
+        qrk::ShaderPath("assets//model_shaders//post_processing.frag"));
     postprocessShader.addUniformSource(postprocessTextureRegistry);
 
     qrk::FXAAShader fxaaShader;
@@ -681,12 +681,12 @@ int main(int argc, char** argv)
 
     // Prepare some debug shaders.
     qrk::Shader normalShader(
-        qrk::ShaderPath("E://VS//Opengl//Defer_3//assets//model_shaders//model.vert"),
+        qrk::ShaderPath("assets//model_shaders//model.vert"),
         qrk::ShaderInline(normalShaderSource),
-        qrk::ShaderPath("E://VS//Opengl//Defer_3//assets//model_shaders//model_normals.geom"));
+        qrk::ShaderPath("assets//model_shaders//model_normals.geom"));
     normalShader.addUniformSource(camera);
 
-    qrk::Shader lampShader(qrk::ShaderPath("E://VS//Opengl//Defer_3//assets//model_shaders//model.vert"),
+    qrk::Shader lampShader(qrk::ShaderPath("assets//model_shaders//model.vert"),
         qrk::ShaderInline(lampShaderSource));
     lampShader.addUniformSource(camera);
 

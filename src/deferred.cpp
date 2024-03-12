@@ -4,8 +4,8 @@ namespace qrk
 {
 
     DeferredGeometryPassShader::DeferredGeometryPassShader()
-        : Shader(ShaderPath("E://VS//Opengl//Defer_3//assets//shaders//builtin//deferred.vert"),
-                 ShaderPath("E://VS//Opengl//Defer_3//assets//shaders//builtin//deferred.frag")) {}
+        : Shader(ShaderPath("assets//shaders//builtin//deferred.vert"),
+                 ShaderPath("assets//shaders//builtin//deferred.frag")) {}
 
     GBuffer::GBuffer(int width, int height) : Framebuffer(width, height) 
     {

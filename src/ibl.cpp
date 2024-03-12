@@ -3,8 +3,8 @@
 namespace qrk 
 {
     CubemapIrradianceShader::CubemapIrradianceShader()
-        : Shader(ShaderPath("E://VS//Opengl//Defer_3//assets//shaders//builtin//cubemap.vert"),
-                 ShaderPath("E://VS//Opengl//Defer_3//assets//shaders//builtin//irradiance_cubemap.frag"))
+        : Shader(ShaderPath("assets//shaders//builtin//cubemap.vert"),
+                 ShaderPath("assets//shaders//builtin//irradiance_cubemap.frag"))
     {
         // Set defaults.
         setHemisphereSampleDelta(hemisphereSampleDelta_);
@@ -41,8 +41,8 @@ namespace qrk
     }
 
     GGXPrefilterShader::GGXPrefilterShader()
-        : Shader(ShaderPath("E://VS//Opengl//Defer_3//assets//shaders//builtin//cubemap.vert"),
-                 ShaderPath("E://VS//Opengl//Defer_3//assets//shaders//builtin//ggx_prefilter_cubemap.frag")) 
+        : Shader(ShaderPath("assets//shaders//builtin//cubemap.vert"),
+                 ShaderPath("assets//shaders//builtin//ggx_prefilter_cubemap.frag")) 
     {
         setNumSamples(numSamples_);
     }
