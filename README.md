@@ -4,4 +4,10 @@ Core Features
 - Texture
 - PBR
 - SSAO
-- Defer
+- Defer Render
+
+Enviroment
+- Window10
+- Visual Studio 2019
+- GLFW GLAD
+- Assimp 
