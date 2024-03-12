@@ -1,16 +1,11 @@
-// clang-format off
-// Must precede glfw/glad, to include OpenGL functions.
 #include "quarkgl.h"
-// clang-format on
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
-//#include "absl/flags/flag.h"
-//#include "absl/flags/parse.h"
-//#include "absl/flags/usage.h"
+
 #include "../imguizmo_quat/imGuIZMOquat.h"
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_glfw.h"

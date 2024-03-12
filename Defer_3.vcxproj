@@ -78,8 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\Environment\Assimp\include;D:\OpenGLEnvironment\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\OpenGLEnvironment\include;D:\Environment\Assimp\lib;D:\OpenGLEnvironment\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>F:\ToGithub\CMERenderEngine\3dparty\include;$(IncludePath)</IncludePath>
+    <LibraryPath>F:\ToGithub\CMERenderEngine\3dparty\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
