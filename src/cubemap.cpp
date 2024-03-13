@@ -29,14 +29,14 @@ namespace qrk
 
         for (int cubemapFace = 0; cubemapFace < 6; ++cubemapFace) 
         {
-            buffer_->activate(targetMip_, cubemapFace);
-            buffer_->clear();
+            m_pBuffer->activate(m_iTargetMip, cubemapFace);
+            m_pBuffer->clear();
 
             shader.setMat4("view", faceViews[cubemapFace]);
-            room_.draw(shader, textureRegistry);
+            m_RoomInstance.draw(shader, textureRegistry);
         }
 
-        buffer_->deactivate();
+        m_pBuffer->deactivate();
     }
 
     EquirectCubemapShader::EquirectCubemapShader()
@@ -45,9 +45,9 @@ namespace qrk
 
     EquirectCubemapConverter::EquirectCubemapConverter(int width, int height,
                                                        bool generateMips)
-        : buffer_(width, height),
-          cubemapRenderHelper_(&buffer_),
-          generateMips_(generateMips) 
+        : m_BufferInstance(width, height),
+        m_CubemapRenderHelperInstance(&m_BufferInstance),
+        m_bGenerateMips(generateMips)
     {
         // Optionally allocate memory for mips if requested.
 
@@ -56,28 +56,28 @@ namespace qrk
         params.wrapMode = TextureWrapMode::CLAMP_TO_EDGE;
         params.generateMips = generateMips ? MipGeneration::ALWAYS : MipGeneration::NEVER;
 
-        cubemap_ = buffer_.attachTexture(BufferType::COLOR_CUBEMAP_HDR, params);
+        m_CubemapInstance = m_BufferInstance.attachTexture(BufferType::COLOR_CUBEMAP_HDR, params);
     }
 
     void EquirectCubemapConverter::multipassDraw(Texture source)
     {
         // Set up the source.
         source.bindToUnit(0, TextureBindType::TEXTURE_2D);
-        equirectCubemapShader_.setInt("qrk_equirectMap", 0);
+        m_EquirectCubemapShaderInstance.setInt("qrk_equirectMap", 0);
 
-        cubemapRenderHelper_.multipassDraw(equirectCubemapShader_);
+        m_CubemapRenderHelperInstance.multipassDraw(m_EquirectCubemapShaderInstance);
 
-        if (generateMips_) 
+        if (m_bGenerateMips)
         {
             // Generate mips after having rendered to the cubemap.
-            cubemap_.asTexture().generateMips();
+            m_CubemapInstance.asTexture().generateMips();
         }
     }
 
     unsigned int EquirectCubemapConverter::bindTexture(unsigned int nextTextureUnit,
                                                        Shader& shader) 
     {
-        cubemap_.asTexture().bindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);
+        m_CubemapInstance.asTexture().bindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);
         // Bind sampler uniforms.
         shader.setInt("qrk_cubemap", nextTextureUnit);
 

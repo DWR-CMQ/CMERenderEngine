@@ -7,15 +7,16 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-namespace qrk {
-void init();
-void terminate();
-void enableGlfwErrorLogging();
-void disableGlfwErrorLogging();
-void initGlErrorLogging();
-void enableGlErrorLogging();
-void disableGlErrorLogging();
-float time();
+namespace qrk 
+{
+	void init();
+	void terminate();
+	void enableGlfwErrorLogging();
+	void disableGlfwErrorLogging();
+	void initGlErrorLogging();
+	void enableGlErrorLogging();
+	void disableGlErrorLogging();
+	float time();
 }  // namespace qrk
 
 #endif
