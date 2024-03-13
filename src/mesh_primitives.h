@@ -9,63 +9,68 @@
 
 namespace qrk {
 
-class MeshPrimitiveException : public QuarkException {
-  using QuarkException::QuarkException;
+class MeshPrimitiveException : public QuarkException
+{
+    using QuarkException::QuarkException;
 };
 
 class PrimitiveMesh : public Mesh {};
 
-class PlaneMesh : public PrimitiveMesh {
- public:
-  explicit PlaneMesh(std::string texturePath = "");
-  explicit PlaneMesh(const std::vector<TextureMap>& textureMaps);
+class PlaneMesh : public PrimitiveMesh
+{
+public:
+    explicit PlaneMesh(std::string texturePath = "");
+    explicit PlaneMesh(const std::vector<TextureMap>& textureMaps);
 
- protected:
-  void loadMeshAndTextures(const std::vector<TextureMap>& textureMaps);
-  void initializeVertexAttributes() override;
+protected:
+    void loadMeshAndTextures(const std::vector<TextureMap>& textureMaps);
+    void initializeVertexAttributes() override;
 };
 
 // A unit cube.
-class CubeMesh : public PrimitiveMesh {
- public:
-  explicit CubeMesh(std::string texturePath = "");
-  explicit CubeMesh(const std::vector<TextureMap>& textureMaps);
+class CubeMesh : public PrimitiveMesh
+{
+public:
+    explicit CubeMesh(std::string texturePath = "");
+    explicit CubeMesh(const std::vector<TextureMap>& textureMaps);
 
- protected:
-  void loadMeshAndTextures(const std::vector<TextureMap>& textureMaps);
-  void initializeVertexAttributes() override;
+protected:
+    void loadMeshAndTextures(const std::vector<TextureMap>& textureMaps);
+    void initializeVertexAttributes() override;
 };
 
 // Like CubeMesh, but with normals pointing inward.
-class RoomMesh : public PrimitiveMesh {
- public:
-  explicit RoomMesh(std::string texturePath = "");
-  explicit RoomMesh(const std::vector<TextureMap>& textureMaps);
+class RoomMesh : public PrimitiveMesh 
+{
+public:
+    explicit RoomMesh(std::string texturePath = "");
+    explicit RoomMesh(const std::vector<TextureMap>& textureMaps);
 
- protected:
-  void loadMeshAndTextures(const std::vector<TextureMap>& textureMaps);
-  void initializeVertexAttributes() override;
+protected:
+    void loadMeshAndTextures(const std::vector<TextureMap>& textureMaps);
+    void initializeVertexAttributes() override;
 };
 
 // A unit sphere, with the given number of meridians / parallels.
-class SphereMesh : public PrimitiveMesh {
- public:
-  static constexpr int DEFAULT_NUM_MERIDIANS = 64;
-  static constexpr int DEFAULT_NUM_PARALLELS = 64;
+class SphereMesh : public PrimitiveMesh
+{
+public:
+    static constexpr int DEFAULT_NUM_MERIDIANS = 64;
+    static constexpr int DEFAULT_NUM_PARALLELS = 64;
 
-  SphereMesh(std::string texturePath = "",
-             int numMeridians = DEFAULT_NUM_MERIDIANS,
-             int numParallels = DEFAULT_NUM_PARALLELS);
-  SphereMesh(const std::vector<TextureMap>& textureMaps,
-             int numMeridians = DEFAULT_NUM_MERIDIANS,
-             int numParallels = DEFAULT_NUM_PARALLELS);
+    SphereMesh(std::string texturePath = "",
+                int numMeridians = DEFAULT_NUM_MERIDIANS,
+                int numParallels = DEFAULT_NUM_PARALLELS);
+    SphereMesh(const std::vector<TextureMap>& textureMaps,
+                int numMeridians = DEFAULT_NUM_MERIDIANS,
+                int numParallels = DEFAULT_NUM_PARALLELS);
 
- protected:
-  void loadMeshAndTextures(const std::vector<TextureMap>& textureMaps);
-  void initializeVertexAttributes() override;
+protected:
+    void loadMeshAndTextures(const std::vector<TextureMap>& textureMaps);
+    void initializeVertexAttributes() override;
 
-  int numMeridians_;
-  int numParallels_;
+    int numMeridians_;
+    int numParallels_;
 };
 
 class SkyboxMesh : public PrimitiveMesh {

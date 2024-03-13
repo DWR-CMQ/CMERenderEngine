@@ -11,7 +11,7 @@ namespace qrk
 {
     class BloomException : public QuarkException 
     {
-      using QuarkException::QuarkException;
+        using QuarkException::QuarkException;
     };
 
     class BloomBuffer : public Framebuffer, public TextureSource
@@ -23,21 +23,21 @@ namespace qrk
 
         Texture getBloomMipChainTexture()
         {
-        return bloomMipChainTexture_.asTexture();
+        return m_BloomMipChainTextureInstance.asTexture();
         }
 
-        int getNumMips() { return bloomMipChainTexture_.numMips; }
+        int getNumMips() { return m_BloomMipChainTextureInstance.numMips; }
 
-      // Limits sampling from any other mip other than the given mip. This is
-      // important to avoid undefined behavior when drawing to a mip level while
-      // sampling from another.
+        // Limits sampling from any other mip other than the given mip. This is
+        // important to avoid undefined behavior when drawing to a mip level while
+        // sampling from another.
         void selectMip(int mipLevel);
         void deselectMip();
 
         unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader) override;
 
     private:
-        Attachment bloomMipChainTexture_;
+        Attachment m_BloomMipChainTextureInstance;
     };
 
     class BloomDownsampleShader : public ScreenShader
@@ -55,15 +55,16 @@ namespace qrk
 
         void configureWith(BloomBuffer& buffer);
         // Sets the radius, in UV coordinates, for the upscaling kernel.
-        void setFilterRadius(float filterRadius) {
-        filterRadius_ = filterRadius;
-        setFloat("qrk_filterRadius", filterRadius_);
+        void setFilterRadius(float filterRadius) 
+        {
+            m_fFilterRadius = filterRadius;
+            setFloat("qrk_filterRadius", m_fFilterRadius);
         }
-        float getFilterRadius() { return filterRadius_; }
+        float getFilterRadius() { return m_fFilterRadius; }
 
     private:
         static constexpr float DEFAULT_FILTER_RADIUS = 0.005f;
-        float filterRadius_ = DEFAULT_FILTER_RADIUS;
+        float m_fFilterRadius = DEFAULT_FILTER_RADIUS;
     };
 
     // A self contained bloom pass that uses a series of down/upsamples to perform
@@ -76,27 +77,27 @@ namespace qrk
         virtual ~BloomPass() = default;
 
         // Sets the radius, in UV coordinates, for the upscaling kernel.
-        void setFilterRadius(float filterRadius) { upsampleShader_.setFilterRadius(filterRadius); }
-        float getFilterRadius() { return upsampleShader_.getFilterRadius(); }
+        void setFilterRadius(float filterRadius) { m_UpsampleShaderInstance.setFilterRadius(filterRadius); }
+        float getFilterRadius() { return m_UpsampleShaderInstance.getFilterRadius(); }
 
         // Performs the bloom based on the image from a source framebuffer. The
         // currently configured color component is blitted into the bloom buffer,
         // after which the bloom downsample/upsample calls are made.
         void multipassDraw(Framebuffer& sourceFb);
 
-        int getNumMips() { return bloomBuffer_.getNumMips(); }
-        void selectMip(int mipLevel) { bloomBuffer_.selectMip(mipLevel); }
-        void deselectMip() { bloomBuffer_.deselectMip(); }
+        int getNumMips() { return m_BloomBufferInstance.getNumMips(); }
+        void selectMip(int mipLevel) { m_BloomBufferInstance.selectMip(mipLevel); }
+        void deselectMip() { m_BloomBufferInstance.deselectMip(); }
 
-        Texture getOutput() { return bloomBuffer_.getBloomMipChainTexture(); }
+        Texture getOutput() { return m_BloomBufferInstance.getBloomMipChainTexture(); }
 
         unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader) override;
 
     private:
-        ScreenQuadMesh screenQuad_;
-        BloomBuffer bloomBuffer_;
-        BloomDownsampleShader downsampleShader_;
-        BloomUpsampleShader upsampleShader_;
+        ScreenQuadMesh m_ScreenQuadInstance;
+        BloomBuffer m_BloomBufferInstance;
+        BloomDownsampleShader m_DownsampleShaderInstance;
+        BloomUpsampleShader m_UpsampleShaderInstance;
     };
 
 }  // namespace qrk
