@@ -43,15 +43,15 @@ namespace qrk
     void PlaneMesh::initializeVertexAttributes()
     {
         // Positions.
-        vertexArray_.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
         // Normals.
-        vertexArray_.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
         // Tangents.
-        vertexArray_.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
         // Texture coordinates.
-        vertexArray_.addVertexAttrib(2, GL_FLOAT);
+        m_VertexArrayObj.addVertexAttrib(2, GL_FLOAT);
 
-        vertexArray_.finalizeVertexAttribs();
+        m_VertexArrayObj.finalizeVertexAttribs();
     }
 
     // clang-format off
@@ -135,15 +135,15 @@ namespace qrk
     void CubeMesh::initializeVertexAttributes() 
     {
         // Positions.
-        vertexArray_.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
         // Normals.
-        vertexArray_.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
         // Tangents.
-        vertexArray_.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
         // Texture coordinates.
-        vertexArray_.addVertexAttrib(2, GL_FLOAT);
+        m_VertexArrayObj.addVertexAttrib(2, GL_FLOAT);
 
-        vertexArray_.finalizeVertexAttribs();
+        m_VertexArrayObj.finalizeVertexAttribs();
     }
 
     // clang-format off
@@ -227,19 +227,19 @@ namespace qrk
     void RoomMesh::initializeVertexAttributes() 
     {
         // Positions.
-        vertexArray_.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
         // Normals.
-        vertexArray_.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
         // Tangents.
-        vertexArray_.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
         // Texture coordinates.
-        vertexArray_.addVertexAttrib(2, GL_FLOAT);
+        m_VertexArrayObj.addVertexAttrib(2, GL_FLOAT);
 
-        vertexArray_.finalizeVertexAttribs();
+        m_VertexArrayObj.finalizeVertexAttribs();
     }
 
     SphereMesh::SphereMesh(std::string texturePath, int numMeridians, int numParallels)
-        : numMeridians_(numMeridians), numParallels_(numParallels) 
+        : m_iNumMeridians(numMeridians), m_iNumParallels(numParallels)
     {
         std::vector<TextureMap> textureMaps;
         if (!texturePath.empty()) 
@@ -252,7 +252,7 @@ namespace qrk
 
     SphereMesh::SphereMesh(const std::vector<TextureMap>& textureMaps,
                            int numMeridians, int numParallels)
-        : numMeridians_(numMeridians), numParallels_(numParallels) 
+        : m_iNumMeridians(numMeridians), m_iNumParallels(numParallels)
     {
         loadMeshAndTextures(textureMaps);
     }
@@ -264,9 +264,9 @@ namespace qrk
         const float PI = glm::pi<float>();
 
         // Always use at least 3 meridians.
-        const unsigned int widthSegments = glm::max(numMeridians_, 3);
+        const unsigned int widthSegments = glm::max(m_iNumMeridians, 3);
         // Add two segments to account for the poles.
-        const unsigned int heightSegments = glm::max(numParallels_, 2);
+        const unsigned int heightSegments = glm::max(m_iNumParallels, 2);
 
         std::vector<float> vertexData;
         // We use <= instead of < because we want to create one more "layer" of
@@ -355,15 +355,15 @@ namespace qrk
     void SphereMesh::initializeVertexAttributes() 
     {
         // Positions.
-        vertexArray_.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
         // Normals.
-        vertexArray_.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
         // Tangents.
-        vertexArray_.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
         // Texture coordinates.
-        vertexArray_.addVertexAttrib(2, GL_FLOAT);
+        m_VertexArrayObj.addVertexAttrib(2, GL_FLOAT);
 
-        vertexArray_.finalizeVertexAttribs();
+        m_VertexArrayObj.finalizeVertexAttribs();
     }
 
     // clang-format off
@@ -439,8 +439,8 @@ namespace qrk
                 std::to_string(static_cast<int>(texture.getType())));
         }
         // TODO: This copies the texture info, meaning it won't see updates.
-        textureMaps_.clear();
-        textureMaps_.emplace_back(texture, TextureMapType::CUBEMAP);
+        m_vecTextureMaps.clear();
+        m_vecTextureMaps.emplace_back(texture, TextureMapType::CUBEMAP);
     }
 
     void SkyboxMesh::loadMesh() 
@@ -453,8 +453,8 @@ namespace qrk
     void SkyboxMesh::initializeVertexAttributes() 
     {
         // Skybox only has vertex positions.
-        vertexArray_.addVertexAttrib(3, GL_FLOAT);
-        vertexArray_.finalizeVertexAttribs();
+        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.finalizeVertexAttribs();
     }
 
     // clang-format off
@@ -495,25 +495,25 @@ namespace qrk
     void ScreenQuadMesh::setTexture(Texture texture) 
     {
         // TODO: This copies the texture info, meaning it won't see updates.
-        textureMaps_.clear();
-        textureMaps_.emplace_back(texture, TextureMapType::DIFFUSE);
+        m_vecTextureMaps.clear();
+        m_vecTextureMaps.emplace_back(texture, TextureMapType::DIFFUSE);
     }
 
-    void ScreenQuadMesh::unsetTexture() { textureMaps_.clear(); }
+    void ScreenQuadMesh::unsetTexture() { m_vecTextureMaps.clear(); }
 
     void ScreenQuadMesh::initializeVertexAttributes()
     {
         // Screen positions.
-        vertexArray_.addVertexAttrib(2, GL_FLOAT);
+        m_VertexArrayObj.addVertexAttrib(2, GL_FLOAT);
         // Texture coordinates.
-        vertexArray_.addVertexAttrib(2, GL_FLOAT);
-        vertexArray_.finalizeVertexAttribs();
+        m_VertexArrayObj.addVertexAttrib(2, GL_FLOAT);
+        m_VertexArrayObj.finalizeVertexAttribs();
     }
 
     void ScreenQuadMesh::bindTextures(Shader& shader,
                                       TextureRegistry* textureRegistry) 
     {
-        if (textureMaps_.empty()) 
+        if (m_vecTextureMaps.empty())
         {
             return;
         }
@@ -527,7 +527,7 @@ namespace qrk
             textureUnit = textureRegistry->getNextTextureUnit();
         }
 
-        Texture& texture = textureMaps_[0].getTexture();
+        Texture& texture = m_vecTextureMaps[0].getTexture();
         texture.bindToUnit(textureUnit, TextureBindType::TEXTURE_2D);
 
         // Set the sampler to the correct texture unit.

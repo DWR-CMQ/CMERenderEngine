@@ -20,9 +20,9 @@ namespace qrk
             monitor = glfwGetPrimaryMonitor();
         }
 
-        window_ = glfwCreateWindow(width, height, title, monitor, /* share */ nullptr);
+        m_pWindow = glfwCreateWindow(width, height, title, monitor, /* share */ nullptr);
 
-        if (window_ == nullptr) 
+        if (m_pWindow == nullptr)
         {
             qrk::terminate();
             throw WindowException("ERROR::WINDOW::CREATE_FAILED");
@@ -38,7 +38,7 @@ namespace qrk
         qrk::initGlErrorLogging();
 
         // Allow us to refer to the object while accessing C APIs.
-        glfwSetWindowUserPointer(window_, this);
+        glfwSetWindowUserPointer(m_pWindow, this);
 
         // Enable multisampling if needed.
         if (samples > 0) 
@@ -58,18 +58,18 @@ namespace qrk
 
     Window::~Window()
     {
-        if (window_ != nullptr)
+        if (m_pWindow != nullptr)
         {
-            glfwDestroyWindow(window_);
+            glfwDestroyWindow(m_pWindow);
         }
         qrk::terminate();
     }
 
-    void Window::activate() { glfwMakeContextCurrent(window_); }
+    void Window::activate() { glfwMakeContextCurrent(m_pWindow); }
 
     void Window::updateUniforms(Shader& shader) 
     {
-        shader.setFloat("qrk_deltaTime", deltaTime_);
+        shader.setFloat("qrk_deltaTime", m_fDeltaTime);
 
         ImageSize size = getSize();
         shader.setInt("qrk_windowWidth", size.width);
@@ -79,18 +79,18 @@ namespace qrk
     ImageSize Window::getSize() const 
     {
         ImageSize size;
-        glfwGetWindowSize(window_, &size.width, &size.height);
+        glfwGetWindowSize(m_pWindow, &size.width, &size.height);
         return size;
     }
 
     void Window::setSize(int width, int height) 
     {
-        glfwSetWindowSize(window_, width, height);
+        glfwSetWindowSize(m_pWindow, width, height);
     }
 
     void Window::enableResizeUpdates()
     {
-        if (resizeUpdatesEnabled_)
+        if (m_bResizeUpdatesEnabled)
         {
             return;
         }
@@ -99,18 +99,18 @@ namespace qrk
             auto self = static_cast<Window*>(glfwGetWindowUserPointer(window));
             self->framebufferSizeCallback(window, width, height);
         };
-        glfwSetFramebufferSizeCallback(window_, callback);
-        resizeUpdatesEnabled_ = true;
+        glfwSetFramebufferSizeCallback(m_pWindow, callback);
+        m_bResizeUpdatesEnabled = true;
     }
 
     void Window::disableResizeUpdates() 
     {
-        if (!resizeUpdatesEnabled_)
+        if (!m_bResizeUpdatesEnabled)
         {
             return;
         }
-        glfwSetFramebufferSizeCallback(window_, nullptr);
-        resizeUpdatesEnabled_ = false;
+        glfwSetFramebufferSizeCallback(m_pWindow, nullptr);
+        m_bResizeUpdatesEnabled = false;
     }
 
     float Window::getAspectRatio() const 
@@ -121,91 +121,91 @@ namespace qrk
 
     void Window::enableKeyInput() 
     {
-        if (keyInputEnabled_) return;
+        if (m_bKeyInputEnabled) return;
         auto callback = [](GLFWwindow* window, int key, int scancode, int action, int mods) 
         {
             auto self = static_cast<Window*>(glfwGetWindowUserPointer(window));
             self->keyCallback(key, scancode, action, mods);
         };
-        glfwSetKeyCallback(window_, callback);
-        keyInputEnabled_ = true;
+        glfwSetKeyCallback(m_pWindow, callback);
+        m_bKeyInputEnabled = true;
     }
 
     void Window::disableKeyInput()
     {
-        if (!keyInputEnabled_) return;
-        glfwSetKeyCallback(window_, nullptr);
-        keyInputEnabled_ = false;
+        if (!m_bKeyInputEnabled) return;
+        glfwSetKeyCallback(m_pWindow, nullptr);
+        m_bKeyInputEnabled = false;
     }
 
     void Window::enableScrollInput() 
     {
-        if (scrollInputEnabled_) return;
+        if (m_bScrollInputEnabled) return;
         auto callback = [](GLFWwindow* window, double xoffset, double yoffset) 
         {
             auto self = static_cast<Window*>(glfwGetWindowUserPointer(window));
             self->scrollCallback(xoffset, yoffset);
         };
-        glfwSetScrollCallback(window_, callback);
-        scrollInputEnabled_ = true;
+        glfwSetScrollCallback(m_pWindow, callback);
+        m_bScrollInputEnabled = true;
     }
 
     void Window::disableScrollInput()
     {
-        if (!scrollInputEnabled_) return;
-        glfwSetScrollCallback(window_, nullptr);
-        scrollInputEnabled_ = false;
+        if (!m_bScrollInputEnabled) return;
+        glfwSetScrollCallback(m_pWindow, nullptr);
+        m_bScrollInputEnabled = false;
     }
 
     void Window::enableMouseMoveInput() 
     {
-        if (mouseMoveInputEnabled_) return;
+        if (m_bMouseMoveInputEnabled) return;
         auto callback = [](GLFWwindow* window, double xpos, double ypos) 
         {
             auto self = static_cast<Window*>(glfwGetWindowUserPointer(window));
             self->mouseMoveCallback(xpos, ypos);
         };
-        glfwSetCursorPosCallback(window_, callback);
-        mouseMoveInputEnabled_ = true;
+        glfwSetCursorPosCallback(m_pWindow, callback);
+        m_bMouseMoveInputEnabled = true;
     }
 
     void Window::disableMouseMoveInput() 
     {
-        if (!mouseMoveInputEnabled_) return;
-        glfwSetCursorPosCallback(window_, nullptr);
-        mouseMoveInputEnabled_ = false;
+        if (!m_bMouseMoveInputEnabled) return;
+        glfwSetCursorPosCallback(m_pWindow, nullptr);
+        m_bMouseMoveInputEnabled = false;
     }
 
     void Window::enableMouseButtonInput()
     {
-        if (mouseButtonInputEnabled_) return;
+        if (m_bMouseButtonInputEnabled) return;
         auto callback = [](GLFWwindow* window, int button, int action, int mods) 
         {
             auto self = static_cast<Window*>(glfwGetWindowUserPointer(window));
             self->mouseButtonCallback(button, action, mods);
         };
-        glfwSetMouseButtonCallback(window_, callback);
-        mouseButtonInputEnabled_ = true;
+        glfwSetMouseButtonCallback(m_pWindow, callback);
+        m_bMouseButtonInputEnabled = true;
     }
 
     void Window::disableMouseButtonInput() 
     {
-        if (!mouseButtonInputEnabled_) return;
-        glfwSetMouseButtonCallback(window_, nullptr);
-        mouseButtonInputEnabled_ = false;
+        if (!m_bMouseButtonInputEnabled) return;
+        glfwSetMouseButtonCallback(m_pWindow, nullptr);
+        m_bMouseButtonInputEnabled = false;
     }
 
     void Window::framebufferSizeCallback(GLFWwindow* window, int width, int height) 
     {
         glViewport(0, 0, width, height);
 
-        if (boundCamera_) 
+        if (m_spBoundCamera)
         {
-            boundCamera_->setAspectRatio(width / static_cast<float>(height));
+            m_spBoundCamera->setAspectRatio(width / static_cast<float>(height));
         }
-        if (boundCameraControls_) 
+        if (m_spBoundCameraControls)
         {
-            boundCameraControls_->resizeWindow(width, height);
+            m_spBoundCameraControls->resizeWindow(width, height);
         }
     }
 
@@ -213,7 +213,7 @@ namespace qrk
     {
         GLFWmonitor* monitor = glfwGetPrimaryMonitor();
         auto size = getSize();
-        glfwSetWindowMonitor(window_, monitor, /* unused xpos */ 0,
+        glfwSetWindowMonitor(m_pWindow, monitor, /* unused xpos */ 0,
                             /* unused ypos */ 0, size.width, size.height,
                             /* refreshRate */ GLFW_DONT_CARE);
     }
@@ -221,28 +221,28 @@ namespace qrk
     void Window::makeWindowed()
     {
         auto size = getSize();
-        glfwSetWindowMonitor(window_, /* monitor */ nullptr, /* xpos */ 0,
+        glfwSetWindowMonitor(m_pWindow, /* monitor */ nullptr, /* xpos */ 0,
                             /* ypos */ 0, size.width, size.height,
                             /* refreshRate */ GLFW_DONT_CARE);
     }
 
     void Window::processInput(float deltaTime) 
     {
-        if (boundCameraControls_) 
+        if (m_spBoundCameraControls)
         {
-            boundCameraControls_->processInput(window_, *boundCamera_, deltaTime);
+            m_spBoundCameraControls->processInput(m_pWindow, *m_spBoundCamera, deltaTime);
         }
     }
 
     void Window::keyCallback(int key, int scancode, int action, int mods) 
     {
-        if (keyInputPaused_) return;
+        if (m_bkeyInputPaused) return;
 
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) 
         {
-            if (escBehavior_ == EscBehavior::TOGGLE_MOUSE_CAPTURE)
+            if (e_eEscBehavior == EscBehavior::TOGGLE_MOUSE_CAPTURE)
             {
-                auto inputMode = glfwGetInputMode(window_, GLFW_CURSOR);
+                auto inputMode = glfwGetInputMode(m_pWindow, GLFW_CURSOR);
                 if (inputMode == GLFW_CURSOR_NORMAL)
                 {
                     enableMouseCapture();
@@ -252,13 +252,13 @@ namespace qrk
                     disableMouseCapture();
                 }
             } 
-            else if (escBehavior_ == EscBehavior::CLOSE) 
+            else if (e_eEscBehavior == EscBehavior::CLOSE)
             {
-                glfwSetWindowShouldClose(window_, true);
+                glfwSetWindowShouldClose(m_pWindow, true);
             } 
-            else if (escBehavior_ == EscBehavior::UNCAPTURE_MOUSE_OR_CLOSE) 
+            else if (e_eEscBehavior == EscBehavior::UNCAPTURE_MOUSE_OR_CLOSE)
             {
-                auto inputMode = glfwGetInputMode(window_, GLFW_CURSOR);
+                auto inputMode = glfwGetInputMode(m_pWindow, GLFW_CURSOR);
                 if (inputMode == GLFW_CURSOR_DISABLED)
                 {
                     disableMouseCapture();
@@ -266,7 +266,7 @@ namespace qrk
                 else 
                 {
                     // Close since mouse is not captured.
-                    glfwSetWindowShouldClose(window_, true);
+                    glfwSetWindowShouldClose(m_pWindow, true);
                 }
             }
         }
@@ -274,7 +274,7 @@ namespace qrk
         // Run handlers.
         if (action == GLFW_PRESS)
         {
-            for (auto pair : keyPressHandlers_)
+            for (auto pair : m_vecKeyPressHandlers)
             {
                 int glfwKey;
                 std::function<void(int)> handler;
@@ -290,31 +290,30 @@ namespace qrk
 
     void Window::scrollCallback(double xoffset, double yoffset)
     {
-        if (mouseInputPaused_) return;
+        if (m_bMouseInputPaused) return;
 
-        if (boundCameraControls_) 
+        if (m_spBoundCameraControls)
         {
-            boundCameraControls_->scroll(*boundCamera_, xoffset, yoffset,
-                                            mouseCaptured_);
+            m_spBoundCameraControls->scroll(*m_spBoundCamera, xoffset, yoffset, m_bMouseCaptured);
         }
     }
 
     void Window::mouseMoveCallback(double xpos, double ypos)
     {
-        if (mouseInputPaused_) return;
-        if (boundCameraControls_) 
+        if (m_bMouseInputPaused) return;
+        if (m_spBoundCameraControls)
         {
-            boundCameraControls_->mouseMove(*boundCamera_, xpos, ypos, mouseCaptured_);
+            m_spBoundCameraControls->mouseMove(*m_spBoundCamera, xpos, ypos, m_bMouseCaptured);
         }
     }
 
     void Window::mouseButtonCallback(int button, int action, int mods)
     {
-        if (mouseInputPaused_) return;
+        if (m_bMouseInputPaused) return;
 
         if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) 
         {
-            if (mouseButtonBehavior_ == MouseButtonBehavior::CAPTURE_MOUSE) 
+            if (m_eMouseButtonBehavior == MouseButtonBehavior::CAPTURE_MOUSE)
             {
                 enableMouseCapture();
             }
@@ -323,7 +322,7 @@ namespace qrk
         // Run handlers.
         if (action == GLFW_PRESS)
         {
-            for (auto pair : mouseButtonHandlers_)
+            for (auto pair : m_vecMouseButtonHandlers)
             {
                 int glfwMouseButton;
                 std::function<void(int)> handler;
@@ -336,114 +335,113 @@ namespace qrk
             }
         }
 
-        if (boundCameraControls_) 
+        if (m_spBoundCameraControls)
         {
-            boundCameraControls_->mouseButton(*boundCamera_, button, action, mods,
-                                                mouseCaptured_);
+            m_spBoundCameraControls->mouseButton(*m_spBoundCamera, button, action, mods, m_bMouseCaptured);
         }
     }
 
     void Window::addKeyPressHandler(int glfwKey, std::function<void(int)> handler)
     {
-        keyPressHandlers_.push_back(std::make_tuple(glfwKey, handler));
+        m_vecKeyPressHandlers.push_back(std::make_tuple(glfwKey, handler));
     }
     void Window::addMouseButtonHandler(int glfwMouseButton, std::function<void(int)> handler) 
     {
-        mouseButtonHandlers_.push_back(std::make_tuple(glfwMouseButton, handler));
+        m_vecMouseButtonHandlers.push_back(std::make_tuple(glfwMouseButton, handler));
     }
 
     void Window::enableMouseCapture() 
     {
-        glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        mouseCaptured_ = true;
+        glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        m_bMouseCaptured = true;
     }
 
     void Window::disableMouseCapture()
     {
-        glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        mouseCaptured_ = false;
+        glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        m_bMouseCaptured = false;
     }
 
     void Window::bindCamera(std::shared_ptr<Camera> camera)
     {
-        boundCamera_ = camera;
-        boundCamera_->setAspectRatio(getSize());
+        m_spBoundCamera = camera;
+        m_spBoundCamera->setAspectRatio(getSize());
     }
 
     void Window::bindCameraControls(std::shared_ptr<CameraControls> cameraControls) 
     {
-        if (!boundCamera_) 
+        if (!m_spBoundCamera)
         {
             throw WindowException(
                 "ERROR::WINDOW::BIND_CAMERA_CONTROLS_FAILED\n"
                 "Camera must be bound before camera controls.");
         }
-        boundCameraControls_ = cameraControls;
+        m_spBoundCameraControls = cameraControls;
         ImageSize size = getSize();
-        boundCameraControls_->resizeWindow(size.width, size.height);
+        m_spBoundCameraControls->resizeWindow(size.width, size.height);
     }
 
-    const float* Window::getFrameDeltas() const { return &frameDeltas_[0]; }
+    const float* Window::getFrameDeltas() const { return &m_fFrameDeltas[0]; }
 
     int Window::getNumFrameDeltas() const { return NUM_FRAME_DELTAS; }
 
     int Window::getFrameDeltasOffset() const
     {
-        return frameCount_ % NUM_FRAME_DELTAS;
+        return m_uiFrameCount % NUM_FRAME_DELTAS;
     }
 
     float Window::getAvgFPS() const 
     {
-        int denominator = std::min<int>(frameCount_, NUM_FRAME_DELTAS);
-        float avgFrameDelta = frameDeltaSum_ / denominator;
+        int denominator = std::min<int>(m_uiFrameCount, NUM_FRAME_DELTAS);
+        float avgFrameDelta = m_fFrameDeltaSum / denominator;
         return 1.0f / avgFrameDelta;
     }
 
     void Window::updateFrameStats(float deltaTime) 
     {
         unsigned int offset = getFrameDeltasOffset();
-        float oldDeltaTime = frameDeltas_[offset];
-        frameDeltaSum_ -= oldDeltaTime;
-        frameDeltaSum_ += deltaTime;
-        frameDeltas_[offset] = deltaTime;
+        float oldDeltaTime = m_fFrameDeltas[offset];
+        m_fFrameDeltaSum -= oldDeltaTime;
+        m_fFrameDeltaSum += deltaTime;
+        m_fFrameDeltas[offset] = deltaTime;
     }
 
     void Window::loop(std::function<void(float)> callback)
     {
         // TODO: Add exception handling here.
-        while (!glfwWindowShouldClose(window_))
+        while (!glfwWindowShouldClose(m_pWindow))
         {
             float currentTime = qrk::time();
-            deltaTime_ = currentTime - lastTime_;
-            lastTime_ = currentTime;
+            m_fDeltaTime = currentTime - m_fLastTime;
+            m_fLastTime = currentTime;
 
-            updateFrameStats(deltaTime_);
+            updateFrameStats(m_fDeltaTime);
 
             // Clear the appropriate buffers.
-            glClearColor(clearColor_.r, clearColor_.g, clearColor_.b, clearColor_.a);
+            glClearColor(m_vecClearColor.r, m_vecClearColor.g, m_vecClearColor.b, m_vecClearColor.a);
             auto clearBits = GL_COLOR_BUFFER_BIT;
-            if (depthTestEnabled_)
+            if (m_bDepthTestEnabled)
             {
                 clearBits |= GL_DEPTH_BUFFER_BIT;
             }
-            if (stencilTestEnabled_) 
+            if (m_bStencilTestEnabled)
             {
                 clearBits |= GL_STENCIL_BUFFER_BIT;
             }
             glClear(clearBits);
 
             // Process necessary input.
-            processInput(deltaTime_);
+            processInput(m_fDeltaTime);
 
             // Call the loop function.
-            callback(deltaTime_);
+            callback(m_fDeltaTime);
 
             qrkCheckForGlError();
 
-            glfwSwapBuffers(window_);
+            glfwSwapBuffers(m_pWindow);
             glfwPollEvents();
 
-            ++frameCount_;
+            ++m_uiFrameCount;
         }
     }
 

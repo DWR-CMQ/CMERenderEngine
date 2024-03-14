@@ -8,24 +8,24 @@ namespace qrk
                                float cuboidExtents, float near, float far,
                                float shadowCameraDistanceFromOrigin,
                                glm::vec3 worldUp)
-        : light_(light),
-          cuboidExtents_(cuboidExtents),
-          near_(near),
-          far_(far),
-          shadowCameraDistanceFromOrigin_(shadowCameraDistanceFromOrigin),
-          worldUp_(worldUp) {}
+        : m_spLight(light),
+        m_fCuboidExtents(cuboidExtents),
+        m_fNear(near),
+        m_fFar(far),
+        m_fShadowCameraDistanceFromOrigin(shadowCameraDistanceFromOrigin),
+        m_vec3WorldUp(worldUp) {}
 
     glm::mat4 ShadowCamera::getViewTransform() 
     {
-        return glm::lookAt(shadowCameraDistanceFromOrigin_ * -light_->getDirection(),
-                            glm::vec3(0.0f), worldUp_);
+        return glm::lookAt(m_fShadowCameraDistanceFromOrigin * -m_spLight->getDirection(),
+                            glm::vec3(0.0f), m_vec3WorldUp);
     }
 
     glm::mat4 ShadowCamera::getProjectionTransform() 
     {
         // Directional lights cast orthographic shadows.
-        return glm::ortho(-cuboidExtents_, cuboidExtents_, -cuboidExtents_,
-                        cuboidExtents_, near_, far_);
+        return glm::ortho(-m_fCuboidExtents, m_fCuboidExtents, -m_fCuboidExtents,
+            m_fCuboidExtents, m_fNear, m_fFar);
     }
 
     void ShadowCamera::updateUniforms(Shader& shader) 
@@ -42,13 +42,13 @@ namespace qrk
         params.filtering = TextureFiltering::NEAREST;
         params.wrapMode = TextureWrapMode::CLAMP_TO_BORDER;
         params.borderColor = glm::vec4(1.0f);
-        depthAttachment_ = attachTexture(BufferType::DEPTH, params);
+        m_DepthAttachmentObj = attachTexture(BufferType::DEPTH, params);
     }
 
     unsigned int ShadowMap::bindTexture(unsigned int nextTextureUnit,
                                         Shader& shader) 
     {
-        depthAttachment_.asTexture().bindToUnit(nextTextureUnit);
+        m_DepthAttachmentObj.asTexture().bindToUnit(nextTextureUnit);
         // TODO: Make this more generic.
         shader.setInt("shadowMap", nextTextureUnit);
         return nextTextureUnit + 1;

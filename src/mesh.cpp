@@ -8,13 +8,13 @@ namespace qrk
     {
         // Combined incoming transform with the node's.
         const glm::mat4 mat = transform * getModelTransform();
-        for (auto& renderable : renderables_)
+        for (auto& renderable : m_vecRenderables)
         {
             renderable->drawWithTransform(mat, shader, textureRegistry);
         }
 
         // Render children.
-        for (auto& childNode : childNodes_)
+        for (auto& childNode : m_vecChildNodes)
         {
             childNode->drawWithTransform(mat, shader, textureRegistry);
         }
@@ -22,11 +22,11 @@ namespace qrk
 
     void RenderableNode::visitRenderables(std::function<void(Renderable*)> visitor)
     {
-        for (auto& renderable : renderables_) 
+        for (auto& renderable : m_vecRenderables)
         {
             visitor(renderable.get());
         }
-        for (auto& childNode : childNodes_) 
+        for (auto& childNode : m_vecChildNodes)
         {
             childNode->visitRenderables(visitor);
         }
@@ -38,33 +38,33 @@ namespace qrk
                         const std::vector<TextureMap>& textureMaps,
                         unsigned int instanceCount)
     {
-        indices_ = indices;
-        textureMaps_ = textureMaps;
-        numVertices_ = numVertices;
-        vertexSizeBytes_ = vertexSizeBytes;
-        instanceCount_ = instanceCount;
+        m_vecIndices = indices;
+        m_vecTextureMaps = textureMaps;
+        m_uiNumVertices = numVertices;
+        m_uiVertexSizeBytes = vertexSizeBytes;
+        m_uiInstanceCount = instanceCount;
 
         // Load VBO.
-        vertexArray_.loadVertexData(vertexData, numVertices_ * vertexSizeBytes);
+        m_VertexArrayObj.loadVertexData(vertexData, m_uiNumVertices * vertexSizeBytes);
 
         initializeVertexAttributes();
         initializeVertexArrayInstanceData();
 
         // Load EBO if this is an indexed mesh.
-        if (!indices_.empty())
+        if (!m_vecIndices.empty())
         {
-            vertexArray_.loadElementData(&indices_[0], indices.size() * sizeof(unsigned int));
+            m_VertexArrayObj.loadElementData(&m_vecIndices[0], indices.size() * sizeof(unsigned int));
         }
     }
 
     void Mesh::loadInstanceModels(const std::vector<glm::mat4>& models) 
     {
-        vertexArray_.loadInstanceVertexData(&models[0], models.size() * sizeof(glm::mat4));
+        m_VertexArrayObj.loadInstanceVertexData(&models[0], models.size() * sizeof(glm::mat4));
     }
 
     void Mesh::loadInstanceModels(const glm::mat4* models, unsigned int size) 
     {
-        vertexArray_.loadInstanceVertexData(&models[0], size * sizeof(glm::mat4));
+        m_VertexArrayObj.loadInstanceVertexData(&models[0], size * sizeof(glm::mat4));
     }
 
     void Mesh::drawWithTransform(const glm::mat4& transform, Shader& shader,
@@ -77,11 +77,11 @@ namespace qrk
 
         // Draw using the VAO.
         shader.activate();
-        vertexArray_.activate();
+        m_VertexArrayObj.activate();
 
         glDraw();
 
-        vertexArray_.deactivate();
+        m_VertexArrayObj.deactivate();
 
         // Reset.
         shader.deactivate();
@@ -89,16 +89,16 @@ namespace qrk
 
     void Mesh::initializeVertexArrayInstanceData()
     {
-        if (instanceCount_) 
+        if (m_uiInstanceCount)
         {
             // Allocate space for mat4 model transforms for the instancing.
-            vertexArray_.allocateInstanceVertexData(instanceCount_ * sizeof(glm::mat4));
+            m_VertexArrayObj.allocateInstanceVertexData(m_uiInstanceCount * sizeof(glm::mat4));
             // Add vertex attributes (max attribute size is vec4, so we need 4 of them).
-            vertexArray_.addVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
-            vertexArray_.addVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
-            vertexArray_.addVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
-            vertexArray_.addVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
-            vertexArray_.finalizeVertexAttribs();
+            m_VertexArrayObj.addVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
+            m_VertexArrayObj.addVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
+            m_VertexArrayObj.addVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
+            m_VertexArrayObj.addVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
+            m_VertexArrayObj.finalizeVertexAttribs();
         }
     }
 
@@ -120,7 +120,7 @@ namespace qrk
             textureRegistry->pushUsageBlock();
             textureUnit = textureRegistry->getNextTextureUnit();
         }
-        for (TextureMap& textureMap : textureMaps_) 
+        for (TextureMap& textureMap : m_vecTextureMaps)
         {
             std::string samplerName;
             TextureMapType type = textureMap.getType();
@@ -214,29 +214,29 @@ namespace qrk
     void Mesh::glDraw() 
     {
         // Handle instancing.
-        if (instanceCount_) 
+        if (m_uiInstanceCount)
         {
             // Handle indexed arrays.
-            if (!indices_.empty()) 
+            if (!m_vecIndices.empty())
             {
-                glDrawElementsInstanced(GL_TRIANGLES, indices_.size(), GL_UNSIGNED_INT,
-                                        nullptr, instanceCount_);
+                glDrawElementsInstanced(GL_TRIANGLES, m_vecIndices.size(), GL_UNSIGNED_INT,
+                                        nullptr, m_uiInstanceCount);
             } 
             else 
             {
-                glDrawArraysInstanced(GL_TRIANGLES, 0, numVertices_, instanceCount_);
+                glDrawArraysInstanced(GL_TRIANGLES, 0, m_uiNumVertices, m_uiInstanceCount);
             }
         } 
         else
         {
             // Handle indexed arrays.
-            if (!indices_.empty())
+            if (!m_vecIndices.empty())
             {
-                glDrawElements(GL_TRIANGLES, indices_.size(), GL_UNSIGNED_INT, nullptr);
+                glDrawElements(GL_TRIANGLES, m_vecIndices.size(), GL_UNSIGNED_INT, nullptr);
             }
             else 
             {
-                glDrawArrays(GL_TRIANGLES, 0, numVertices_);
+                glDrawArrays(GL_TRIANGLES, 0, m_uiNumVertices);
             }
         }
     }

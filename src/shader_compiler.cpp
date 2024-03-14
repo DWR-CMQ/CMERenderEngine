@@ -47,7 +47,7 @@ namespace qrk
         std::string shaderString = shaderLoader.load();
         const char* resolvedSource = shaderString.c_str();
         unsigned int shaderId = compileShader(resolvedSource, type);
-        shaders_.push_back(shaderId);
+        m_vecShaders.push_back(shaderId);
         return shaderId;
     }
 
@@ -60,7 +60,7 @@ namespace qrk
         unsigned int shaderProgram = glCreateProgram();
 
         // Add the compiled shaders into the program.
-        for (unsigned int shaderId : shaders_) 
+        for (unsigned int shaderId : m_vecShaders)
         {
             glAttachShader(shaderProgram, shaderId);
         }
@@ -75,11 +75,11 @@ namespace qrk
         }
 
         // Delete shaders now that they're linked.
-        for (unsigned int shaderId : shaders_) 
+        for (unsigned int shaderId : m_vecShaders)
         {
             glDeleteShader(shaderId);
         }
-        shaders_.clear();
+        m_vecShaders.clear();
         return shaderProgram;
     }
 

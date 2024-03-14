@@ -8,7 +8,6 @@
 
 namespace qrk 
 {
-
     int calculateNumMips(int width, int height) 
     {
         return 1 + static_cast<int>(std::floor(std::log2(std::max(width, height))));
@@ -64,22 +63,22 @@ namespace qrk
         GLenum dataFormat;
         if (texture.m_iNumChannels == 1)
         {
-            texture.internalFormat_ = GL_R8;
+            texture.m_uiInternalFormat = GL_R8;
             dataFormat = GL_RED;
         } 
         else if (texture.m_iNumChannels == 2)
         {
-            texture.internalFormat_ = GL_RG8;
+            texture.m_uiInternalFormat = GL_RG8;
             dataFormat = GL_RG;
         } 
         else if (texture.m_iNumChannels == 3)
         {
-            texture.internalFormat_ = isSRGB ? GL_SRGB8 : GL_RGB8;
+            texture.m_uiInternalFormat = isSRGB ? GL_SRGB8 : GL_RGB8;
             dataFormat = GL_RGB;
         }
         else if (texture.m_iNumChannels == 4)
         {
-            texture.internalFormat_ = isSRGB ? GL_SRGB8_ALPHA8 : GL_RGBA8;
+            texture.m_uiInternalFormat = isSRGB ? GL_SRGB8_ALPHA8 : GL_RGBA8;
             dataFormat = GL_RGBA;
         } 
         else 
@@ -96,7 +95,7 @@ namespace qrk
         glBindTexture(GL_TEXTURE_2D, texture.m_uiID);
 
         // TODO: Replace with glTexStorage2D
-        glTexImage2D(GL_TEXTURE_2D, /* mipmap level */ 0, texture.internalFormat_,
+        glTexImage2D(GL_TEXTURE_2D, /* mipmap level */ 0, texture.m_uiInternalFormat,
                     texture.m_iWidth, texture.m_iHeight, 0,
                     /* tex data format */ dataFormat, GL_UNSIGNED_BYTE, data);
         if (params.generateMips >= MipGeneration::ON_LOAD)
@@ -146,22 +145,22 @@ namespace qrk
         GLenum dataFormat;
         if (texture.m_iNumChannels == 1)
         {
-            texture.internalFormat_ = GL_R16F;
+            texture.m_uiInternalFormat = GL_R16F;
             dataFormat = GL_RED;
         } 
         else if (texture.m_iNumChannels == 2)
         {
-            texture.internalFormat_ = GL_RG16F;
+            texture.m_uiInternalFormat = GL_RG16F;
             dataFormat = GL_RG;
         } 
         else if (texture.m_iNumChannels == 3)
         {
-            texture.internalFormat_ = GL_RGB16F;
+            texture.m_uiInternalFormat = GL_RGB16F;
             dataFormat = GL_RGB;
         } 
         else if (texture.m_iNumChannels == 4)
         {
-            texture.internalFormat_ = GL_RGBA16F;
+            texture.m_uiInternalFormat = GL_RGBA16F;
             dataFormat = GL_RGBA;
         }
         else
@@ -178,7 +177,7 @@ namespace qrk
         glBindTexture(GL_TEXTURE_2D, texture.m_uiID);
 
         // TODO: Replace with glTexStorage2D
-        glTexImage2D(GL_TEXTURE_2D, /*mip=*/0, texture.internalFormat_,
+        glTexImage2D(GL_TEXTURE_2D, /*mip=*/0, texture.m_uiInternalFormat,
                     texture.m_iWidth, texture.m_iHeight, 0,
                     /*tex data format=*/dataFormat, GL_FLOAT, data);
 
@@ -212,7 +211,7 @@ namespace qrk
         Texture texture;
         texture.m_eType = TextureType::CUBEMAP;
         texture.m_iNumMips = 1;
-        texture.internalFormat_ = GL_RGB8;  // Cubemaps must be RGB.
+        texture.m_uiInternalFormat = GL_RGB8;  // Cubemaps must be RGB.
 
         glGenTextures(1, &texture.m_uiID);
         glBindTexture(GL_TEXTURE_CUBE_MAP, texture.m_uiID);
@@ -262,7 +261,7 @@ namespace qrk
             // Load into the next cube map texture position.
             // TODO: Replace with glTexStorage2D
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, /*level=*/0,
-                            texture.internalFormat_, width, height, /*border=*/0,
+                            texture.m_uiInternalFormat, width, height, /*border=*/0,
                             /*format=*/GL_RGB, /*type=*/GL_UNSIGNED_BYTE, data);
             stbi_image_free(data);
         }
@@ -298,12 +297,12 @@ namespace qrk
                 texture.m_iNumMips = std::min(texture.m_iNumMips, params.maxNumMips);
             }
         }
-        texture.internalFormat_ = internalFormat;
+        texture.m_uiInternalFormat = internalFormat;
 
         glGenTextures(1, &texture.m_uiID);
         glBindTexture(GL_TEXTURE_2D, texture.m_uiID);
 
-        glTexStorage2D(GL_TEXTURE_2D, texture.m_iNumMips, texture.internalFormat_,
+        glTexStorage2D(GL_TEXTURE_2D, texture.m_iNumMips, texture.m_uiInternalFormat,
                         texture.m_iWidth, texture.m_iHeight);
 
         // Set texture-wrapping/filtering options.
@@ -338,12 +337,12 @@ namespace qrk
                 texture.m_iNumMips = std::min(texture.m_iNumMips, params.maxNumMips);
             }
         }
-        texture.internalFormat_ = internalFormat;
+        texture.m_uiInternalFormat = internalFormat;
 
         glGenTextures(1, &texture.m_uiID);
         glBindTexture(GL_TEXTURE_CUBE_MAP, texture.m_uiID);
 
-        glTexStorage2D(GL_TEXTURE_CUBE_MAP, texture.m_iNumMips, texture.internalFormat_,
+        glTexStorage2D(GL_TEXTURE_CUBE_MAP, texture.m_iNumMips, texture.m_uiInternalFormat,
                         texture.m_iWidth, texture.m_iHeight);
 
         applyParams(params, texture.m_eType);
@@ -400,7 +399,7 @@ namespace qrk
         case TextureBindType::IMAGE_TEXTURE:
             // Bind image unit.
             glBindImageTexture(textureUnit, m_uiID, /*level=*/0, /*layered=*/GL_FALSE, 0,
-                                GL_READ_WRITE, internalFormat_);
+                                GL_READ_WRITE, m_uiInternalFormat);
             break;
         default:
             throw TextureException("ERROR::TEXTURE::INVALID_TEXTURE_BIND_TYPE\n" +

@@ -4,28 +4,28 @@ namespace qrk
 {
     void TextureRegistry::updateUniforms(Shader& shader) 
     {
-        nextTextureUnit_ = 0;
-        lastAvailableUnits_.clear();
+        m_uiNextTextureUnit = 0;
+        m_vecLastAvailableUnits.clear();
 
-        for (auto source : textureSources_) 
+        for (auto source : m_vecTextureSources)
         {
-            nextTextureUnit_ = source->bindTexture(nextTextureUnit_, shader);
+            m_uiNextTextureUnit = source->bindTexture(m_uiNextTextureUnit, shader);
         }
     }
 
     void TextureRegistry::pushUsageBlock() 
     {
-        lastAvailableUnits_.push_back(nextTextureUnit_);
+        m_vecLastAvailableUnits.push_back(m_uiNextTextureUnit);
     }
 
     void TextureRegistry::popUsageBlock() 
     {
-        if (lastAvailableUnits_.empty())
+        if (m_vecLastAvailableUnits.empty())
         {
             throw TextureRegistryException("ERROR::TEXTURE_REGISTRY::POP");
         }
-        nextTextureUnit_ = lastAvailableUnits_.back();
-        lastAvailableUnits_.pop_back();
+        m_uiNextTextureUnit = m_vecLastAvailableUnits.back();
+        m_vecLastAvailableUnits.pop_back();
     }
 
 }  // namespace qrk

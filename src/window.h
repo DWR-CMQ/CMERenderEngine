@@ -19,207 +19,225 @@
 #include <tuple>
 #include <vector>
 
-namespace qrk {
+namespace qrk 
+{
 
-class WindowException : public QuarkException {
-  using QuarkException::QuarkException;
-};
+    class WindowException : public QuarkException 
+    {
+        using QuarkException::QuarkException;
+    };
 
-constexpr int DEFAULT_WIDTH = 800;
-constexpr int DEFAULT_HEIGHT = 600;
-constexpr char const* DEFAULT_TITLE = "quarkGL";
-const glm::vec4 DEFAULT_CLEAR_COLOR = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    constexpr int DEFAULT_WIDTH = 800;
+    constexpr int DEFAULT_HEIGHT = 600;
+    constexpr char const* DEFAULT_TITLE = "quarkGL";
+    const glm::vec4 DEFAULT_CLEAR_COLOR = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
-// Controls special convenience behavior when Esc is pressed.
-enum class EscBehavior {
-  NONE,
-  TOGGLE_MOUSE_CAPTURE,
-  CLOSE,
-  // Uncaptures the mouse if it is captured, or else closes the app.
-  UNCAPTURE_MOUSE_OR_CLOSE,
-};
+    // Controls special convenience behavior when Esc is pressed.
+    enum class EscBehavior 
+    {
+        NONE,
+        TOGGLE_MOUSE_CAPTURE,
+        CLOSE,
+        // Uncaptures the mouse if it is captured, or else closes the app.
+        UNCAPTURE_MOUSE_OR_CLOSE,
+    };
 
-// Controls special convenience behavior when the LMB is pressed.
-enum class MouseButtonBehavior {
-  NONE,
-  CAPTURE_MOUSE,
-};
+    // Controls special convenience behavior when the LMB is pressed.
+    enum class MouseButtonBehavior
+    {
+        NONE,
+        CAPTURE_MOUSE,
+    };
 
-class Window : public UniformSource {
- public:
-  Window(int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT,
-         const char* title = DEFAULT_TITLE, bool fullscreen = false,
-         int samples = 0);
-  virtual ~Window();
-  GLFWwindow* getGlfwRef() const { return window_; }
+    class Window : public UniformSource 
+    {
+    public:
+        Window(int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT,
+                const char* title = DEFAULT_TITLE, bool fullscreen = false,
+                int samples = 0);
+        virtual ~Window();
+        GLFWwindow* getGlfwRef() const { return m_pWindow; }
 
-  // TODO: Should this be called something different, and 'activate' be used for
-  // setViewport?
-  void activate();
+        // TODO: Should this be called something different, and 'activate' be used for
+        // setViewport?
+        void activate();
 
-  void setViewport() {
-    ImageSize size = getSize();
-    glViewport(0, 0, size.width, size.height);
-  }
+        void setViewport()
+        {
+            ImageSize size = getSize();
+            glViewport(0, 0, size.width, size.height);
+        }
 
-  void enableVsync() {
-    activate();
-    glfwSwapInterval(1);
-  }
-  void disableVsync() {
-    activate();
-    glfwSwapInterval(0);
-  }
+        void enableVsync()
+        {
+            activate();
+            glfwSwapInterval(1);
+        }
+        void disableVsync()
+        {
+            activate();
+            glfwSwapInterval(0);
+        }
 
-  // TODO: Extract all these as a "Context" object.
-  void enableDepthTest() {
-    glEnable(GL_DEPTH_TEST);
-    depthTestEnabled_ = true;
-  }
-  void disableDepthTest() {
-    glDisable(GL_DEPTH_TEST);
-    depthTestEnabled_ = false;
-  }
+        // TODO: Extract all these as a "Context" object.
+        void enableDepthTest()
+        {
+            glEnable(GL_DEPTH_TEST);
+            m_bDepthTestEnabled = true;
+        }
 
-  // TODO: Consider extracting stencil logic out to a separate class.
-  void enableStencilTest() {
-    glEnable(GL_STENCIL_TEST);
-    // Only replace the value in the stencil buffer if both the stencil and
-    // depth test pass.
-    glStencilOp(/*sfail=*/GL_KEEP, /*dpfail=*/GL_KEEP, /*dppass=*/GL_REPLACE);
-    stencilTestEnabled_ = true;
-  }
-  void disableStencilTest() {
-    glDisable(GL_STENCIL_TEST);
-    stencilTestEnabled_ = false;
-  }
+        void disableDepthTest()
+        {
+            glDisable(GL_DEPTH_TEST);
+            m_bDepthTestEnabled = false;
+        }
 
-  void enableStencilUpdates() { glStencilMask(0xFF); }
-  void disableStencilUpdates() { glStencilMask(0x00); }
+        // TODO: Consider extracting stencil logic out to a separate class.
+        void enableStencilTest()
+        {
+            glEnable(GL_STENCIL_TEST);
+            // Only replace the value in the stencil buffer if both the stencil and
+            // depth test pass.
+            glStencilOp(/*sfail=*/GL_KEEP, /*dpfail=*/GL_KEEP, /*dppass=*/GL_REPLACE);
+            m_bStencilTestEnabled = true;
+        }
 
-  void stencilAlwaysDraw() { setStencilFunc(GL_ALWAYS); }
-  void stencilDrawWhenMatching() { setStencilFunc(GL_EQUAL); }
-  void stencilDrawWhenNotMatching() { setStencilFunc(GL_NOTEQUAL); }
-  void setStencilFunc(GLenum func) {
-    // Set the stencil test to use the given `func` when comparing for fragment
-    // liveness.
-    glStencilFunc(func, /*ref=*/1, /*mask=*/0xFF);
-  }
+        void disableStencilTest()
+        {
+            glDisable(GL_STENCIL_TEST);
+            m_bStencilTestEnabled = false;
+        }
 
-  // TODO: Consider extracting blending logic.
-  void enableAlphaBlending() {
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBlendEquation(GL_FUNC_ADD);
-  }
-  void disableAlphaBlending() { glDisable(GL_BLEND); }
+        void enableStencilUpdates() { glStencilMask(0xFF); }
+        void disableStencilUpdates() { glStencilMask(0x00); }
 
-  void enableFaceCull() { glEnable(GL_CULL_FACE); }
-  void disableFaceCull() { glDisable(GL_CULL_FACE); }
+        void stencilAlwaysDraw() { setStencilFunc(GL_ALWAYS); }
+        void stencilDrawWhenMatching() { setStencilFunc(GL_EQUAL); }
+        void stencilDrawWhenNotMatching() { setStencilFunc(GL_NOTEQUAL); }
+        void setStencilFunc(GLenum func) 
+        {
+            // Set the stencil test to use the given `func` when comparing for fragment
+            // liveness.
+            glStencilFunc(func, /*ref=*/1, /*mask=*/0xFF);
+        }
 
-  void enableWireframe() { glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); }
-  void disableWireframe() { glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
+        // TODO: Consider extracting blending logic.
+        void enableAlphaBlending()
+        {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glBlendEquation(GL_FUNC_ADD);
+        }
+        void disableAlphaBlending() { glDisable(GL_BLEND); }
 
-  void enableSeamlessCubemap() { glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS); }
-  void disableSeamlessCubemap() { glDisable(GL_TEXTURE_CUBE_MAP_SEAMLESS); }
+        void enableFaceCull() { glEnable(GL_CULL_FACE); }
+        void disableFaceCull() { glDisable(GL_CULL_FACE); }
 
-  void cullFrontFaces() { glCullFace(GL_FRONT); }
-  void cullBackFaces() { glCullFace(GL_BACK); }
+        void enableWireframe() { glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); }
+        void disableWireframe() { glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
 
-  void updateUniforms(Shader& shader);
+        void enableSeamlessCubemap() { glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS); }
+        void disableSeamlessCubemap() { glDisable(GL_TEXTURE_CUBE_MAP_SEAMLESS); }
 
-  ImageSize getSize() const;
-  void setSize(int width, int height);
-  void enableResizeUpdates();
-  void disableResizeUpdates();
-  float getAspectRatio() const;
+        void cullFrontFaces() { glCullFace(GL_FRONT); }
+        void cullBackFaces() { glCullFace(GL_BACK); }
 
-  unsigned int getFrameCount() const { return frameCount_; }
-  const float* getFrameDeltas() const;
-  int getNumFrameDeltas() const;
-  int getFrameDeltasOffset() const;
-  float getAvgFPS() const;
-  glm::vec4 getClearColor() const { return clearColor_; }
-  void setClearColor(glm::vec4 color) { clearColor_ = color; }
+        void updateUniforms(Shader& shader);
 
-  void makeFullscreen();
-  void makeWindowed();
+        ImageSize getSize() const;
+        void setSize(int width, int height);
+        void enableResizeUpdates();
+        void disableResizeUpdates();
+        float getAspectRatio() const;
 
-  EscBehavior getEscBehavior() const { return escBehavior_; }
-  void setEscBehavior(EscBehavior behavior) { escBehavior_ = behavior; }
+        unsigned int getFrameCount() const { return m_uiFrameCount; }
+        const float* getFrameDeltas() const;
+        int getNumFrameDeltas() const;
+        int getFrameDeltasOffset() const;
+        float getAvgFPS() const;
+        glm::vec4 getClearColor() const { return m_vecClearColor; }
+        void setClearColor(glm::vec4 color) { m_vecClearColor = color; }
 
-  MouseButtonBehavior getMouseButtonBehavior() const {
-    return mouseButtonBehavior_;
-  }
-  void setMouseButtonBehavior(MouseButtonBehavior behavior) {
-    mouseButtonBehavior_ = behavior;
-  }
+        void makeFullscreen();
+        void makeWindowed();
 
-  void enableKeyInput();
-  void disableKeyInput();
-  void enableScrollInput();
-  void disableScrollInput();
-  void enableMouseMoveInput();
-  void disableMouseMoveInput();
-  void enableMouseButtonInput();
-  void disableMouseButtonInput();
+        EscBehavior getEscBehavior() const { return e_eEscBehavior; }
+        void setEscBehavior(EscBehavior behavior) { e_eEscBehavior = behavior; }
 
-  void setKeyInputPaused(bool isPaused) { keyInputPaused_ = isPaused; }
-  void setMouseInputPaused(bool isPaused) { mouseInputPaused_ = isPaused; }
+        MouseButtonBehavior getMouseButtonBehavior() const 
+        {
+            return m_eMouseButtonBehavior;
+        }
+        void setMouseButtonBehavior(MouseButtonBehavior behavior)
+        {
+            m_eMouseButtonBehavior = behavior;
+        }
 
-  void enableMouseCapture();
-  void disableMouseCapture();
+        void enableKeyInput();
+        void disableKeyInput();
+        void enableScrollInput();
+        void disableScrollInput();
+        void enableMouseMoveInput();
+        void disableMouseMoveInput();
+        void enableMouseButtonInput();
+        void disableMouseButtonInput();
 
-  void bindCamera(std::shared_ptr<Camera> camera);
-  void bindCameraControls(std::shared_ptr<CameraControls> cameraControls);
+        void setKeyInputPaused(bool isPaused) { m_bkeyInputPaused = isPaused; }
+        void setMouseInputPaused(bool isPaused) { m_bMouseInputPaused = isPaused; }
 
-  // TODO: Add a way to remove handlers.
-  void addKeyPressHandler(int glfwKey, std::function<void(int)> handler);
-  void addMouseButtonHandler(int glfwMouseButton,
-                             std::function<void(int)> handler);
+        void enableMouseCapture();
+        void disableMouseCapture();
 
-  void loop(std::function<void(float)> callback);
+        void bindCamera(std::shared_ptr<Camera> camera);
+        void bindCameraControls(std::shared_ptr<CameraControls> cameraControls);
 
-  // TODO: Allow setting window icon.
+        // TODO: Add a way to remove handlers.
+        void addKeyPressHandler(int glfwKey, std::function<void(int)> handler);
+        void addMouseButtonHandler(int glfwMouseButton,
+                                    std::function<void(int)> handler);
 
- private:
-  void processInput(float deltaTime);
-  void keyCallback(int key, int scancode, int action, int mods);
-  void scrollCallback(double xoffset, double yoffset);
-  void mouseMoveCallback(double xpos, double ypos);
-  void mouseButtonCallback(int button, int action, int mods);
-  void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+        void loop(std::function<void(float)> callback);
 
-  void updateFrameStats(float deltaTime);
+        // TODO: Allow setting window icon.
 
-  GLFWwindow* window_;
-  bool depthTestEnabled_ = false;
-  bool stencilTestEnabled_ = false;
+    private:
+        void processInput(float deltaTime);
+        void keyCallback(int key, int scancode, int action, int mods);
+        void scrollCallback(double xoffset, double yoffset);
+        void mouseMoveCallback(double xpos, double ypos);
+        void mouseButtonCallback(int button, int action, int mods);
+        void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
-  float lastTime_ = 0.0f;
-  float deltaTime_ = 0.0f;
-  unsigned int frameCount_ = 0;
-  static constexpr int NUM_FRAME_DELTAS = 120;
-  float frameDeltas_[NUM_FRAME_DELTAS] = {0.0f};
-  float frameDeltaSum_ = 0.0f;
-  glm::vec4 clearColor_ = DEFAULT_CLEAR_COLOR;
+        void updateFrameStats(float deltaTime);
 
-  EscBehavior escBehavior_ = EscBehavior::NONE;
-  MouseButtonBehavior mouseButtonBehavior_ = MouseButtonBehavior::NONE;
-  bool resizeUpdatesEnabled_ = false;
-  bool keyInputEnabled_ = false;
-  bool scrollInputEnabled_ = false;
-  bool mouseMoveInputEnabled_ = false;
-  bool mouseButtonInputEnabled_ = false;
-  bool keyInputPaused_ = false;
-  bool mouseInputPaused_ = false;
-  bool mouseCaptured_ = false;
-  std::vector<std::tuple<int, std::function<void(int)>>> keyPressHandlers_;
-  std::vector<std::tuple<int, std::function<void(int)>>> mouseButtonHandlers_;
+        GLFWwindow* m_pWindow;
+        bool m_bDepthTestEnabled = false;
+        bool m_bStencilTestEnabled = false;
 
-  std::shared_ptr<Camera> boundCamera_ = nullptr;
-  std::shared_ptr<CameraControls> boundCameraControls_ = nullptr;
-};
+        float m_fLastTime = 0.0f;
+        float m_fDeltaTime = 0.0f;
+        unsigned int m_uiFrameCount = 0;
+        static constexpr int NUM_FRAME_DELTAS = 120;
+        float m_fFrameDeltas[NUM_FRAME_DELTAS] = {0.0f};
+        float m_fFrameDeltaSum = 0.0f;
+        glm::vec4 m_vecClearColor = DEFAULT_CLEAR_COLOR;
+
+        EscBehavior e_eEscBehavior = EscBehavior::NONE;
+        MouseButtonBehavior m_eMouseButtonBehavior = MouseButtonBehavior::NONE;
+        bool m_bResizeUpdatesEnabled = false;
+        bool m_bKeyInputEnabled = false;
+        bool m_bScrollInputEnabled = false;
+        bool m_bMouseMoveInputEnabled = false;
+        bool m_bMouseButtonInputEnabled = false;
+        bool m_bkeyInputPaused = false;
+        bool m_bMouseInputPaused = false;
+        bool m_bMouseCaptured = false;
+        std::vector<std::tuple<int, std::function<void(int)>>> m_vecKeyPressHandlers;
+        std::vector<std::tuple<int, std::function<void(int)>>> m_vecMouseButtonHandlers;
+
+        std::shared_ptr<Camera> m_spBoundCamera = nullptr;
+        std::shared_ptr<CameraControls> m_spBoundCameraControls = nullptr;
+    };
 }  // namespace qrk
 
 #endif

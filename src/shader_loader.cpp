@@ -28,7 +28,7 @@ namespace qrk
         // code).
         if (string_has_suffix(shaderPath, ".glsl")) return;
 
-        switch (shaderType_) 
+        switch (m_eShaderType)
         {
         case ShaderType::VERTEX:
             if (!string_has_suffix(shaderPath, ".vert"))
@@ -76,14 +76,14 @@ namespace qrk
 
         std::string resolvedPath = shaderPath;
 
-        auto item = onceCache_.find(resolvedPath);
-        return item != onceCache_.end();
+        auto item = m_unsetOnceCache.find(resolvedPath);
+        return item != m_unsetOnceCache.end();
     }
 
     std::string ShaderLoader::getIncludesTraceback() 
     {
         std::stringstream buffer;
-        for (std::string path : includeChain_) 
+        for (std::string path : m_dequeIncludeChain)
         {
             buffer << "  > " << path << std::endl;
         }
@@ -92,7 +92,7 @@ namespace qrk
 
     bool ShaderLoader::checkCircularInclude(std::string const& resolvedPath) 
     {
-        for (std::string path : includeChain_)
+        for (std::string path : m_dequeIncludeChain)
         {
             if (path == resolvedPath)
             {
@@ -104,15 +104,15 @@ namespace qrk
 
     ShaderLoader::ShaderLoader(const ShaderSource* shaderSource,
                                const ShaderType type)
-        : shaderSource_(shaderSource), shaderType_(type) {}
+        : m_pShaderSource(shaderSource), m_eShaderType(type) {}
 
     std::string ShaderLoader::lookupOrLoad(std::string const& shaderPath) 
     {
         //std::string resolvedPath = resolvePath(shaderPath);
 
         std::string resolvedPath = shaderPath;
-        auto item = codeCache_.find(resolvedPath);
-        if (item != codeCache_.end()) 
+        auto item = m_unmapCodeCache.find(resolvedPath);
+        if (item != m_unmapCodeCache.end())
         {
             // Cache hit; return code.
             return item->second;
@@ -159,7 +159,7 @@ namespace qrk
         //std::string resolvedPath = resolvePath(shaderPath);
 
         std::string resolvedPath = shaderPath;
-        codeCache_[resolvedPath] = shaderCode;
+        m_unmapCodeCache[resolvedPath] = shaderCode;
     }
 
     std::string ShaderLoader::preprocessShader(std::string const& shaderPath,
@@ -168,12 +168,12 @@ namespace qrk
         //std::string resolvedPath = resolvePath(shaderPath);
 
         std::string resolvedPath = shaderPath;
-        includeChain_.push_back(resolvedPath);
+        m_dequeIncludeChain.push_back(resolvedPath);
 
         std::regex oncePattern(R"(((^|\r?\n)\s*)#pragma\s+once\s*(?=\r?\n|$))");
         if (std::regex_search(shaderCode, oncePattern)) 
         {
-            onceCache_.insert(resolvedPath);
+            m_unsetOnceCache.insert(resolvedPath);
         }
 
         std::regex includePattern(R"(((^|\r?\n)\s*)#pragma\s+qrk_include\s+(".*"|<.*>)(?=\r?\n|$))");
@@ -206,21 +206,21 @@ namespace qrk
         });
 
         //std::string processedCode = shaderCode;
-        includeChain_.pop_back();
+        m_dequeIncludeChain.pop_back();
         return processedCode;
     }
 
     std::string ShaderLoader::load()
     {
         // Handle either loading from file, or loading from inline source.
-        onceCache_.clear();
-        if (shaderSource_->isPath())
+        m_unsetOnceCache.clear();
+        if (m_pShaderSource->isPath())
         {
-            return load(shaderSource_->value);
+            return load(m_pShaderSource->value);
         } 
         else
         {
-            return preprocessShader(".", shaderSource_->value);
+            return preprocessShader(".", m_pShaderSource->value);
         }
     }
 }  // namespace qrk

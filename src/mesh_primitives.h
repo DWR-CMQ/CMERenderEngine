@@ -7,112 +7,115 @@
 #include "texture.h"
 #include "texture_map.h"
 
-namespace qrk {
-
-class MeshPrimitiveException : public QuarkException
+namespace qrk 
 {
-    using QuarkException::QuarkException;
-};
 
-class PrimitiveMesh : public Mesh {};
+    class MeshPrimitiveException : public QuarkException
+    {
+        using QuarkException::QuarkException;
+    };
 
-class PlaneMesh : public PrimitiveMesh
-{
-public:
-    explicit PlaneMesh(std::string texturePath = "");
-    explicit PlaneMesh(const std::vector<TextureMap>& textureMaps);
+    class PrimitiveMesh : public Mesh {};
 
-protected:
-    void loadMeshAndTextures(const std::vector<TextureMap>& textureMaps);
-    void initializeVertexAttributes() override;
-};
+    class PlaneMesh : public PrimitiveMesh
+    {
+    public:
+        explicit PlaneMesh(std::string texturePath = "");
+        explicit PlaneMesh(const std::vector<TextureMap>& textureMaps);
 
-// A unit cube.
-class CubeMesh : public PrimitiveMesh
-{
-public:
-    explicit CubeMesh(std::string texturePath = "");
-    explicit CubeMesh(const std::vector<TextureMap>& textureMaps);
+    protected:
+        void loadMeshAndTextures(const std::vector<TextureMap>& textureMaps);
+        void initializeVertexAttributes() override;
+    };
 
-protected:
-    void loadMeshAndTextures(const std::vector<TextureMap>& textureMaps);
-    void initializeVertexAttributes() override;
-};
+    // A unit cube.
+    class CubeMesh : public PrimitiveMesh
+    {
+    public:
+        explicit CubeMesh(std::string texturePath = "");
+        explicit CubeMesh(const std::vector<TextureMap>& textureMaps);
 
-// Like CubeMesh, but with normals pointing inward.
-class RoomMesh : public PrimitiveMesh 
-{
-public:
-    explicit RoomMesh(std::string texturePath = "");
-    explicit RoomMesh(const std::vector<TextureMap>& textureMaps);
+    protected:
+        void loadMeshAndTextures(const std::vector<TextureMap>& textureMaps);
+        void initializeVertexAttributes() override;
+    };
 
-protected:
-    void loadMeshAndTextures(const std::vector<TextureMap>& textureMaps);
-    void initializeVertexAttributes() override;
-};
+    // Like CubeMesh, but with normals pointing inward.
+    class RoomMesh : public PrimitiveMesh 
+    {
+    public:
+        explicit RoomMesh(std::string texturePath = "");
+        explicit RoomMesh(const std::vector<TextureMap>& textureMaps);
 
-// A unit sphere, with the given number of meridians / parallels.
-class SphereMesh : public PrimitiveMesh
-{
-public:
-    static constexpr int DEFAULT_NUM_MERIDIANS = 64;
-    static constexpr int DEFAULT_NUM_PARALLELS = 64;
+    protected:
+        void loadMeshAndTextures(const std::vector<TextureMap>& textureMaps);
+        void initializeVertexAttributes() override;
+    };
 
-    SphereMesh(std::string texturePath = "",
-                int numMeridians = DEFAULT_NUM_MERIDIANS,
-                int numParallels = DEFAULT_NUM_PARALLELS);
-    SphereMesh(const std::vector<TextureMap>& textureMaps,
-                int numMeridians = DEFAULT_NUM_MERIDIANS,
-                int numParallels = DEFAULT_NUM_PARALLELS);
+    // A unit sphere, with the given number of meridians / parallels.
+    class SphereMesh : public PrimitiveMesh
+    {
+    public:
+        static constexpr int DEFAULT_NUM_MERIDIANS = 64;
+        static constexpr int DEFAULT_NUM_PARALLELS = 64;
 
-protected:
-    void loadMeshAndTextures(const std::vector<TextureMap>& textureMaps);
-    void initializeVertexAttributes() override;
+        SphereMesh(std::string texturePath = "",
+                    int numMeridians = DEFAULT_NUM_MERIDIANS,
+                    int numParallels = DEFAULT_NUM_PARALLELS);
+        SphereMesh(const std::vector<TextureMap>& textureMaps,
+                    int numMeridians = DEFAULT_NUM_MERIDIANS,
+                    int numParallels = DEFAULT_NUM_PARALLELS);
 
-    int numMeridians_;
-    int numParallels_;
-};
+    protected:
+        void loadMeshAndTextures(const std::vector<TextureMap>& textureMaps);
+        void initializeVertexAttributes() override;
 
-class SkyboxMesh : public PrimitiveMesh {
- public:
-  // Creates an unbound skybox mesh.
-  SkyboxMesh();
-  // Creates a new skybox mesh from a set of 6 textures for the faces. Textures
-  // must be passed in order starting with GL_TEXTURE_CUBE_MAP_POSITIVE_X and
-  // incrementing from there; namely, in the order right, left, top, bottom,
-  // front, and back.
-  explicit SkyboxMesh(std::vector<std::string> faces);
-  explicit SkyboxMesh(Texture texture);
+        int m_iNumMeridians;
+        int m_iNumParallels;
+    };
 
-  // Sets a framebuffer attachment as the texture.
-  void setTexture(Attachment attachment);
-  // Sets the texture. This overrides previously set textures.
-  void setTexture(Texture texture);
+    class SkyboxMesh : public PrimitiveMesh 
+    {
+    public:
+        // Creates an unbound skybox mesh.
+        SkyboxMesh();
+        // Creates a new skybox mesh from a set of 6 textures for the faces. Textures
+        // must be passed in order starting with GL_TEXTURE_CUBE_MAP_POSITIVE_X and
+        // incrementing from there; namely, in the order right, left, top, bottom,
+        // front, and back.
+        explicit SkyboxMesh(std::vector<std::string> faces);
+        explicit SkyboxMesh(Texture texture);
 
- protected:
-  void loadMesh();
-  void initializeVertexAttributes() override;
-};
+        // Sets a framebuffer attachment as the texture.
+        void setTexture(Attachment attachment);
+        // Sets the texture. This overrides previously set textures.
+        void setTexture(Texture texture);
 
-class ScreenQuadMesh : public PrimitiveMesh {
- public:
-  // Creates an unbound screen quad mesh.
-  ScreenQuadMesh();
-  // Creates a new screen quad mesh from a texture.
-  explicit ScreenQuadMesh(Texture texture);
+    protected:
+        void loadMesh();
+        void initializeVertexAttributes() override;
+    };
 
-  // Sets a framebuffer attachment as the texture.
-  void setTexture(Attachment attachment);
-  // Sets the texture. This overrides previously set textures.
-  void setTexture(Texture texture);
-  // Unsets the texture.
-  void unsetTexture();
+    class ScreenQuadMesh : public PrimitiveMesh
+    {
+    public:
+        // Creates an unbound screen quad mesh.
+        ScreenQuadMesh();
+        // Creates a new screen quad mesh from a texture.
+        explicit ScreenQuadMesh(Texture texture);
 
- protected:
-  void loadMesh();
-  void initializeVertexAttributes() override;
-  void bindTextures(Shader& shader, TextureRegistry* textureRegistry) override;
-};
+        // Sets a framebuffer attachment as the texture.
+        void setTexture(Attachment attachment);
+        // Sets the texture. This overrides previously set textures.
+        void setTexture(Texture texture);
+        // Unsets the texture.
+        void unsetTexture();
+
+    protected:
+        void loadMesh();
+        void initializeVertexAttributes() override;
+        void bindTextures(Shader& shader, TextureRegistry* textureRegistry) override;
+    };
 
 }  // namespace qrk
 

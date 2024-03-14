@@ -32,41 +32,41 @@ namespace qrk
                          const std::vector<unsigned int>& indices,
                          const std::vector<TextureMap>& textureMaps,
                          unsigned int instanceCount)
-        : vertices_(vertices)
+        : m_vecVertices(vertices)
     {
-        loadMeshData(&vertices_[0], vertices_.size(), sizeof(ModelVertex), indices,
+        loadMeshData(&m_vecVertices[0], m_vecVertices.size(), sizeof(ModelVertex), indices,
                     textureMaps, instanceCount);
     }
 
     void ModelMesh::initializeVertexAttributes() 
     {
-          // Positions.
-          vertexArray_.addVertexAttrib(3, GL_FLOAT);
-          // Normals.
-          vertexArray_.addVertexAttrib(3, GL_FLOAT);
-          // Tangents.
-          vertexArray_.addVertexAttrib(3, GL_FLOAT);
-          // Texture coordinates.
-          vertexArray_.addVertexAttrib(2, GL_FLOAT);
+        // Positions.
+        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        // Normals.
+        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        // Tangents.
+        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        // Texture coordinates.
+        m_VertexArrayObj.addVertexAttrib(2, GL_FLOAT);
 
-          vertexArray_.finalizeVertexAttribs();
+        m_VertexArrayObj.finalizeVertexAttribs();
     }
 
     Model::Model(const char* path, unsigned int instanceCount)
-        : instanceCount_(instanceCount)
+        : m_uiInstanceCount(instanceCount)
     {
         std::string pathString(path);
         size_t i = pathString.find_last_of("/");
         // This will either be the model's directory, or empty string if the model is
         // at project root.
-        directory_ = i != std::string::npos ? pathString.substr(0, i) : "";
+        m_sDirectory = i != std::string::npos ? pathString.substr(0, i) : "";
 
         loadModel(pathString);
     }
 
     void Model::loadInstanceModels(const std::vector<glm::mat4>& models) 
     {
-        rootNode_.visitRenderables([&](Renderable* renderable)
+        m_RootNodeObj.visitRenderables([&](Renderable* renderable)
         {
             // All renderables in a Model are ModelMeshes.
             ModelMesh* mesh = static_cast<ModelMesh*>(renderable);
@@ -76,7 +76,7 @@ namespace qrk
 
     void Model::loadInstanceModels(const glm::mat4* models, unsigned int size)
     {
-        rootNode_.visitRenderables([&](Renderable* renderable) 
+        m_RootNodeObj.visitRenderables([&](Renderable* renderable)
         {
             // All renderables in a Model are ModelMeshes.
             ModelMesh* mesh = static_cast<ModelMesh*>(renderable);
@@ -87,7 +87,7 @@ namespace qrk
     void Model::drawWithTransform(const glm::mat4& transform, Shader& shader,
                                   TextureRegistry* textureRegistry) 
     {
-        rootNode_.drawWithTransform(transform * getModelTransform(), shader,
+        m_RootNodeObj.drawWithTransform(transform * getModelTransform(), shader,
                                     textureRegistry);
     }
 
@@ -105,7 +105,7 @@ namespace qrk
             throw ModelLoaderException("ERROR::MODEL::" + std::string(importer.GetErrorString()));
         }
 
-        processNode(rootNode_, scene->mRootNode, scene);
+        processNode(m_RootNodeObj, scene->mRootNode, scene);
     }
 
     void Model::processNode(RenderableNode& target, aiNode* node,
@@ -199,8 +199,7 @@ namespace qrk
                                 loadedMaps.end());
         }
 
-        return std::make_unique<ModelMesh>(vertices, indices, textureMaps,
-                                            instanceCount_);
+        return std::make_unique<ModelMesh>(vertices, indices, textureMaps, m_uiInstanceCount);
     }
 
     std::vector<TextureMap> Model::loadMaterialTextureMaps(aiMaterial* material,
@@ -217,11 +216,11 @@ namespace qrk
                 material->GetTexture(aiType, i, &texturePath);
                 // TODO: Pull the texture loading bits into a separate class.
                 // Assume that the texture path is relative to model directory.
-                std::string fullPath = directory_ + "/" + texturePath.C_Str();
+                std::string fullPath = m_sDirectory + "/" + texturePath.C_Str();
 
                 // Don't re-load a texture if it's already been loaded.
-                auto item = loadedTextureMaps_.find(fullPath);
-                if (item != loadedTextureMaps_.end())
+                auto item = m_unmapLoadedTextureMaps.find(fullPath);
+                if (item != m_unmapLoadedTextureMaps.end())
                 {
                     // Texture has already been loaded, but likely of a different map type
                     // (for example, it could be a combined roughness / metallic map). If
@@ -242,7 +241,7 @@ namespace qrk
 
                 Texture texture = Texture::load(fullPath.c_str(), isSRGB);
                 TextureMap textureMap(texture, type);
-                loadedTextureMaps_.insert(std::make_pair(fullPath, textureMap));
+                m_unmapLoadedTextureMaps.insert(std::make_pair(fullPath, textureMap));
                 textureMaps.push_back(textureMap);
             }
         }

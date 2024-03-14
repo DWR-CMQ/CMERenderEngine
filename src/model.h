@@ -15,67 +15,72 @@
 #include <unordered_map>
 #include <vector>
 
-namespace qrk {
-class ModelLoaderException : public QuarkException {
-  using QuarkException::QuarkException;
-};
+namespace qrk 
+{
+    class ModelLoaderException : public QuarkException
+    {
+        using QuarkException::QuarkException;
+    };
 
-struct ModelVertex {
-  glm::vec3 position;
-  glm::vec3 normal;
-  glm::vec3 tangent;
-  glm::vec2 texCoords;
-};
+    struct ModelVertex
+    {
+        glm::vec3 position;
+        glm::vec3 normal;
+        glm::vec3 tangent;
+        glm::vec2 texCoords;
+    };
 
-class ModelMesh : public Mesh {
- public:
-  ModelMesh(const std::vector<ModelVertex>& vertices,
-            const std::vector<unsigned int>& indices,
-            const std::vector<TextureMap>& textureMaps,
-            unsigned int instanceCount = 0);
+    class ModelMesh : public Mesh
+    {
+    public:
+        ModelMesh(const std::vector<ModelVertex>& vertices,
+                const std::vector<unsigned int>& indices,
+                const std::vector<TextureMap>& textureMaps,
+                unsigned int instanceCount = 0);
 
-  virtual ~ModelMesh() = default;
+        virtual ~ModelMesh() = default;
 
- private:
-  void initializeVertexAttributes() override;
-  std::vector<ModelVertex> vertices_;
-};
+    private:
+        void initializeVertexAttributes() override;
+        std::vector<ModelVertex> m_vecVertices;
+    };
 
-constexpr auto DEFAULT_LOAD_FLAGS =
-    // Ensure that all non-triangular polygon are converted to triangles.
-    aiProcess_Triangulate |
-    // Generate normals if the model doesn't have them.
-    aiProcess_GenSmoothNormals |
-    // Calculates tangent space if the model doesn't have them.
-    aiProcess_CalcTangentSpace |
-    // Generate UV coords if they aren't present.
-    aiProcess_GenUVCoords |
-    // Reduce vertex duplication.
-    aiProcess_JoinIdenticalVertices |
-    // Sort the result by primitive type.
-    aiProcess_SortByPType;
+    constexpr auto DEFAULT_LOAD_FLAGS =
+        // Ensure that all non-triangular polygon are converted to triangles.
+        aiProcess_Triangulate |
+        // Generate normals if the model doesn't have them.
+        aiProcess_GenSmoothNormals |
+        // Calculates tangent space if the model doesn't have them.
+        aiProcess_CalcTangentSpace |
+        // Generate UV coords if they aren't present.
+        aiProcess_GenUVCoords |
+        // Reduce vertex duplication.
+        aiProcess_JoinIdenticalVertices |
+        // Sort the result by primitive type.
+        aiProcess_SortByPType;
 
-class Model : public Renderable {
- public:
-  explicit Model(const char* path, unsigned int instanceCount = 0);
-  virtual ~Model() = default;
-  void loadInstanceModels(const std::vector<glm::mat4>& models);
-  void loadInstanceModels(const glm::mat4* models, unsigned int size);
-  void drawWithTransform(const glm::mat4& transform, Shader& shader,
-                         TextureRegistry* textureRegistry = nullptr) override;
+    class Model : public Renderable 
+    {
+    public:
+        explicit Model(const char* path, unsigned int instanceCount = 0);
+        virtual ~Model() = default;
+        void loadInstanceModels(const std::vector<glm::mat4>& models);
+        void loadInstanceModels(const glm::mat4* models, unsigned int size);
+        void drawWithTransform(const glm::mat4& transform, Shader& shader,
+                                TextureRegistry* textureRegistry = nullptr) override;
 
- private:
-  void loadModel(std::string path);
-  void processNode(RenderableNode& target, aiNode* node, const aiScene* scene);
-  std::unique_ptr<ModelMesh> processMesh(aiMesh* mesh, const aiScene* scene);
-  std::vector<TextureMap> loadMaterialTextureMaps(aiMaterial* material,
-                                                  TextureMapType type);
+    private:
+        void loadModel(std::string path);
+        void processNode(RenderableNode& target, aiNode* node, const aiScene* scene);
+        std::unique_ptr<ModelMesh> processMesh(aiMesh* mesh, const aiScene* scene);
+        std::vector<TextureMap> loadMaterialTextureMaps(aiMaterial* material,
+                                                        TextureMapType type);
 
-  unsigned int instanceCount_;
-  RenderableNode rootNode_;
-  std::string directory_;
-  std::unordered_map<std::string, TextureMap> loadedTextureMaps_;
-};
+        unsigned int m_uiInstanceCount;
+        RenderableNode m_RootNodeObj;
+        std::string m_sDirectory;
+        std::unordered_map<std::string, TextureMap> m_unmapLoadedTextureMaps;
+    };
 
 }  // namespace qrk
 

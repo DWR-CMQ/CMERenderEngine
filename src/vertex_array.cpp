@@ -4,11 +4,11 @@ namespace qrk
 {
     VertexArray::VertexArray() 
     {
-        glGenVertexArrays(1, &vao_);
+        glGenVertexArrays(1, &m_uiVao);
         activate();
     }
 
-    void VertexArray::activate() { glBindVertexArray(vao_); }
+    void VertexArray::activate() { glBindVertexArray(m_uiVao); }
 
     void VertexArray::deactivate() { glBindVertexArray(0); }
 
@@ -17,29 +17,29 @@ namespace qrk
     {
         activate();
 
-        if (!vbo_) glGenBuffers(1, &vbo_);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+        if (!m_uiVbo) glGenBuffers(1, &m_uiVbo);
+        glBindBuffer(GL_ARRAY_BUFFER, m_uiVbo);
         // TODO: Allow other draw strategies besides GL_STATIC_DRAW.
         glBufferData(GL_ARRAY_BUFFER, data.size(), &data[0], GL_STATIC_DRAW);
-        vertexSizeBytes_ = data.size();
+        m_uiVertexSizeBytes = data.size();
     }
 
     void VertexArray::loadVertexData(const void* data, unsigned int sizeBytes) 
     {
         activate();
 
-        if (!vbo_) glGenBuffers(1, &vbo_);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+        if (!m_uiVbo) glGenBuffers(1, &m_uiVbo);
+        glBindBuffer(GL_ARRAY_BUFFER, m_uiVbo);
         glBufferData(GL_ARRAY_BUFFER, sizeBytes, data, GL_STATIC_DRAW);
-        vertexSizeBytes_ = sizeBytes;
+        m_uiVertexSizeBytes = sizeBytes;
     }
 
     void VertexArray::allocateInstanceVertexData(unsigned int size) 
     {
         activate();
 
-        if (!instanceVbo_) glGenBuffers(1, &instanceVbo_);
-        glBindBuffer(GL_ARRAY_BUFFER, instanceVbo_);
+        if (!m_uiInstanceVbo) glGenBuffers(1, &m_uiInstanceVbo);
+        glBindBuffer(GL_ARRAY_BUFFER, m_uiInstanceVbo);
         glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_STATIC_DRAW);
     }
 
@@ -47,8 +47,8 @@ namespace qrk
     {
         activate();
 
-        if (!instanceVbo_) glGenBuffers(1, &instanceVbo_);
-        glBindBuffer(GL_ARRAY_BUFFER, instanceVbo_);
+        if (!m_uiInstanceVbo) glGenBuffers(1, &m_uiInstanceVbo);
+        glBindBuffer(GL_ARRAY_BUFFER, m_uiInstanceVbo);
         glBufferData(GL_ARRAY_BUFFER, data.size(), &data[0], GL_STATIC_DRAW);
     }
 
@@ -56,8 +56,8 @@ namespace qrk
     {
         activate();
 
-        if (!instanceVbo_) glGenBuffers(1, &instanceVbo_);
-        glBindBuffer(GL_ARRAY_BUFFER, instanceVbo_);
+        if (!m_uiInstanceVbo) glGenBuffers(1, &m_uiInstanceVbo);
+        glBindBuffer(GL_ARRAY_BUFFER, m_uiInstanceVbo);
         glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
     }
 
@@ -65,11 +65,11 @@ namespace qrk
     {
         activate();
 
-        if (!ebo_) glGenBuffers(1, &ebo_);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
+        if (!m_uiEbo) glGenBuffers(1, &m_uiEbo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_uiEbo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size(), &indices[0],
                     GL_STATIC_DRAW);
-        elementSize_ = indices.size();
+        m_uiElementSize = indices.size();
     }
 
     void VertexArray::loadElementData(const unsigned int* indices,
@@ -77,26 +77,26 @@ namespace qrk
     {
         activate();
 
-        if (!ebo_) glGenBuffers(1, &ebo_);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
+        if (!m_uiEbo) glGenBuffers(1, &m_uiEbo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_uiEbo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
-        elementSize_ = size;
+        m_uiElementSize = size;
     }
 
     void VertexArray::addVertexAttrib(unsigned int size, unsigned int type,
                                       unsigned int instanceDivisor) 
     {
         VertexAttrib attrib;
-        attrib.layoutPosition = nextLayoutPosition_;
+        attrib.layoutPosition = m_uiNextLayoutPosition;
         attrib.size = size;
         attrib.type = type;
         attrib.instanceDivisor = instanceDivisor;
 
 
-        attribs_.push_back(attrib);
-        nextLayoutPosition_++;
+        m_vecAttribs.push_back(attrib);
+        m_uiNextLayoutPosition++;
         // TODO: Support types other than float.
-        stride_ += size * sizeof(float);
+        m_uiStride += size * sizeof(float);
     }
 
     void VertexArray::finalizeVertexAttribs() 
@@ -104,11 +104,11 @@ namespace qrk
         activate();
 
         int offset = 0;
-        for (const VertexAttrib& attrib : attribs_) 
+        for (const VertexAttrib& attrib : m_vecAttribs)
         {
             glVertexAttribPointer(
                 attrib.layoutPosition, attrib.size, attrib.type,
-                /* normalized */ GL_FALSE, stride_,
+                /* normalized */ GL_FALSE, m_uiStride,
                 // TODO: Support types other than float.
                 /* offset */ static_cast<const char*>(nullptr) + offset);
             glEnableVertexAttribArray(attrib.layoutPosition);
@@ -121,7 +121,7 @@ namespace qrk
 
         // Clear state to support subsequent runs.
         // We intentionally don't reset nextLayoutPosition_.
-        attribs_.clear();
-        stride_ = 0;
+        m_vecAttribs.clear();
+        m_uiStride = 0;
     }
 }  // namespace qrk

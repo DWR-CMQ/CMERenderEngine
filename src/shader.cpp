@@ -11,7 +11,7 @@ namespace qrk
         ShaderCompiler compiler;
         compiler.loadAndCompileShader(vertexSource, ShaderType::VERTEX);
         compiler.loadAndCompileShader(fragmentSource, ShaderType::FRAGMENT);
-        shaderProgram_ = compiler.linkShaderProgram();
+        m_uiShaderProgram = compiler.linkShaderProgram();
     }
 
     Shader::Shader(const ShaderSource& vertexSource,
@@ -22,12 +22,12 @@ namespace qrk
         compiler.loadAndCompileShader(vertexSource, ShaderType::VERTEX);
         compiler.loadAndCompileShader(fragmentSource, ShaderType::FRAGMENT);
         compiler.loadAndCompileShader(geometrySource, ShaderType::GEOMETRY);
-        shaderProgram_ = compiler.linkShaderProgram();
+        m_uiShaderProgram = compiler.linkShaderProgram();
     }
 
     int Shader::safeGetUniformLocation(const char* name) 
     {
-        int uniform = glGetUniformLocation(shaderProgram_, name);
+        int uniform = glGetUniformLocation(m_uiShaderProgram, name);
         if (uniform == -1) 
         {
         // TODO: Log a message; either uniform is invalid, or it got optimized away
@@ -37,13 +37,13 @@ namespace qrk
         return uniform;
     }
 
-    void Shader::activate() { glUseProgram(shaderProgram_); }
+    void Shader::activate() { glUseProgram(m_uiShaderProgram); }
     void Shader::deactivate() { glUseProgram(0); }
 
     // TODO: Is shared_ptr really the best approach here?
     void Shader::addUniformSource(std::shared_ptr<UniformSource> source) 
     {
-        uniformSources_.push_back(source);
+        m_vecUniformSources.push_back(source);
     }
 
     void Shader::updateUniforms() 
@@ -51,7 +51,7 @@ namespace qrk
         // Update core uniforms.
         setFloat("qrk_time", qrk::time());
 
-        for (auto uniformSource : uniformSources_) 
+        for (auto uniformSource : m_vecUniformSources)
         {
             uniformSource->updateUniforms(*this);
         }
@@ -105,7 +105,7 @@ namespace qrk
     {
         ShaderCompiler compiler;
         compiler.loadAndCompileShader(computeSource, ShaderType::COMPUTE);
-        shaderProgram_ = compiler.linkShaderProgram();
+        m_uiShaderProgram = compiler.linkShaderProgram();
     }
 
     void ComputeShader::dispatchToTexture(Texture& texture) 

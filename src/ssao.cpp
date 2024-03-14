@@ -13,7 +13,7 @@ namespace qrk
 
     SsaoKernel::SsaoKernel(float radius, float bias, int kernelSize,
                            int noiseTextureSideLength)
-        : radius_(radius), bias_(bias) 
+        : m_fRadius(radius), m_fBias(bias)
     {
         regenerate(kernelSize, noiseTextureSideLength);
     }
@@ -21,15 +21,14 @@ namespace qrk
     void SsaoKernel::regenerate(int kernelSize, int noiseTextureSideLength) 
     {
         // Generate the kernel.
-        kernel_.resize(kernelSize);
+        m_vecKernel.resize(kernelSize);
         for (int i = 0; i < kernelSize; ++i) 
         {
             // Generate a hemisphere sample, with the normal vector pointing in the
             // positive Z direction.
 
             // First we generate a vector along the sample space.
-            glm::vec3 sample(rand_.next() * 2.0f - 1.0f, rand_.next() * 2.0f - 1.0f,
-                                rand_.next());
+            glm::vec3 sample(m_RandObj.next() * 2.0f - 1.0f, m_RandObj.next() * 2.0f - 1.0f, m_RandObj.next());
             // Reject samples outside the sphere, to avoid over-sampling the corners.
             if (glm::length2(sample) >= 1.0f) 
             {
@@ -38,7 +37,7 @@ namespace qrk
             }
 
             // Use the vector to generate a point in the hemisphere.
-            sample = glm::normalize(sample) * rand_.next();
+            sample = glm::normalize(sample) * m_RandObj.next();
 
             // At this point we have a random point sampled in the hemisphere, but we
             // want to sample more points closer to the actual fragment, so we scale the
@@ -47,7 +46,7 @@ namespace qrk
             scale = lerp(0.1f, 1.0f, scale * scale);
             sample *= scale;
 
-            kernel_[i] = sample;
+            m_vecKernel[i] = sample;
         }
 
         // Generate the noise texture used to rotate the kernel.
@@ -58,7 +57,7 @@ namespace qrk
         {
             // Generate a vector on the XY normal plane which we'll use to randomly
             // "tilt" the sample hemisphere in the shader.
-            glm::vec3 noise(rand_.next() * 2.0f - 1.0f, rand_.next() * 2.0f - 1.0f,
+            glm::vec3 noise(m_RandObj.next() * 2.0f - 1.0f, m_RandObj.next() * 2.0f - 1.0f,
                             0.0f);
             noiseData[i] = noise;
         }
@@ -69,23 +68,23 @@ namespace qrk
         params.filtering = TextureFiltering::NEAREST;
         params.wrapMode = TextureWrapMode::REPEAT;
 
-        noiseTexture_ = Texture::createFromData(noiseTextureSideLength, noiseTextureSideLength, GL_RGB16F, noiseData, params);
+        m_NoiseTextureObj = Texture::createFromData(noiseTextureSideLength, noiseTextureSideLength, GL_RGB16F, noiseData, params);
     }
 
     void SsaoKernel::updateUniforms(Shader& shader) 
     {
-        shader.setFloat("qrk_ssaoSampleRadius", radius_);
-        shader.setFloat("qrk_ssaoSampleBias", bias_);
-        shader.setInt("qrk_ssaoKernelSize", kernel_.size());
-        for (unsigned int i = 0; i < kernel_.size(); ++i) 
+        shader.setFloat("qrk_ssaoSampleRadius", m_fRadius);
+        shader.setFloat("qrk_ssaoSampleBias", m_fBias);
+        shader.setInt("qrk_ssaoKernelSize", m_vecKernel.size());
+        for (unsigned int i = 0; i < m_vecKernel.size(); ++i)
         {
-            shader.setVec3("qrk_ssaoKernel[" + std::to_string(i) + "]", kernel_[i]);
+            shader.setVec3("qrk_ssaoKernel[" + std::to_string(i) + "]", m_vecKernel[i]);
         }
     }
 
     unsigned int SsaoKernel::bindTexture(unsigned int nextTextureUnit, Shader& shader)
     {
-        noiseTexture_.bindToUnit(nextTextureUnit);
+        m_NoiseTextureObj.bindToUnit(nextTextureUnit);
         // Bind sampler uniforms.
         shader.setInt("qrk_ssaoNoise", nextTextureUnit);
 
@@ -97,12 +96,12 @@ namespace qrk
         // Make sure we're clearing properly.
         setClearColor(glm::vec4(0.0f));
         // Create and attach the SSAO buffer. Don't need a depth buffer.
-        ssaoBuffer_ = attachTexture(qrk::BufferType::GRAYSCALE);
+        m_SsaoBufferObj = attachTexture(qrk::BufferType::GRAYSCALE);
     }
 
     unsigned int SsaoBuffer::bindTexture(unsigned int nextTextureUnit, Shader& shader) 
     {
-        ssaoBuffer_.asTexture().bindToUnit(nextTextureUnit);
+        m_SsaoBufferObj.asTexture().bindToUnit(nextTextureUnit);
         // Bind sampler uniforms.
         shader.setInt("qrk_ssao", nextTextureUnit);
 
