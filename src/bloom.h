@@ -26,7 +26,7 @@ namespace qrk
         return m_BloomMipChainTextureInstance.asTexture();
         }
 
-        int getNumMips() { return m_BloomMipChainTextureInstance.numMips; }
+        int getNumMips() { return m_BloomMipChainTextureInstance.m_iNumMips; }
 
         // Limits sampling from any other mip other than the given mip. This is
         // important to avoid undefined behavior when drawing to a mip level while

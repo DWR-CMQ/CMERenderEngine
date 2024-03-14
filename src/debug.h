@@ -6,15 +6,15 @@
 #include "core.h"
 // clang-format on
 
-namespace qrk {
-
-// RAII debugging group marker.
-class DebugGroup {
- public:
-  DebugGroup(const char* name);
-  ~DebugGroup();
-};
-
+namespace qrk 
+{
+	// RAII debugging group marker.
+	class DebugGroup 
+	{
+	public:
+		DebugGroup(const char* name);
+		~DebugGroup();
+	};
 }  // namespace qrk
 
 #endif

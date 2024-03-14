@@ -6,36 +6,36 @@ namespace qrk
     {
         // TODO: Throw an error if this exceeds the max light count supported in the
         // shader.
-        lights_.push_back(light);
+        m_vecLights.push_back(light);
 
         switch (light->getLightType())
         {
         case LightType::DIRECTIONAL_LIGHT:
-            light->setLightIdx(directionalCount_);
-            directionalCount_++;
+            light->setLightIdx(m_uiDirectionalCount);
+            m_uiDirectionalCount++;
             break;
         case LightType::POINT_LIGHT:
-            light->setLightIdx(pointCount_);
-            pointCount_++;
+            light->setLightIdx(m_uiPointCount);
+            m_uiPointCount++;
             break;
         case LightType::SPOT_LIGHT:
-            light->setLightIdx(spotCount_);
-            spotCount_++;
+            light->setLightIdx(m_uiPointCount);
+            m_uiSpotCount++;
             break;
         }
     }
 
     void LightRegistry::updateUniforms(Shader& shader)
     {
-        if (viewSource_ != nullptr) 
+        if (m_spViewSource != nullptr)
         {
-            applyViewTransform(viewSource_->getViewTransform());
+            applyViewTransform(m_spViewSource->getViewTransform());
         }
-        shader.setInt("qrk_directionalLightCount", directionalCount_);
-        shader.setInt("qrk_pointLightCount", pointCount_);
-        shader.setInt("qrk_spotLightCount", spotCount_);
+        shader.setInt("qrk_directionalLightCount", m_uiDirectionalCount);
+        shader.setInt("qrk_pointLightCount", m_uiPointCount);
+        shader.setInt("qrk_spotLightCount", m_uiSpotCount);
 
-        for (auto light : lights_) 
+        for (auto light : m_vecLights)
         {
             light->updateUniforms(shader);
         }
@@ -44,7 +44,7 @@ namespace qrk
     void LightRegistry::applyViewTransform(const glm::mat4& view)
     {
         // TODO: Only do this when we need to.
-        for (auto light : lights_)
+        for (auto light : m_vecLights)
         {
             light->applyViewTransform(view);
         }
@@ -52,7 +52,7 @@ namespace qrk
 
     void LightRegistry::setUseViewTransform(bool useViewTransform)
     {
-        for (auto light : lights_) 
+        for (auto light : m_vecLights)
         {
             light->setUseViewTransform(useViewTransform);
         }
@@ -68,14 +68,14 @@ namespace qrk
     {
         checkState();
 
-        if (hasViewBeenApplied_) 
+        if (m_hasViewBeenApplied) 
         {
-            shader.setVec3(uniformName_ + ".direction", useViewTransform_ ? viewDirection_ : direction_);
+            shader.setVec3(m_sUniformName + ".direction", m_bUseViewTransform ? viewDirection_ : direction_);
         }
-        if (hasLightChanged_) 
+        if (m_hasLightChanged) 
         {
-            shader.setVec3(uniformName_ + ".diffuse", diffuse_);
-            shader.setVec3(uniformName_ + ".specular", specular_);
+            shader.setVec3(m_sUniformName + ".diffuse", diffuse_);
+            shader.setVec3(m_sUniformName + ".specular", specular_);
         }
 
         // TODO: Fix change detection to work with >1 shaders.
@@ -85,33 +85,33 @@ namespace qrk
     void DirectionalLight::applyViewTransform(const glm::mat4& view) 
     {
         viewDirection_ = glm::vec3(view * glm::vec4(direction_, 0.0f));
-        hasViewBeenApplied_ = true;
+        m_hasViewBeenApplied = true;
     }
 
     PointLight::PointLight(glm::vec3 position, glm::vec3 diffuse,
                            glm::vec3 specular, Attenuation attenuation)
-        : position_(position),
-          diffuse_(diffuse),
-          specular_(specular),
-          attenuation_(attenuation) {}
+        : m_vec3Position(position),
+        m_vec3Diffuse(diffuse),
+        m_vec3Specular(specular),
+        m_stAttenuation(attenuation) {}
 
     void PointLight::updateUniforms(Shader& shader)
     {
         checkState();
 
-        if (hasViewBeenApplied_)
+        if (m_hasViewBeenApplied)
         {
-            shader.setVec3(uniformName_ + ".position", useViewTransform_ ? viewPosition_ : position_);
+            shader.setVec3(m_sUniformName + ".position", m_bUseViewTransform ? m_vec3ViewPosition : m_vec3Position);
         }
-        if (hasLightChanged_)
+        if (m_hasLightChanged)
         {
-            shader.setVec3(uniformName_ + ".diffuse", diffuse_);
-            shader.setVec3(uniformName_ + ".specular", specular_);
-            shader.setFloat(uniformName_ + ".attenuation.constant",
-                            attenuation_.constant);
-            shader.setFloat(uniformName_ + ".attenuation.linear", attenuation_.linear);
-            shader.setFloat(uniformName_ + ".attenuation.quadratic",
-                            attenuation_.quadratic);
+            shader.setVec3(m_sUniformName + ".diffuse", m_vec3Diffuse);
+            shader.setVec3(m_sUniformName + ".specular", m_vec3Specular);
+            shader.setFloat(m_sUniformName + ".attenuation.constant",
+                m_stAttenuation.constant);
+            shader.setFloat(m_sUniformName + ".attenuation.linear", m_stAttenuation.linear);
+            shader.setFloat(m_sUniformName + ".attenuation.quadratic",
+                m_stAttenuation.quadratic);
         }
 
         // resetChangeDetection();
@@ -119,43 +119,41 @@ namespace qrk
 
     void PointLight::applyViewTransform(const glm::mat4& view)
     {
-        viewPosition_ = glm::vec3(view * glm::vec4(position_, 1.0f));
-        hasViewBeenApplied_ = true;
+        m_vec3ViewPosition = glm::vec3(view * glm::vec4(m_vec3Position, 1.0f));
+        m_hasViewBeenApplied = true;
     }
 
     SpotLight::SpotLight(glm::vec3 position, glm::vec3 direction, float innerAngle,
                          float outerAngle, glm::vec3 diffuse, glm::vec3 specular,
                          Attenuation attenuation)
-        : position_(position),
-          direction_(direction),
-          innerAngle_(innerAngle),
-          outerAngle_(outerAngle),
-          diffuse_(diffuse),
-          specular_(specular),
-          attenuation_(attenuation) {}
+        : m_vec3Position(position),
+        m_vec3Direction(direction),
+        m_fInnerAngle(innerAngle),
+        m_fOuterAngle(outerAngle),
+        m_vec3Diffuse(diffuse),
+        m_vec3Specular(specular),
+        m_stAttenuation(attenuation) {}
 
     void SpotLight::updateUniforms(Shader& shader)
     {
         checkState();
 
-        if (hasViewBeenApplied_) 
+        if (m_hasViewBeenApplied)
         {
-            shader.setVec3(uniformName_ + ".position",
-                            useViewTransform_ ? viewPosition_ : position_);
-            shader.setVec3(uniformName_ + ".direction",
-                            useViewTransform_ ? viewDirection_ : direction_);
+            shader.setVec3(m_sUniformName + ".position", m_bUseViewTransform ? m_vec3ViewPosition : m_vec3Position);
+            shader.setVec3(m_sUniformName + ".direction", m_bUseViewTransform ? m_vec3ViewDirection : m_vec3Direction);
         }
-        if (hasLightChanged_)
+        if (m_hasLightChanged)
         {
-            shader.setFloat(uniformName_ + ".innerAngle", innerAngle_);
-            shader.setFloat(uniformName_ + ".outerAngle", outerAngle_);
-            shader.setVec3(uniformName_ + ".diffuse", diffuse_);
-            shader.setVec3(uniformName_ + ".specular", specular_);
-            shader.setFloat(uniformName_ + ".attenuation.constant",
-                            attenuation_.constant);
-            shader.setFloat(uniformName_ + ".attenuation.linear", attenuation_.linear);
-            shader.setFloat(uniformName_ + ".attenuation.quadratic",
-                            attenuation_.quadratic);
+            shader.setFloat(m_sUniformName + ".innerAngle", m_fInnerAngle);
+            shader.setFloat(m_sUniformName + ".outerAngle", m_fOuterAngle);
+            shader.setVec3(m_sUniformName + ".diffuse", m_vec3Diffuse);
+            shader.setVec3(m_sUniformName + ".specular", m_vec3Specular);
+            shader.setFloat(m_sUniformName + ".attenuation.constant",
+                m_stAttenuation.constant);
+            shader.setFloat(m_sUniformName + ".attenuation.linear", m_stAttenuation.linear);
+            shader.setFloat(m_sUniformName + ".attenuation.quadratic",
+                m_stAttenuation.quadratic);
         }
 
         // resetChangeDetection();
@@ -163,9 +161,9 @@ namespace qrk
 
     void SpotLight::applyViewTransform(const glm::mat4& view) 
     {
-        viewPosition_ = glm::vec3(view * glm::vec4(position_, 1.0f));
-        viewDirection_ = glm::vec3(view * glm::vec4(direction_, 0.0f));
-        hasViewBeenApplied_ = true;
+        m_vec3ViewPosition = glm::vec3(view * glm::vec4(m_vec3Position, 1.0f));
+        m_vec3ViewDirection = glm::vec3(view * glm::vec4(m_vec3Direction, 0.0f));
+        m_hasViewBeenApplied = true;
     }
 
 }  // namespace qrk

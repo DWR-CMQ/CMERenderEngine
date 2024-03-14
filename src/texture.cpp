@@ -48,11 +48,11 @@ namespace qrk
                           const TextureParams& params)
     {
         Texture texture;
-        texture.type_ = TextureType::TEXTURE_2D;
+        texture.m_eType = TextureType::TEXTURE_2D;
 
         stbi_set_flip_vertically_on_load(params.flipVerticallyOnLoad);
         unsigned char* data =
-            stbi_load(path, &texture.width_, &texture.height_, &texture.numChannels_,
+            stbi_load(path, &texture.m_iWidth, &texture.m_iHeight, &texture.m_iNumChannels,
                     /*desired_channels=*/0);
 
         if (data == nullptr) 
@@ -62,22 +62,22 @@ namespace qrk
         }
 
         GLenum dataFormat;
-        if (texture.numChannels_ == 1)
+        if (texture.m_iNumChannels == 1)
         {
             texture.internalFormat_ = GL_R8;
             dataFormat = GL_RED;
         } 
-        else if (texture.numChannels_ == 2) 
+        else if (texture.m_iNumChannels == 2)
         {
             texture.internalFormat_ = GL_RG8;
             dataFormat = GL_RG;
         } 
-        else if (texture.numChannels_ == 3) 
+        else if (texture.m_iNumChannels == 3)
         {
             texture.internalFormat_ = isSRGB ? GL_SRGB8 : GL_RGB8;
             dataFormat = GL_RGB;
         }
-        else if (texture.numChannels_ == 4) 
+        else if (texture.m_iNumChannels == 4)
         {
             texture.internalFormat_ = isSRGB ? GL_SRGB8_ALPHA8 : GL_RGBA8;
             dataFormat = GL_RGBA;
@@ -89,29 +89,29 @@ namespace qrk
                 "ERROR::TEXTURE::UNSUPPORTED_TEXTURE_FORMAT\n"
                 "Texture '" +
                 std::string(path) + "' contained unsupported number of channels: " +
-                std::to_string(texture.numChannels_));
+                std::to_string(texture.m_iNumChannels));
         }
 
-        glGenTextures(1, &texture.id_);
-        glBindTexture(GL_TEXTURE_2D, texture.id_);
+        glGenTextures(1, &texture.m_uiID);
+        glBindTexture(GL_TEXTURE_2D, texture.m_uiID);
 
         // TODO: Replace with glTexStorage2D
         glTexImage2D(GL_TEXTURE_2D, /* mipmap level */ 0, texture.internalFormat_,
-                    texture.width_, texture.height_, 0,
+                    texture.m_iWidth, texture.m_iHeight, 0,
                     /* tex data format */ dataFormat, GL_UNSIGNED_BYTE, data);
         if (params.generateMips >= MipGeneration::ON_LOAD)
         {
             glGenerateMipmap(GL_TEXTURE_2D);
-            texture.numMips_ = calculateNumMips(texture.width_, texture.height_);
+            texture.m_iNumMips = calculateNumMips(texture.m_iWidth, texture.m_iHeight);
             // TODO: Take into account params.maxNumMips
         } 
         else 
         {
-            texture.numMips_ = 1;
+            texture.m_iNumMips = 1;
         }
 
         // Set texture-wrapping/filtering options.
-        applyParams(params, texture.type_);
+        applyParams(params, texture.m_eType);
 
         stbi_image_free(data);
 
@@ -130,12 +130,12 @@ namespace qrk
     Texture Texture::loadHdr(const char* path, const TextureParams& params) 
     {
         Texture texture;
-        texture.type_ = TextureType::TEXTURE_2D;
-        texture.numMips_ = 1;
+        texture.m_eType = TextureType::TEXTURE_2D;
+        texture.m_iNumMips = 1;
 
         stbi_set_flip_vertically_on_load(true);
-        float* data = stbi_loadf(path, &texture.width_, &texture.height_,
-                                &texture.numChannels_, /*desired_channels=*/0);
+        float* data = stbi_loadf(path, &texture.m_iWidth, &texture.m_iHeight,
+                                &texture.m_iNumChannels, /*desired_channels=*/0);
 
         if (data == nullptr) 
         {
@@ -144,22 +144,22 @@ namespace qrk
         }
 
         GLenum dataFormat;
-        if (texture.numChannels_ == 1)
+        if (texture.m_iNumChannels == 1)
         {
             texture.internalFormat_ = GL_R16F;
             dataFormat = GL_RED;
         } 
-        else if (texture.numChannels_ == 2)
+        else if (texture.m_iNumChannels == 2)
         {
             texture.internalFormat_ = GL_RG16F;
             dataFormat = GL_RG;
         } 
-        else if (texture.numChannels_ == 3)
+        else if (texture.m_iNumChannels == 3)
         {
             texture.internalFormat_ = GL_RGB16F;
             dataFormat = GL_RGB;
         } 
-        else if (texture.numChannels_ == 4) 
+        else if (texture.m_iNumChannels == 4)
         {
             texture.internalFormat_ = GL_RGBA16F;
             dataFormat = GL_RGBA;
@@ -171,19 +171,19 @@ namespace qrk
                 "ERROR::TEXTURE::UNSUPPORTED_TEXTURE_FORMAT\n"
                 "Texture '" +
                 std::string(path) + "' contained unsupported number of channels: " +
-                std::to_string(texture.numChannels_));
+                std::to_string(texture.m_iNumChannels));
         }
 
-        glGenTextures(1, &texture.id_);
-        glBindTexture(GL_TEXTURE_2D, texture.id_);
+        glGenTextures(1, &texture.m_uiID);
+        glBindTexture(GL_TEXTURE_2D, texture.m_uiID);
 
         // TODO: Replace with glTexStorage2D
         glTexImage2D(GL_TEXTURE_2D, /*mip=*/0, texture.internalFormat_,
-                    texture.width_, texture.height_, 0,
+                    texture.m_iWidth, texture.m_iHeight, 0,
                     /*tex data format=*/dataFormat, GL_FLOAT, data);
 
         // Set texture-wrapping/filtering options.
-        applyParams(params, texture.type_);
+        applyParams(params, texture.m_eType);
 
         stbi_image_free(data);
 
@@ -210,12 +210,12 @@ namespace qrk
         }
 
         Texture texture;
-        texture.type_ = TextureType::CUBEMAP;
-        texture.numMips_ = 1;
+        texture.m_eType = TextureType::CUBEMAP;
+        texture.m_iNumMips = 1;
         texture.internalFormat_ = GL_RGB8;  // Cubemaps must be RGB.
 
-        glGenTextures(1, &texture.id_);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, texture.id_);
+        glGenTextures(1, &texture.m_uiID);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, texture.m_uiID);
 
         int width, height, numChannels;
         bool initialized = false;
@@ -247,11 +247,11 @@ namespace qrk
                         "Cubemap texture '" +
                         faces[i] + "' was not square");
                 }
-                texture.width_ = width;
-                texture.height_ = height;
-                texture.numChannels_ = numChannels;
+                texture.m_iWidth = width;
+                texture.m_iHeight = height;
+                texture.m_iNumChannels = numChannels;
             } 
-            else if (width != texture.width_ || height != texture.height_)
+            else if (width != texture.m_iWidth || height != texture.m_iHeight)
             {
                 throw TextureException(
                     "ERROR::TEXTURE::INVALID_TEXTURE_SIZE\n"
@@ -267,7 +267,7 @@ namespace qrk
             stbi_image_free(data);
         }
 
-        applyParams(params, texture.type_);
+        applyParams(params, texture.m_eType);
 
         return texture;
     }
@@ -285,29 +285,29 @@ namespace qrk
                             const TextureParams& params) 
     {
         Texture texture;
-        texture.type_ = TextureType::TEXTURE_2D;
-        texture.width_ = width;
-        texture.height_ = height;
-        texture.numChannels_ = 0;  // Default.
-        texture.numMips_ = 1;
+        texture.m_eType = TextureType::TEXTURE_2D;
+        texture.m_iWidth = width;
+        texture.m_iHeight = height;
+        texture.m_iNumChannels = 0;  // Default.
+        texture.m_iNumMips = 1;
         if (params.generateMips == MipGeneration::ALWAYS) 
         {
-            texture.numMips_ = calculateNumMips(texture.width_, texture.height_);
+            texture.m_iNumMips = calculateNumMips(texture.m_iWidth, texture.m_iHeight);
             if (params.maxNumMips >= 0) 
             {
-                texture.numMips_ = std::min(texture.numMips_, params.maxNumMips);
+                texture.m_iNumMips = std::min(texture.m_iNumMips, params.maxNumMips);
             }
         }
         texture.internalFormat_ = internalFormat;
 
-        glGenTextures(1, &texture.id_);
-        glBindTexture(GL_TEXTURE_2D, texture.id_);
+        glGenTextures(1, &texture.m_uiID);
+        glBindTexture(GL_TEXTURE_2D, texture.m_uiID);
 
-        glTexStorage2D(GL_TEXTURE_2D, texture.numMips_, texture.internalFormat_,
-                        texture.width_, texture.height_);
+        glTexStorage2D(GL_TEXTURE_2D, texture.m_iNumMips, texture.internalFormat_,
+                        texture.m_iWidth, texture.m_iHeight);
 
         // Set texture-wrapping/filtering options.
-        applyParams(params, texture.type_);
+        applyParams(params, texture.m_eType);
 
         return texture;
     }
@@ -325,28 +325,28 @@ namespace qrk
                                    const TextureParams& params)
     {
         Texture texture;
-        texture.type_ = TextureType::CUBEMAP;
-        texture.width_ = size;
-        texture.height_ = size;
-        texture.numChannels_ = 0;  // Default.
-        texture.numMips_ = 1;
+        texture.m_eType = TextureType::CUBEMAP;
+        texture.m_iWidth = size;
+        texture.m_iHeight = size;
+        texture.m_iNumChannels = 0;  // Default.
+        texture.m_iNumMips = 1;
         if (params.generateMips == MipGeneration::ALWAYS)
         {
-            texture.numMips_ = calculateNumMips(texture.width_, texture.height_);
+            texture.m_iNumMips = calculateNumMips(texture.m_iWidth, texture.m_iHeight);
             if (params.maxNumMips >= 0) 
             {
-                texture.numMips_ = std::min(texture.numMips_, params.maxNumMips);
+                texture.m_iNumMips = std::min(texture.m_iNumMips, params.maxNumMips);
             }
         }
         texture.internalFormat_ = internalFormat;
 
-        glGenTextures(1, &texture.id_);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, texture.id_);
+        glGenTextures(1, &texture.m_uiID);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, texture.m_uiID);
 
-        glTexStorage2D(GL_TEXTURE_CUBE_MAP, texture.numMips_, texture.internalFormat_,
-                        texture.width_, texture.height_);
+        glTexStorage2D(GL_TEXTURE_CUBE_MAP, texture.m_iNumMips, texture.internalFormat_,
+                        texture.m_iWidth, texture.m_iHeight);
 
-        applyParams(params, texture.type_);
+        applyParams(params, texture.m_eType);
 
         return texture;
     }
@@ -374,7 +374,7 @@ namespace qrk
         Texture texture = Texture::create(width, height, internalFormat, params);
         // Upload the data.
         glTexSubImage2D(GL_TEXTURE_2D, /*level=*/0, /*xoffset=*/0,
-                        /*yoffset=*/0, texture.width_, texture.height_,
+                        /*yoffset=*/0, texture.m_iWidth, texture.m_iHeight,
                         /*format=*/GL_RGB, GL_FLOAT, data.data());
         return texture;
     }
@@ -386,20 +386,20 @@ namespace qrk
 
         if (bindType == TextureBindType::BY_TEXTURE_TYPE)
         {
-            bindType = textureTypeToTextureBindType(type_);
+            bindType = textureTypeToTextureBindType(m_eType);
         }
 
         switch (bindType) 
         {
         case TextureBindType::TEXTURE_2D:
-            glBindTexture(GL_TEXTURE_2D, id_);
+            glBindTexture(GL_TEXTURE_2D, m_uiID);
             break;
         case TextureBindType::CUBEMAP:
-            glBindTexture(GL_TEXTURE_CUBE_MAP, id_);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, m_uiID);
             break;
         case TextureBindType::IMAGE_TEXTURE:
             // Bind image unit.
-            glBindImageTexture(textureUnit, id_, /*level=*/0, /*layered=*/GL_FALSE, 0,
+            glBindImageTexture(textureUnit, m_uiID, /*level=*/0, /*layered=*/GL_FALSE, 0,
                                 GL_READ_WRITE, internalFormat_);
             break;
         default:
@@ -410,8 +410,8 @@ namespace qrk
 
     void Texture::setSamplerMipRange(int min, int max)
     {
-        GLenum target = textureTypeToGlTarget(type_);
-        glBindTexture(target, id_);
+        GLenum target = textureTypeToGlTarget(m_eType);
+        glBindTexture(target, m_uiID);
         glTexParameteri(target, GL_TEXTURE_BASE_LEVEL, min);
         glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, max);
     }
@@ -422,7 +422,7 @@ namespace qrk
         setSamplerMipRange(0, 1000);
     }
 
-    void Texture::free() { glDeleteTextures(1, &id_); }
+    void Texture::free() { glDeleteTextures(1, &m_uiID); }
 
     void Texture::generateMips(int maxNumMips)
     {
@@ -431,8 +431,8 @@ namespace qrk
             setSamplerMipRange(0, maxNumMips);
         }
 
-        GLenum target = textureTypeToGlTarget(type_);
-        glBindTexture(target, id_);
+        GLenum target = textureTypeToGlTarget(m_eType);
+        glBindTexture(target, m_uiID);
         glGenerateMipmap(target);
 
         if (maxNumMips >= 0) 

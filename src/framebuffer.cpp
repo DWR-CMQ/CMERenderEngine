@@ -5,21 +5,21 @@ namespace qrk
 {
     Texture Attachment::asTexture() 
     {
-        if (target != AttachmentTarget::TEXTURE)
+        if (m_eTarget != AttachmentTarget::TEXTURE)
         {
             throw FramebufferException("ERROR::FRAMEBUFFER::INVALID_ATTACHMENT_TARGET");
         }
         Texture texture;
-        texture.id_ = id;
-        texture.type_ = textureType;
-        texture.width_ = width;
-        texture.height_ = height;
-        texture.numMips_ = numMips;
+        texture.m_uiID = m_uiID;
+        texture.m_eType = m_eTextureType;
+        texture.m_iWidth = m_iWidth;
+        texture.m_iHeight = m_iHeight;
+        texture.m_iNumMips = m_iNumMips;
         return texture;
     }
 
     Framebuffer::Framebuffer(int width, int height, int samples)
-        : width_(width), height_(height), samples_(samples) 
+        : m_iWidth(width), m_iHeight(height), m_iSamples(samples)
     {
         glGenFramebuffers(1, &fbo_);
     }
@@ -35,11 +35,11 @@ namespace qrk
         glBindFramebuffer(GL_FRAMEBUFFER, fbo_);
 
         // Activate the specified mip level (usually 0).
-        for (Attachment& attachment : attachments_) 
+        for (Attachment& attachment : m_vecAttachments)
         {
-            GLenum attachmentType = bufferTypeToGlAttachmentType(attachment.type, attachment.colorAttachmentIndex);
+            GLenum attachmentType = bufferTypeToGlAttachmentType(attachment.m_eType, attachment.m_iColorAttachmentIndex);
 
-            switch (attachment.target) 
+            switch (attachment.m_eTarget)
             {
                 case AttachmentTarget::TEXTURE:
                 {
@@ -53,7 +53,7 @@ namespace qrk
                         }
                         target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubemapFace;
                     }
-                    glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, target, attachment.id, mipLevel);
+                    glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, target, attachment.m_uiID, mipLevel);
                 } break;
                 case AttachmentTarget::RENDERBUFFER:
                     // Perform some checks.
@@ -73,7 +73,7 @@ namespace qrk
             }
         }
 
-        ImageSize mipSize = calculateMipLevel(width_, height_, mipLevel);
+        ImageSize mipSize = calculateMipLevel(m_iWidth, m_iHeight, mipLevel);
         glViewport(0, 0, mipSize.width, mipSize.height);
     }
 
@@ -82,8 +82,8 @@ namespace qrk
     ImageSize Framebuffer::getSize() 
     {
         ImageSize size;
-        size.width = width_;
-        size.height = height_;
+        size.width = m_iWidth;
+        size.height = m_iHeight;
         return size;
     }
 
@@ -102,7 +102,7 @@ namespace qrk
         activate();
 
         TextureType textureType = TextureType::TEXTURE_2D;
-        GLenum textureTarget = samples_ ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+        GLenum textureTarget = m_iSamples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
         // Special case cubemaps.
         if (type == BufferType::COLOR_CUBEMAP_HDR || type == BufferType::COLOR_CUBEMAP_HDR_ALPHA) 
         {
@@ -122,27 +122,26 @@ namespace qrk
         int numMips = 1;
         if (params.generateMips == MipGeneration::ALWAYS) 
         {
-            numMips = calculateNumMips(width_, height_);
+            numMips = calculateNumMips(m_iWidth, m_iHeight);
             if (params.maxNumMips >= 0) 
             {
                 numMips = std::min(numMips, params.maxNumMips);
             }
         }
-        if (samples_ && textureType != TextureType::CUBEMAP) 
+        if (m_iSamples && textureType != TextureType::CUBEMAP)
         {
-            glTexStorage2DMultisample(textureTarget, samples_, internalFormat, width_,
-                                        height_,
-                                        /*fixedsamplelocations=*/GL_TRUE);
+            glTexStorage2DMultisample(textureTarget, m_iSamples, internalFormat, m_iWidth,
+                m_iHeight, GL_TRUE);
         } 
         else 
         {
-            glTexStorage2D(textureTarget, numMips, internalFormat, width_, height_);
+            glTexStorage2D(textureTarget, numMips, internalFormat, m_iWidth, m_iHeight);
         }
 
         Texture::applyParams(params, textureType);
 
         // Attach the texture to the framebuffer.
-        int colorAttachmentIndex = numColorAttachments_;
+        int colorAttachmentIndex = m_iNumColorAttachments;
 
         GLenum attachmentType = bufferTypeToGlAttachmentType(type, colorAttachmentIndex);
         GLenum textarget = textureType == TextureType::CUBEMAP ? GL_TEXTURE_CUBE_MAP_POSITIVE_X : textureTarget;
@@ -180,18 +179,17 @@ namespace qrk
 
         GLenum internalFormat = bufferTypeToGlInternalFormat(type);
 
-        if (samples_) 
+        if (m_iSamples)
         {
-            glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples_, internalFormat,
-                                            width_, height_);
+            glRenderbufferStorageMultisample(GL_RENDERBUFFER, m_iSamples, internalFormat, m_iWidth, m_iHeight);
         } 
         else 
         {
-            glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width_, height_);
+            glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, m_iWidth, m_iHeight);
         }
 
         // Attach the renderbuffer to the framebuffer.
-        int colorAttachmentIndex = numColorAttachments_;
+        int colorAttachmentIndex = m_iNumColorAttachments;
         GLenum attachmentType = bufferTypeToGlAttachmentType(type, colorAttachmentIndex);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachmentType, GL_RENDERBUFFER, rbo);
 
@@ -225,7 +223,7 @@ namespace qrk
         // TODO: This doesn't handle non-mip0 blits.
         glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_);
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, target.fbo_);
-        glBlitFramebuffer(0, 0, width_, height_, 0, 0, width_, height_, bits,
+        glBlitFramebuffer(0, 0, m_iWidth, m_iHeight, 0, 0, m_iWidth, m_iHeight, bits,
                         GL_NEAREST);
         deactivate();
     }
@@ -234,7 +232,7 @@ namespace qrk
     {
         glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_);
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        glBlitFramebuffer(0, 0, width_, height_, 0, 0, width_, height_, bits, GL_NEAREST);
+        glBlitFramebuffer(0, 0, m_iWidth, m_iHeight, 0, 0, m_iWidth, m_iHeight, bits, GL_NEAREST);
         deactivate();
     }
 
@@ -244,25 +242,25 @@ namespace qrk
                                            TextureType textureType)
     {
         Attachment attachment;
-        attachment.id = id;
-        attachment.width = width_;
-        attachment.height = height_;
-        attachment.numMips = numMips;
-        attachment.target = target;
-        attachment.type = type;
-        attachment.colorAttachmentIndex = colorAttachmentIndex;
-        attachment.textureType = textureType;
+        attachment.m_uiID = id;
+        attachment.m_iWidth = m_iWidth;
+        attachment.m_iHeight = m_iHeight;
+        attachment.m_iNumMips = numMips;
+        attachment.m_eTarget = target;
+        attachment.m_eType = type;
+        attachment.m_iColorAttachmentIndex = colorAttachmentIndex;
+        attachment.m_eTextureType = textureType;
 
-        attachments_.push_back(attachment);
+        m_vecAttachments.push_back(attachment);
         return attachment;
     }
 
     Attachment Framebuffer::getAttachment(AttachmentTarget target,
                                           BufferType type) 
     {
-        for (Attachment& attachment : attachments_) 
+        for (Attachment& attachment : m_vecAttachments)
         {
-            if (attachment.target == target && attachment.type == type) 
+            if (attachment.m_eTarget == target && attachment.m_eType == type)
             {
                 return attachment;
             }
@@ -286,7 +284,7 @@ namespace qrk
                 // Multiple color attachments OK.
                 return;
             case BufferType::DEPTH:
-                if (hasDepthAttachment_) 
+                if (m_hasDepthAttachment)
                 {
                     throw FramebufferException(
                         "ERROR::FRAMEBUFFER::BUFFER_TYPE_ALREADY_IN_USE\n" +
@@ -294,7 +292,7 @@ namespace qrk
                 }
                 return;
             case BufferType::STENCIL:
-                if (hasStencilAttachment_) 
+                if (m_hasStencilAttachment)
                 {
                     throw FramebufferException(
                         "ERROR::FRAMEBUFFER::BUFFER_TYPE_ALREADY_IN_USE\n" +
@@ -302,7 +300,7 @@ namespace qrk
                 }
                 return;
             case BufferType::DEPTH_AND_STENCIL:
-                if (hasDepthAttachment_ || hasStencilAttachment_)
+                if (m_hasDepthAttachment || m_hasStencilAttachment)
                 {
                     throw FramebufferException(
                         "ERROR::FRAMEBUFFER::BUFFER_TYPE_ALREADY_IN_USE\n" +
@@ -325,18 +323,18 @@ namespace qrk
             case BufferType::COLOR_SNORM_ALPHA:
             case BufferType::COLOR_CUBEMAP_HDR_ALPHA:
             case BufferType::GRAYSCALE:
-                hasColorAttachment_ = true;
-                numColorAttachments_++;
+                m_hasColorAttachment = true;
+                m_iNumColorAttachments++;
                 return;
             case BufferType::DEPTH:
-                hasDepthAttachment_ = true;
+                m_hasDepthAttachment = true;
                 return;
             case BufferType::STENCIL:
-                hasStencilAttachment_ = true;
+                m_hasStencilAttachment = true;
                 return;
             case BufferType::DEPTH_AND_STENCIL:
-                hasDepthAttachment_ = true;
-                hasStencilAttachment_ = true;
+                m_hasDepthAttachment = true;
+                m_hasStencilAttachment = true;
                 return;
         }
         throw FramebufferException("ERROR::FRAMEBUFFER::INVALID_BUFFER_TYPE\n" +
@@ -345,20 +343,20 @@ namespace qrk
 
     void Framebuffer::updateBufferSources() 
     {
-        if (hasColorAttachment_) 
+        if (m_hasColorAttachment)
         {
-            if (numColorAttachments_ == 1)
+            if (m_iNumColorAttachments == 1)
             {
                 glDrawBuffer(GL_COLOR_ATTACHMENT0);
             } 
             else
             {
                 std::vector<unsigned int> attachments;
-                for (int i = 0; i < numColorAttachments_; i++) 
+                for (int i = 0; i < m_iNumColorAttachments; i++)
                 {
                     attachments.push_back(GL_COLOR_ATTACHMENT0 + i);
                 }
-                glDrawBuffers(numColorAttachments_, attachments.data());
+                glDrawBuffers(m_iNumColorAttachments, attachments.data());
             }
             // Always read from attachment 0.
             glReadBuffer(GL_COLOR_ATTACHMENT0);
@@ -372,18 +370,18 @@ namespace qrk
 
     void Framebuffer::clear() 
     {
-        glClearColor(clearColor_.r, clearColor_.g, clearColor_.b, clearColor_.a);
+        glClearColor(m_vec4ClearColor.r, m_vec4ClearColor.g, m_vec4ClearColor.b, m_vec4ClearColor.a);
 
         GLbitfield clearBits = 0;
-        if (hasColorAttachment_) 
+        if (m_hasColorAttachment)
         {
             clearBits |= GL_COLOR_BUFFER_BIT;
         }
-        if (hasDepthAttachment_) 
+        if (m_hasDepthAttachment)
         {
             clearBits |= GL_DEPTH_BUFFER_BIT;
         }
-        if (hasStencilAttachment_) 
+        if (m_hasStencilAttachment)
         {
             clearBits |= GL_STENCIL_BUFFER_BIT;
         }

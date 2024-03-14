@@ -16,7 +16,7 @@ namespace qrk
 
     void BloomBuffer::selectMip(int mipLevel)
     {
-        if (mipLevel < 0 || mipLevel >= m_BloomMipChainTextureInstance.numMips)
+        if (mipLevel < 0 || mipLevel >= m_BloomMipChainTextureInstance.m_iNumMips)
         {
             throw BloomException("ERROR::BLOOM::SOURCE_MIP_OUT_OF_RANGE");
         }

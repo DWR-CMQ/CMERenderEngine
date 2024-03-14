@@ -6,23 +6,25 @@
 #include <stdexcept>
 #include <string>
 
-namespace qrk {
+namespace qrk 
+{
+	class QuarkException : public std::runtime_error
+	{
+		using std::runtime_error::runtime_error;
+	};
 
-class QuarkException : public std::runtime_error {
-  using std::runtime_error::runtime_error;
-};
+	class GlException : public QuarkException
+	{
+		using QuarkException::QuarkException;
+	};
 
-class GlException : public QuarkException {
-  using QuarkException::QuarkException;
-};
+	// Returns a string representation of the given GL error.
+	std::string glErrorToString(GLenum errorCode);
 
-// Returns a string representation of the given GL error.
-std::string glErrorToString(GLenum errorCode);
+	// Checks for an OpenGL error and throws a GlException if one was present.
+	void checkForGlError(const char* file, int line);
 
-// Checks for an OpenGL error and throws a GlException if one was present.
-void checkForGlError(const char* file, int line);
-
-#define qrkCheckForGlError() ::qrk::checkForGlError(__FILE__, __LINE__)
+	#define qrkCheckForGlError() ::qrk::checkForGlError(__FILE__, __LINE__)
 
 }  // namespace qrk
 

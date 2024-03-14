@@ -16,18 +16,18 @@ namespace qrk
         attachRenderbuffer(qrk::BufferType::DEPTH_AND_STENCIL);
         // Position and normal are stored as "HDR" colors for higher precision.
         // TODO: Positions can be un-projected from depth without storing them.
-        positionAOBuffer_ = attachTexture(qrk::BufferType::COLOR_HDR_ALPHA);
-        normalRoughnessBuffer_ = attachTexture(qrk::BufferType::COLOR_SNORM_ALPHA);
-        albedoMetallicBuffer_ = attachTexture(qrk::BufferType::COLOR_ALPHA);
-        emissionBuffer_ = attachTexture(qrk::BufferType::COLOR_ALPHA);
+        m_PositionAOBufferInstance = attachTexture(qrk::BufferType::COLOR_HDR_ALPHA);
+        m_NormalRoughnessBufferInstance = attachTexture(qrk::BufferType::COLOR_SNORM_ALPHA);
+        m_AlbedoMetallicBufferInstance = attachTexture(qrk::BufferType::COLOR_ALPHA);
+        m_EmissionBufferInstance = attachTexture(qrk::BufferType::COLOR_ALPHA);
     }
 
     unsigned int GBuffer::bindTexture(unsigned int nextTextureUnit, Shader& shader) 
     {
-        positionAOBuffer_.asTexture().bindToUnit(nextTextureUnit + 0);
-        normalRoughnessBuffer_.asTexture().bindToUnit(nextTextureUnit + 1);
-        albedoMetallicBuffer_.asTexture().bindToUnit(nextTextureUnit + 2);
-        emissionBuffer_.asTexture().bindToUnit(nextTextureUnit + 3);
+        m_PositionAOBufferInstance.asTexture().bindToUnit(nextTextureUnit + 0);
+        m_NormalRoughnessBufferInstance.asTexture().bindToUnit(nextTextureUnit + 1);
+        m_AlbedoMetallicBufferInstance.asTexture().bindToUnit(nextTextureUnit + 2);
+        m_EmissionBufferInstance.asTexture().bindToUnit(nextTextureUnit + 3);
         // Bind sampler uniforms.
         shader.setInt("gPositionAO", nextTextureUnit + 0);
         shader.setInt("gNormalRoughness", nextTextureUnit + 1);

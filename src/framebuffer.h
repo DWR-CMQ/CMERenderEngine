@@ -46,15 +46,15 @@ namespace qrk
     {
     public:
         // TODO: Make these private.
-        unsigned int id;
-        int width;
-        int height;
-        int numMips;
-        AttachmentTarget target;
-        BufferType type;
+        unsigned int m_uiID;
+        int m_iWidth;
+        int m_iHeight;
+        int m_iNumMips;
+        AttachmentTarget m_eTarget;
+        BufferType m_eType;
         // Attachment index. Only applies for color buffers.
-        int colorAttachmentIndex;
-        TextureType textureType;
+        int m_iColorAttachmentIndex;
+        TextureType m_eTextureType;
 
         Texture asTexture();
 
@@ -188,8 +188,8 @@ namespace qrk
         // framebuffer).
         void deactivate();
 
-        glm::vec4 getClearColor() { return clearColor_; }
-        void setClearColor(glm::vec4 color) { clearColor_ = color; }
+        glm::vec4 getClearColor() { return m_vec4ClearColor; }
+        void setClearColor(glm::vec4 color) { m_vec4ClearColor = color; }
         void clear();
 
         ImageSize getSize();
@@ -209,33 +209,34 @@ namespace qrk
         // Copies the framebuffer to the default framebuffer.
         void blitToDefault(GLenum type);
 
-        void enableAlphaBlending() {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glBlendEquation(GL_FUNC_ADD);
+        void enableAlphaBlending()
+        {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glBlendEquation(GL_FUNC_ADD);
         }
         void disableAlphaBlending() { glDisable(GL_BLEND); }
 
         void enableAdditiveBlending() 
         {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE);
-        glBlendEquation(GL_FUNC_ADD);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_ONE, GL_ONE);
+            glBlendEquation(GL_FUNC_ADD);
         }
         void disableAdditiveBlending() { glDisable(GL_BLEND); }
 
     private:
         unsigned int fbo_ = 0;
-        int width_;
-        int height_;
-        int samples_;
-        std::vector<Attachment> attachments_;
+        int m_iWidth;
+        int m_iHeight;
+        int m_iSamples;
+        std::vector<Attachment> m_vecAttachments;
 
-        bool hasColorAttachment_ = false;
-        int numColorAttachments_ = 0;
-        bool hasDepthAttachment_ = false;
-        bool hasStencilAttachment_ = false;
-        glm::vec4 clearColor_ = DEFAULT_CLEAR_COLOR;
+        bool m_hasColorAttachment = false;
+        int m_iNumColorAttachments = 0;
+        bool m_hasDepthAttachment = false;
+        bool m_hasStencilAttachment = false;
+        glm::vec4 m_vec4ClearColor = DEFAULT_CLEAR_COLOR;
 
         Attachment saveAttachment(unsigned int id, int numMips,
                                 AttachmentTarget target, BufferType type,
