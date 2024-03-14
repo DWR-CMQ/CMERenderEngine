@@ -21,7 +21,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\aa.cpp">
+    <ClCompile Include="src\fxaa.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\bloom.cpp">
@@ -131,7 +131,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\aa.h">
+    <ClInclude Include="src\fxaa.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\bloom.h">

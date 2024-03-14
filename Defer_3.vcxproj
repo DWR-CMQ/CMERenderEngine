@@ -152,7 +152,7 @@
     <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
-    <ClCompile Include="src\aa.cpp" />
+    <ClCompile Include="src\fxaa.cpp" />
     <ClCompile Include="src\bloom.cpp" />
     <ClCompile Include="src\blur.cpp" />
     <ClCompile Include="src\camera.cpp" />
@@ -195,7 +195,7 @@
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
-    <ClInclude Include="src\aa.h" />
+    <ClInclude Include="src\fxaa.h" />
     <ClInclude Include="src\bloom.h" />
     <ClInclude Include="src\blur.h" />
     <ClInclude Include="src\camera.h" />

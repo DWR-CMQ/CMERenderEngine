@@ -6,7 +6,7 @@
 #include "core.h"
 // clang-format on
 
-#include "aa.h"
+#include "fxaa.h"
 #include "bloom.h"
 #include "blur.h"
 #include "camera.h"

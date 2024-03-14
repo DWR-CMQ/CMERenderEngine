@@ -85,8 +85,7 @@ struct ModelRenderOptions
     glm::vec3 directionalDiffuse = glm::vec3(0.5f);
     glm::vec3 directionalSpecular = glm::vec3(0.5f);
     float directionalIntensity = 10.0f;
-    glm::vec3 directionalDirection =
-        glm::normalize(glm::vec3(-0.2f, -1.0f, -0.3f));
+    glm::vec3 directionalDirection =  glm::normalize(glm::vec3(-0.2f, -1.0f, -0.3f));
 
     bool shadowMapping = false;
     float shadowCameraCuboidExtents = 2.0f;
@@ -196,11 +195,11 @@ void renderImGuiUI(ModelRenderOptions& opts, qrk::Camera camera, qrk::ShadowMap 
 
     constexpr float IMAGE_BASE_SIZE = 160.0f;
 
-    if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_DefaultOpen)) {
+    if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_DefaultOpen))
+    {
         // Perform some shenanigans so that the gizmo rotates along with the
         // camera while still representing the same model rotation.
-        glm::quat rotViewSpace =
-            glm::quat_cast(camera.getViewTransform()) * opts.modelRotation;
+        glm::quat rotViewSpace =  glm::quat_cast(camera.getViewTransform()) * opts.modelRotation;
         ImGui::gizmo3D("Model rotation", rotViewSpace, IMAGE_BASE_SIZE);
         opts.modelRotation =
             glm::quat_cast(glm::inverse(camera.getViewTransform())) *
@@ -221,7 +220,8 @@ void renderImGuiUI(ModelRenderOptions& opts, qrk::Camera camera, qrk::ShadowMap 
             reinterpret_cast<float*>(&opts.directionalDirection),
             -1.0f, 1.0f);
 
-        if (ImGui::Button("Reset rotation")) {
+        if (ImGui::Button("Reset rotation")) 
+        {
             opts.modelRotation = glm::identity<glm::quat>();
         }
         imguiFloatSlider("Model scale", &opts.modelScale, 0.0001f, 100.0f, "%.04f",
@@ -233,14 +233,16 @@ void renderImGuiUI(ModelRenderOptions& opts, qrk::Camera camera, qrk::ShadowMap 
     // Create a child so that this section can scroll separately.
     ImGui::BeginChild("MainOptions");
 
-    if (ImGui::CollapsingHeader("Rendering")) {
+    if (ImGui::CollapsingHeader("Rendering"))
+    {
         ImGui::Combo("Lighting model", reinterpret_cast<int*>(&opts.lightingModel),
             "Blinn-Phong\0Cook-Torrance GGX\0\0");
         ImGui::SameLine();
         imguiHelpMarker("Which lighting model to use for shading.");
 
         ImGui::Separator();
-        if (ImGui::TreeNode("Directional light")) {
+        if (ImGui::TreeNode("Directional light"))
+        {
             static bool lockSpecular = true;
             ImGui::ColorEdit3("Diffuse color",
                 reinterpret_cast<float*>(&opts.directionalDiffuse),
@@ -459,13 +461,6 @@ void renderImGuiUI(ModelRenderOptions& opts, qrk::Camera camera, qrk::ShadowMap 
 /** Loads a model based on command line flag, or a default. */
 std::unique_ptr<qrk::Model> loadModelOrDefault()
 {
-    //std::string modelPath = absl::GetFlag(FLAGS_model);
-
-    //if (!modelPath.empty()) 
-    //{
-    //    return std::make_unique<qrk::Model>(modelPath.c_str());
-    //}
-
     // Default to the gltf DamagedHelmet.
     auto helmet = std::make_unique<qrk::Model>("assets//models//DamagedHelmet/DamagedHelmet.gltf");
     return helmet;
@@ -529,12 +524,8 @@ void loadSkyboxImage(
 
 int main(int argc, char** argv)
 {
-    //absl::SetProgramUsageMessage(
-    //    "quarkGL model viewer. Usage:\n  model_render --model path/to/model.obj");
-    //absl::ParseCommandLine(argc, argv);
 
-    qrk::Window win(1920, 1080, "Model Render", /* fullscreen */ false,
-        /* samples */ 0);
+    qrk::Window win(1920, 1080, "Model Render", /* fullscreen */ false, 0);
     win.setClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
     win.setEscBehavior(qrk::EscBehavior::UNCAPTURE_MOUSE_OR_CLOSE);
 
@@ -575,13 +566,11 @@ int main(int argc, char** argv)
 
     // Set up the main framebuffer that will store intermediate states.
     qrk::Framebuffer mainFb(win.getSize());
-    auto mainColorAttachment =
-        mainFb.attachTexture(qrk::BufferType::COLOR_HDR_ALPHA);
+    auto mainColorAttachment =  mainFb.attachTexture(qrk::BufferType::COLOR_HDR_ALPHA);
     mainFb.attachRenderbuffer(qrk::BufferType::DEPTH_AND_STENCIL);
 
     qrk::Framebuffer finalFb(win.getSize());
-    auto finalColorAttachment =
-        finalFb.attachTexture(qrk::BufferType::COLOR_ALPHA);
+    auto finalColorAttachment = finalFb.attachTexture(qrk::BufferType::COLOR_ALPHA);
 
     // Build the G-Buffer and prepare deferred shading.
     qrk::DeferredGeometryPassShader geometryPassShader;
@@ -686,8 +675,7 @@ int main(int argc, char** argv)
         qrk::ShaderPath("assets//model_shaders//model_normals.geom"));
     normalShader.addUniformSource(camera);
 
-    qrk::Shader lampShader(qrk::ShaderPath("assets//model_shaders//model.vert"),
-        qrk::ShaderInline(lampShaderSource));
+    qrk::Shader lampShader(qrk::ShaderPath("assets//model_shaders//model.vert"), qrk::ShaderInline(lampShaderSource));
     lampShader.addUniformSource(camera);
 
     // Load primary model.
@@ -717,13 +705,6 @@ int main(int argc, char** argv)
         opts.numFrameDeltas = win.getNumFrameDeltas();
         opts.frameDeltasOffset = win.getFrameDeltasOffset();
         opts.avgFPS = win.getAvgFPS();
-
-        // Render UI.
-        //UIContext ctx;
-        //ctx.camera = *camera;
-        //ctx.shadowMap = *shadowMap;
-        //ctx.ssaoBuffer = *ssaoBlurredBuffer;
-
 
         //renderImGuiUI(opts, ctx);
         renderImGuiUI(opts, *camera, *shadowMap, *ssaoBlurredBuffer);
