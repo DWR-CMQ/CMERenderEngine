@@ -6,7 +6,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-namespace qrk 
+namespace Cme 
 {
     int calculateNumMips(int width, int height) 
     {
@@ -494,4 +494,4 @@ namespace qrk
         }
     }
 
-}  // namespace qrk
+}  // namespace Cme

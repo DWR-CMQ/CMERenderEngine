@@ -1,6 +1,6 @@
 #include "exceptions.h"
 
-namespace qrk 
+namespace Cme 
 {
     std::string glErrorToString(GLenum errorCode)
     {
@@ -37,4 +37,4 @@ namespace qrk
         }
     }
 
-}  // namespace qrk
+}  // namespace Cme

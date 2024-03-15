@@ -1,6 +1,6 @@
 #include "vertex_array.h"
 
-namespace qrk 
+namespace Cme 
 {
     VertexArray::VertexArray() 
     {
@@ -124,4 +124,4 @@ namespace qrk
         m_vecAttribs.clear();
         m_uiStride = 0;
     }
-}  // namespace qrk
+}  // namespace Cme

@@ -7,7 +7,7 @@
 #include "shader_primitives.h"
 #include "texture_registry.h"
 
-namespace qrk 
+namespace Cme 
 {
     class PingPongPass 
     {
@@ -57,6 +57,6 @@ namespace qrk
         bool m_bHorizontal = false;
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

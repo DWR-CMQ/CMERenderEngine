@@ -16,7 +16,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 
-namespace qrk 
+namespace Cme 
 {
     enum class CameraDirection 
     {
@@ -214,6 +214,6 @@ namespace qrk
         float m_fAltitude;
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

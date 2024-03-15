@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-namespace qrk 
+namespace Cme 
 {
 
     class Shader;
@@ -105,6 +105,6 @@ namespace qrk
         void dispatchToTexture(Texture& texture);
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

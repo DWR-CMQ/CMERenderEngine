@@ -7,7 +7,7 @@
 #include "texture.h"
 #include "texture_map.h"
 
-namespace qrk 
+namespace Cme 
 {
 
     class MeshPrimitiveException : public QuarkException
@@ -117,6 +117,6 @@ namespace qrk
         void bindTextures(Shader& shader, TextureRegistry* textureRegistry) override;
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

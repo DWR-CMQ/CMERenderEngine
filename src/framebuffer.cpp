@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 #include "framebuffer.h"
 
-namespace qrk 
+namespace Cme 
 {
     Texture Attachment::asTexture() 
     {
@@ -388,4 +388,4 @@ namespace qrk
         glClear(clearBits);
     }
 
-}  // namespace qrk
+}  // namespace Cme

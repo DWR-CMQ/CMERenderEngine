@@ -1,17 +1,17 @@
 #include "bloom.h"
 
-namespace qrk
+namespace Cme
 {
     BloomBuffer::BloomBuffer(int width, int height) : Framebuffer(width, height) 
     {
         // Create and attach the bloom buffer. Don't need a depth buffer.
-        qrk::TextureParams resampleParams;
+        Cme::TextureParams resampleParams;
 
-        resampleParams.filtering = qrk::TextureFiltering::BILINEAR;
-        resampleParams.wrapMode = qrk::TextureWrapMode::CLAMP_TO_EDGE;
-        resampleParams.generateMips = qrk::MipGeneration::ALWAYS;
+        resampleParams.filtering = Cme::TextureFiltering::BILINEAR;
+        resampleParams.wrapMode = Cme::TextureWrapMode::CLAMP_TO_EDGE;
+        resampleParams.generateMips = Cme::MipGeneration::ALWAYS;
 
-        m_BloomMipChainTextureInstance = attachTexture(qrk::BufferType::COLOR_HDR_ALPHA, resampleParams);
+        m_BloomMipChainTextureInstance = attachTexture(Cme::BufferType::COLOR_HDR_ALPHA, resampleParams);
     }
 
     void BloomBuffer::selectMip(int mipLevel)
@@ -104,4 +104,4 @@ namespace qrk
         return nextTextureUnit + 1;
     }
 
-}  // namespace qrk
+}  // namespace Cme

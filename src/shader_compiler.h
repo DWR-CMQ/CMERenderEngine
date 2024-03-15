@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-namespace qrk
+namespace Cme
 {
     class ShaderCompilerException : public QuarkException 
     {
@@ -30,6 +30,6 @@ namespace qrk
         std::vector<unsigned int> m_vecShaders;
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

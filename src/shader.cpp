@@ -3,7 +3,7 @@
 #include "shader_compiler.h"
 #include "shader_loader.h"
 
-namespace qrk
+namespace Cme
 {
     Shader::Shader(const ShaderSource& vertexSource,
                    const ShaderSource& fragmentSource) 
@@ -49,7 +49,7 @@ namespace qrk
     void Shader::updateUniforms() 
     {
         // Update core uniforms.
-        setFloat("qrk_time", qrk::time());
+        setFloat("qrk_time", Cme::time());
 
         for (auto uniformSource : m_vecUniformSources)
         {
@@ -118,4 +118,4 @@ namespace qrk
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
     }
 
-}  // namespace qrk
+}  // namespace Cme

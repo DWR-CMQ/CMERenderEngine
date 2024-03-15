@@ -1,6 +1,6 @@
 #include "mesh.h"
 
-namespace qrk
+namespace Cme
 {
     void RenderableNode::drawWithTransform(const glm::mat4& transform,
                                         Shader& shader,
@@ -240,4 +240,4 @@ namespace qrk
             }
         }
     }
-}  // namespace qrk
+}  // namespace Cme

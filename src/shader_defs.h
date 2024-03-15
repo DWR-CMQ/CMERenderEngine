@@ -1,7 +1,7 @@
 #ifndef QUARKGL_SHADER_DEFS_H_
 #define QUARKGL_SHADER_DEFS_H_
 
-namespace qrk 
+namespace Cme 
 {
 
 	enum class ShaderType
@@ -31,6 +31,6 @@ namespace qrk
 		bool isPath() const { return true; }
 	};
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace qrk 
+namespace Cme 
 {
 	class QuarkException : public std::runtime_error
 	{
@@ -24,8 +24,8 @@ namespace qrk
 	// Checks for an OpenGL error and throws a GlException if one was present.
 	void checkForGlError(const char* file, int line);
 
-	#define qrkCheckForGlError() ::qrk::checkForGlError(__FILE__, __LINE__)
+	#define qrkCheckForGlError() ::Cme::checkForGlError(__FILE__, __LINE__)
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

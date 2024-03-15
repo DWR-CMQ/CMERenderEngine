@@ -1,6 +1,6 @@
 #include "ibl.h"
 
-namespace qrk 
+namespace Cme 
 {
     CubemapIrradianceShader::CubemapIrradianceShader()
         : Shader(ShaderPath("assets//shaders//builtin//cubemap.vert"),
@@ -58,7 +58,7 @@ namespace qrk
         setFloat("qrk_roughness", roughness);
     }
 
-    qrk::GGXPrefilteredEnvMapCalculator::GGXPrefilteredEnvMapCalculator(
+    Cme::GGXPrefilteredEnvMapCalculator::GGXPrefilteredEnvMapCalculator(
         int width, int height, int maxNumMips)
         : m_BufferInstance(width, height), m_CubemapRenderHelperInstance(&m_BufferInstance)
     {
@@ -137,4 +137,4 @@ namespace qrk
         return nextTextureUnit + 1;
     }
 
-}  // namespace qrk
+}  // namespace Cme

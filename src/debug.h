@@ -6,7 +6,7 @@
 #include "core.h"
 // clang-format on
 
-namespace qrk 
+namespace Cme 
 {
 	// RAII debugging group marker.
 	class DebugGroup 
@@ -15,6 +15,6 @@ namespace qrk
 		DebugGroup(const char* name);
 		~DebugGroup();
 	};
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

@@ -7,7 +7,7 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-namespace qrk 
+namespace Cme 
 {
 	void init();
 	void terminate();
@@ -17,6 +17,6 @@ namespace qrk
 	void enableGlErrorLogging();
 	void disableGlErrorLogging();
 	float time();
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

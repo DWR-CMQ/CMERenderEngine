@@ -3,7 +3,7 @@
 
 #include <random>
 
-namespace qrk 
+namespace Cme 
 {
     // A random generator for generating pseudorandom seeds.
     class SeedGenerator 
@@ -44,6 +44,6 @@ namespace qrk
         const unsigned int m_kuiSeed;
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

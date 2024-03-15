@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="3dparty\glad.c" />
+    <ClCompile Include="App.cpp" />
     <ClCompile Include="imguizmo_quat\imGuIZMOquat.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
@@ -181,6 +182,7 @@
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="App.h" />
     <ClInclude Include="imguizmo_quat\imGuIZMOquat.h" />
     <ClInclude Include="imguizmo_quat\vgConfig.h" />
     <ClInclude Include="imguizmo_quat\vGizmo.h" />

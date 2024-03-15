@@ -3,7 +3,7 @@
 
 #include <cstring>
 
-namespace qrk 
+namespace Cme 
 {
     SkyboxShader::SkyboxShader()
         : Shader(ShaderPath("assets//shaders//builtin//skybox.vert"),
@@ -53,4 +53,4 @@ namespace qrk
         : Shader(ShaderPath("assets//shaders//builtin//shadow_map.vert"),
                  ShaderPath("assets//shaders//builtin//shadow_map.frag")) {}
 
-}  // namespace qrk
+}  // namespace Cme

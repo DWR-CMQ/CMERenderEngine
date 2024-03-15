@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace qrk
+namespace Cme
 {
 
     class TextureException : public QuarkException
@@ -201,6 +201,6 @@ namespace qrk
         friend class Attachment;
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

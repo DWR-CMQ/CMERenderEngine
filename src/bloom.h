@@ -7,7 +7,7 @@
 #include "shader_primitives.h"
 #include "texture_registry.h"
 
-namespace qrk 
+namespace Cme 
 {
     class BloomException : public QuarkException 
     {
@@ -100,6 +100,6 @@ namespace qrk
         BloomUpsampleShader m_UpsampleShaderInstance;
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

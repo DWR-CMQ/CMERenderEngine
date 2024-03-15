@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace qrk 
+namespace Cme 
 {
 
     class TextureRegistryException : public QuarkException
@@ -62,6 +62,6 @@ namespace qrk
         std::vector<std::shared_ptr<TextureSource>> m_vecTextureSources;
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

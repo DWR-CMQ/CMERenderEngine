@@ -11,7 +11,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-namespace qrk
+namespace Cme
 {
 
     class SsaoException : public QuarkException
@@ -87,6 +87,6 @@ namespace qrk
         void configureWith(SsaoKernel& kernel, SsaoBuffer& buffer);
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

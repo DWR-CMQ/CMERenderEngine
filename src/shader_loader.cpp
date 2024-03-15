@@ -8,7 +8,7 @@
 #include <sstream>
 #include <iostream>
 
-namespace qrk 
+namespace Cme 
 {
 
     std::string readFile(std::string const& path) 
@@ -190,7 +190,7 @@ namespace qrk
 
             if (inclType == '<')
             {
-                // qrk include.
+                // Cme include.
                 return whitespace + load("assets/shaders/" + path);
             } 
             else
@@ -223,4 +223,4 @@ namespace qrk
             return preprocessShader(".", m_pShaderSource->value);
         }
     }
-}  // namespace qrk
+}  // namespace Cme

@@ -170,7 +170,7 @@ static bool imguiFloatSlider(const char* desc, float* value, float min,
 }
 
 // Helper for an image control.
-static void imguiImage(const qrk::Texture& texture, glm::vec2 size)
+static void imguiImage(const Cme::Texture& texture, glm::vec2 size)
 {
     ImTextureID texID = reinterpret_cast<void*>(texture.getId());
     // Flip the image.
@@ -181,13 +181,13 @@ static void imguiImage(const qrk::Texture& texture, glm::vec2 size)
 // Non-normative context for UI rendering. Used for accessing renderer info.
 struct UIContext 
 {
-    qrk::Camera& camera;
-    qrk::ShadowMap& shadowMap;
-    qrk::SsaoBuffer& ssaoBuffer;
+    Cme::Camera& camera;
+    Cme::ShadowMap& shadowMap;
+    Cme::SsaoBuffer& ssaoBuffer;
 };
 
 // Called during game loop.
-void renderImGuiUI(ModelRenderOptions& opts, qrk::Camera camera, qrk::ShadowMap shadowMap, qrk::SsaoBuffer ssaoBuffer)
+void renderImGuiUI(ModelRenderOptions& opts, Cme::Camera camera, Cme::ShadowMap shadowMap, Cme::SsaoBuffer ssaoBuffer)
 {
     // ImGui::ShowDemoWindow();
 
@@ -408,7 +408,7 @@ void renderImGuiUI(ModelRenderOptions& opts, qrk::Camera camera, qrk::ShadowMap 
         imguiFloatSlider("Speed", &opts.speed, 0.1, 50.0);
         imguiFloatSlider("Sensitivity", &opts.sensitivity, 0.01, 1.0, nullptr,
             Scale::LOG);
-        imguiFloatSlider("FoV", &opts.fov, qrk::MIN_FOV, qrk::MAX_FOV, "%.1f¡ã");
+        imguiFloatSlider("FoV", &opts.fov, Cme::MIN_FOV, Cme::MAX_FOV, "%.1f¡ã");
         if (imguiFloatSlider("Near plane", &opts.near, 0.01, 1000.0, nullptr,
             Scale::LOG)) 
         {
@@ -459,19 +459,19 @@ void renderImGuiUI(ModelRenderOptions& opts, qrk::Camera camera, qrk::ShadowMap 
 }
 
 /** Loads a model based on command line flag, or a default. */
-std::unique_ptr<qrk::Model> loadModelOrDefault()
+std::unique_ptr<Cme::Model> loadModelOrDefault()
 {
     // Default to the gltf DamagedHelmet.
-    auto helmet = std::make_unique<qrk::Model>("assets//models//DamagedHelmet/DamagedHelmet.gltf");
+    auto helmet = std::make_unique<Cme::Model>("assets//models//DamagedHelmet/DamagedHelmet.gltf");
     return helmet;
 }
 
 /** Loads a skybox image as a cubemap and generates IBL info. */
 void loadSkyboxImage(
-    SkyboxImage skyboxImage, qrk::SkyboxMesh& skybox,
-    qrk::EquirectCubemapConverter& equirectCubemapConverter,
-    qrk::CubemapIrradianceCalculator& irradianceCalculator,
-    qrk::GGXPrefilteredEnvMapCalculator& prefilteredEnvMapCalculator) 
+    SkyboxImage skyboxImage, Cme::SkyboxMesh& skybox,
+    Cme::EquirectCubemapConverter& equirectCubemapConverter,
+    Cme::CubemapIrradianceCalculator& irradianceCalculator,
+    Cme::GGXPrefilteredEnvMapCalculator& prefilteredEnvMapCalculator) 
 {
     std::string hdrPath;
     switch (skyboxImage)
@@ -499,20 +499,20 @@ void loadSkyboxImage(
         break;
     }
 
-    qrk::Texture hdr = qrk::Texture::loadHdr(hdrPath.c_str());
+    Cme::Texture hdr = Cme::Texture::loadHdr(hdrPath.c_str());
 
     // Process HDR cubemap
     {
-        qrk::DebugGroup debugGroup("HDR equirect to cubemap");
+        Cme::DebugGroup debugGroup("HDR equirect to cubemap");
         equirectCubemapConverter.multipassDraw(hdr);
     }
     auto cubemap = equirectCubemapConverter.getCubemap();
     {
-        qrk::DebugGroup debugGroup("Irradiance calculation");
+        Cme::DebugGroup debugGroup("Irradiance calculation");
         irradianceCalculator.multipassDraw(cubemap);
     }
     {
-        qrk::DebugGroup debugGroup("Prefiltered env map calculation");
+        Cme::DebugGroup debugGroup("Prefiltered env map calculation");
         prefilteredEnvMapCalculator.multipassDraw(cubemap);
     }
 
@@ -525,9 +525,9 @@ void loadSkyboxImage(
 int main(int argc, char** argv)
 {
 
-    qrk::Window win(1920, 1080, "Model Render", /* fullscreen */ false, 0);
+    Cme::Window win(1920, 1080, "Model Render", /* fullscreen */ false, 0);
     win.setClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
-    win.setEscBehavior(qrk::EscBehavior::UNCAPTURE_MOUSE_OR_CLOSE);
+    win.setEscBehavior(Cme::EscBehavior::UNCAPTURE_MOUSE_OR_CLOSE);
 
     // Setup Dear ImGui.
     IMGUI_CHECKVERSION();
@@ -542,144 +542,144 @@ int main(int argc, char** argv)
     ModelRenderOptions opts;
 
     // Setup the camera.
-    auto camera = std::make_shared<qrk::Camera>(/* position */ glm::vec3(0.0f, 0.0f, 3.0f));
-    std::shared_ptr<qrk::CameraControls> cameraControls = std::make_shared<qrk::OrbitCameraControls>(*camera);
+    auto camera = std::make_shared<Cme::Camera>(/* position */ glm::vec3(0.0f, 0.0f, 3.0f));
+    std::shared_ptr<Cme::CameraControls> cameraControls = std::make_shared<Cme::OrbitCameraControls>(*camera);
     win.bindCamera(camera);
     win.bindCameraControls(cameraControls);
 
     // Create light registry and add lights.
-    auto lightRegistry = std::make_shared<qrk::LightRegistry>();
+    auto lightRegistry = std::make_shared<Cme::LightRegistry>();
     lightRegistry->setViewSource(camera);
 
-    auto directionalLight = std::make_shared<qrk::DirectionalLight>();
+    auto directionalLight = std::make_shared<Cme::DirectionalLight>();
     lightRegistry->addLight(directionalLight);
 
-    auto pointLight = std::make_shared<qrk::PointLight>(glm::vec3(1.2f, 1.0f, 2.0f));
+    auto pointLight = std::make_shared<Cme::PointLight>(glm::vec3(1.2f, 1.0f, 2.0f));
     pointLight->setSpecular(glm::vec3(0.5f, 0.5f, 0.5f));
     // lightRegistry->addLight(pointLight);
 
     // Create a mesh for the light.
-    qrk::SphereMesh lightSphere;
+    Cme::SphereMesh lightSphere;
     lightSphere.setModelTransform(
         glm::scale(glm::translate(glm::mat4(1.0f), pointLight->getPosition()),
             glm::vec3(0.2f)));
 
     // Set up the main framebuffer that will store intermediate states.
-    qrk::Framebuffer mainFb(win.getSize());
-    auto mainColorAttachment =  mainFb.attachTexture(qrk::BufferType::COLOR_HDR_ALPHA);
-    mainFb.attachRenderbuffer(qrk::BufferType::DEPTH_AND_STENCIL);
+    Cme::Framebuffer mainFb(win.getSize());
+    auto mainColorAttachment =  mainFb.attachTexture(Cme::BufferType::COLOR_HDR_ALPHA);
+    mainFb.attachRenderbuffer(Cme::BufferType::DEPTH_AND_STENCIL);
 
-    qrk::Framebuffer finalFb(win.getSize());
-    auto finalColorAttachment = finalFb.attachTexture(qrk::BufferType::COLOR_ALPHA);
+    Cme::Framebuffer finalFb(win.getSize());
+    auto finalColorAttachment = finalFb.attachTexture(Cme::BufferType::COLOR_ALPHA);
 
     // Build the G-Buffer and prepare deferred shading.
-    qrk::DeferredGeometryPassShader geometryPassShader;
+    Cme::DeferredGeometryPassShader geometryPassShader;
     geometryPassShader.addUniformSource(camera);
 
-    auto gBuffer = std::make_shared<qrk::GBuffer>(win.getSize());
-    auto lightingTextureRegistry = std::make_shared<qrk::TextureRegistry>();
+    auto gBuffer = std::make_shared<Cme::GBuffer>(win.getSize());
+    auto lightingTextureRegistry = std::make_shared<Cme::TextureRegistry>();
     lightingTextureRegistry->addTextureSource(gBuffer);
 
-    qrk::ScreenQuadMesh screenQuad;
-    qrk::ScreenShader gBufferVisShader(
-        qrk::ShaderPath("assets//model_shaders//gbuffer_vis.frag"));
+    Cme::ScreenQuadMesh screenQuad;
+    Cme::ScreenShader gBufferVisShader(
+        Cme::ShaderPath("assets//model_shaders//gbuffer_vis.frag"));
 
-    qrk::ScreenShader lightingPassShader(
-        qrk::ShaderPath("assets//model_shaders//lighting_pass.frag"));
+    Cme::ScreenShader lightingPassShader(
+        Cme::ShaderPath("assets//model_shaders//lighting_pass.frag"));
     lightingPassShader.addUniformSource(camera);
     lightingPassShader.addUniformSource(lightingTextureRegistry);
     lightingPassShader.addUniformSource(lightRegistry);
 
     // Setup shadow mapping.
     constexpr int SHADOW_MAP_SIZE = 1024;
-    auto shadowMap = std::make_shared<qrk::ShadowMap>(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
+    auto shadowMap = std::make_shared<Cme::ShadowMap>(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
     lightingTextureRegistry->addTextureSource(shadowMap);
 
-    qrk::ShadowMapShader shadowShader;
-    auto shadowCamera = std::make_shared<qrk::ShadowCamera>(directionalLight);
+    Cme::ShadowMapShader shadowShader;
+    auto shadowCamera = std::make_shared<Cme::ShadowCamera>(directionalLight);
     shadowShader.addUniformSource(shadowCamera);
     lightingPassShader.addUniformSource(shadowCamera);
 
     // Setup SSAO.
-    qrk::SsaoShader ssaoShader;
+    Cme::SsaoShader ssaoShader;
     ssaoShader.addUniformSource(camera);
 
-    auto ssaoKernel = std::make_shared<qrk::SsaoKernel>();
+    auto ssaoKernel = std::make_shared<Cme::SsaoKernel>();
     ssaoShader.addUniformSource(ssaoKernel);
-    auto ssaoBuffer = std::make_shared<qrk::SsaoBuffer>(win.getSize());
+    auto ssaoBuffer = std::make_shared<Cme::SsaoBuffer>(win.getSize());
 
-    auto ssaoTextureRegistry = std::make_shared<qrk::TextureRegistry>();
+    auto ssaoTextureRegistry = std::make_shared<Cme::TextureRegistry>();
     ssaoTextureRegistry->addTextureSource(gBuffer);
     ssaoTextureRegistry->addTextureSource(ssaoKernel);
     ssaoShader.addUniformSource(ssaoTextureRegistry);
 
-    qrk::SsaoBlurShader ssaoBlurShader;
-    auto ssaoBlurredBuffer = std::make_shared<qrk::SsaoBuffer>(win.getSize());
+    Cme::SsaoBlurShader ssaoBlurShader;
+    auto ssaoBlurredBuffer = std::make_shared<Cme::SsaoBuffer>(win.getSize());
     lightingTextureRegistry->addTextureSource(ssaoBlurredBuffer);
 
     // Setup post processing.
-    auto bloomPass = std::make_shared<qrk::BloomPass>(win.getSize());
+    auto bloomPass = std::make_shared<Cme::BloomPass>(win.getSize());
 
-    auto postprocessTextureRegistry = std::make_shared<qrk::TextureRegistry>();
+    auto postprocessTextureRegistry = std::make_shared<Cme::TextureRegistry>();
     postprocessTextureRegistry->addTextureSource(bloomPass);
-    qrk::ScreenShader postprocessShader(
-        qrk::ShaderPath("assets//model_shaders//post_processing.frag"));
+    Cme::ScreenShader postprocessShader(
+        Cme::ShaderPath("assets//model_shaders//post_processing.frag"));
     postprocessShader.addUniformSource(postprocessTextureRegistry);
 
-    qrk::FXAAShader fxaaShader;
+    Cme::FXAAShader fxaaShader;
 
     // Setup skybox and IBL.
-    qrk::SkyboxShader skyboxShader;
+    Cme::SkyboxShader skyboxShader;
     skyboxShader.addUniformSource(camera);
 
     constexpr int CUBEMAP_SIZE = 1024;
-    qrk::EquirectCubemapConverter equirectCubemapConverter(
+    Cme::EquirectCubemapConverter equirectCubemapConverter(
         CUBEMAP_SIZE, CUBEMAP_SIZE, /*generateMips=*/true);
 
     // Irradiance map averages radiance uniformly so it doesn't have a lot of high
     // frequency details and can thus be small.
     auto irradianceCalculator =
-        std::make_shared<qrk::CubemapIrradianceCalculator>(32, 32);
+        std::make_shared<Cme::CubemapIrradianceCalculator>(32, 32);
     auto irradianceMap = irradianceCalculator->getIrradianceMap();
     lightingTextureRegistry->addTextureSource(irradianceCalculator);
 
     // Create prefiltered envmap for specular IBL. It doesn't have to be super
     // large.
     auto prefilteredEnvMapCalculator =
-        std::make_shared<qrk::GGXPrefilteredEnvMapCalculator>(CUBEMAP_SIZE,
+        std::make_shared<Cme::GGXPrefilteredEnvMapCalculator>(CUBEMAP_SIZE,
             CUBEMAP_SIZE);
     auto prefilteredEnvMap = prefilteredEnvMapCalculator->getPrefilteredEnvMap();
     lightingTextureRegistry->addTextureSource(prefilteredEnvMapCalculator);
     lightingPassShader.addUniformSource(prefilteredEnvMapCalculator);
 
-    auto brdfLUT = std::make_shared<qrk::GGXBrdfIntegrationCalculator>(
+    auto brdfLUT = std::make_shared<Cme::GGXBrdfIntegrationCalculator>(
         CUBEMAP_SIZE, CUBEMAP_SIZE);
     {
         // Only needs to be calculated once up front.
-        qrk::DebugGroup debugGroup("BRDF LUT calculation");
+        Cme::DebugGroup debugGroup("BRDF LUT calculation");
         brdfLUT->draw();
     }
     auto brdfIntegrationMap = brdfLUT->getBrdfIntegrationMap();
     lightingTextureRegistry->addTextureSource(brdfLUT);
 
-    qrk::SkyboxMesh skybox;
+    Cme::SkyboxMesh skybox;
 
     // Load the actual env map and generate IBL textures.
     loadSkyboxImage(opts.skyboxImage, skybox, equirectCubemapConverter,
         *irradianceCalculator, *prefilteredEnvMapCalculator);
 
     // Prepare some debug shaders.
-    qrk::Shader normalShader(
-        qrk::ShaderPath("assets//model_shaders//model.vert"),
-        qrk::ShaderInline(normalShaderSource),
-        qrk::ShaderPath("assets//model_shaders//model_normals.geom"));
+    Cme::Shader normalShader(
+        Cme::ShaderPath("assets//model_shaders//model.vert"),
+        Cme::ShaderInline(normalShaderSource),
+        Cme::ShaderPath("assets//model_shaders//model_normals.geom"));
     normalShader.addUniformSource(camera);
 
-    qrk::Shader lampShader(qrk::ShaderPath("assets//model_shaders//model.vert"), qrk::ShaderInline(lampShaderSource));
+    Cme::Shader lampShader(Cme::ShaderPath("assets//model_shaders//model.vert"), Cme::ShaderInline(lampShaderSource));
     lampShader.addUniformSource(camera);
 
     // Load primary model.
-    std::unique_ptr<qrk::Model> model = loadModelOrDefault();
+    std::unique_ptr<Cme::Model> model = loadModelOrDefault();
 
     win.enableFaceCull();
     win.loop([&](float deltaTime) 
@@ -727,14 +727,14 @@ int main(int argc, char** argv)
 
         if (opts.cameraControlType != prevOpts.cameraControlType) 
         {
-            std::shared_ptr<qrk::CameraControls> newControls;
+            std::shared_ptr<Cme::CameraControls> newControls;
             switch (opts.cameraControlType)
             {
             case CameraControlType::FLY:
-                newControls = std::make_shared<qrk::FlyCameraControls>();
+                newControls = std::make_shared<Cme::FlyCameraControls>();
                 break;
             case CameraControlType::ORBIT:
-                newControls = std::make_shared<qrk::OrbitCameraControls>(*camera);
+                newControls = std::make_shared<Cme::OrbitCameraControls>(*camera);
                 break;
             }
             newControls->setSpeed(cameraControls->getSpeed());
@@ -760,14 +760,14 @@ int main(int argc, char** argv)
         }
 
         win.setMouseButtonBehavior(opts.captureMouse
-            ? qrk::MouseButtonBehavior::CAPTURE_MOUSE
-            : qrk::MouseButtonBehavior::NONE);
+            ? Cme::MouseButtonBehavior::CAPTURE_MOUSE
+            : Cme::MouseButtonBehavior::NONE);
 
         // == Main render path ==
         // Step 0: optional shadow pass.
         if (opts.shadowMapping) 
         {
-            qrk::DebugGroup debugGroup("Directional shadow map");
+            Cme::DebugGroup debugGroup("Directional shadow map");
             shadowCamera->setCuboidExtents(opts.shadowCameraCuboidExtents);
             shadowCamera->setNearPlane(opts.shadowCameraNear);
             shadowCamera->setFarPlane(opts.shadowCameraFar);
@@ -782,7 +782,7 @@ int main(int argc, char** argv)
 
         // Step 1: geometry pass. Build the G-Buffer.
         {
-            qrk::DebugGroup debugGroup("Geometry pass");
+            Cme::DebugGroup debugGroup("Geometry pass");
             gBuffer->activate();
             gBuffer->clear();
 
@@ -805,7 +805,7 @@ int main(int argc, char** argv)
         if (opts.gBufferVis != GBufferVis::DISABLED)
         {
             {
-                qrk::DebugGroup debugGroup("G-Buffer vis");
+                Cme::DebugGroup debugGroup("G-Buffer vis");
                 switch (opts.gBufferVis) {
                 case GBufferVis::POSITIONS:
                 case GBufferVis::AO:
@@ -832,7 +832,7 @@ int main(int argc, char** argv)
 
             // TODO: Refactor avoid needing to copy this.
             {
-                qrk::DebugGroup debugGroup("Imgui pass");
+                Cme::DebugGroup debugGroup("Imgui pass");
                 ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
             }
             return;
@@ -842,7 +842,7 @@ int main(int argc, char** argv)
         // TODO: Extract into an "SSAO pass".
         if (opts.ssao)
         {
-            qrk::DebugGroup debugGroup("SSAO pass");
+            Cme::DebugGroup debugGroup("SSAO pass");
             ssaoKernel->setRadius(opts.ssaoRadius);
             ssaoKernel->setBias(opts.ssaoBias);
 
@@ -868,7 +868,7 @@ int main(int argc, char** argv)
 
         // Step 2: lighting pass. Draw to the main framebuffer.
         {
-            qrk::DebugGroup debugGroup("Deferred lighting pass");
+            Cme::DebugGroup debugGroup("Deferred lighting pass");
             mainFb.activate();
             mainFb.clear();
 
@@ -900,7 +900,7 @@ int main(int argc, char** argv)
 
         // Step 3: forward render anything else on top.
         {
-            qrk::DebugGroup debugGroup("Forward pass");
+            Cme::DebugGroup debugGroup("Forward pass");
 
             // Before we do so, we have to blit the depth buffer.
             gBuffer->blit(mainFb, GL_DEPTH_BUFFER_BIT);
@@ -937,12 +937,12 @@ int main(int argc, char** argv)
         // Step 4: post processing.
         if (opts.bloom) 
         {
-            qrk::DebugGroup debugGroup("Bloom pass");
+            Cme::DebugGroup debugGroup("Bloom pass");
             bloomPass->multipassDraw(/*sourceFb=*/mainFb);
         }
 
         {
-            qrk::DebugGroup debugGroup("Tonemap & gamma");
+            Cme::DebugGroup debugGroup("Tonemap & gamma");
             finalFb.activate();
             finalFb.clear();
 
@@ -965,7 +965,7 @@ int main(int argc, char** argv)
         // Finally draw to the screen via the FXAA shader.
         if (opts.fxaa) 
         {
-            qrk::DebugGroup debugGroup("FXAA");
+            Cme::DebugGroup debugGroup("FXAA");
             screenQuad.setTexture(finalColorAttachment);
             screenQuad.draw(fxaaShader);
         }
@@ -978,7 +978,7 @@ int main(int argc, char** argv)
 
         // Finally, draw ImGui data.
         {
-            qrk::DebugGroup debugGroup("Imgui pass");
+            Cme::DebugGroup debugGroup("Imgui pass");
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         }
     });

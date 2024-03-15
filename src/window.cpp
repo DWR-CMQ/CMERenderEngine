@@ -1,12 +1,12 @@
 #include "window.h"
 
 
-namespace qrk
+namespace Cme
 {
     Window::Window(int width, int height, const char* title, bool fullscreen,
                    int samples)
     {
-        qrk::init();
+        Cme::init();
 
         if (samples > 0)
         {
@@ -24,7 +24,7 @@ namespace qrk
 
         if (m_pWindow == nullptr)
         {
-            qrk::terminate();
+            Cme::terminate();
             throw WindowException("ERROR::WINDOW::CREATE_FAILED");
         }
 
@@ -35,7 +35,7 @@ namespace qrk
             throw WindowException("ERROR::WINDOW::GLAD_INITIALIZATION_FAILED");
         }
 
-        qrk::initGlErrorLogging();
+        Cme::initGlErrorLogging();
 
         // Allow us to refer to the object while accessing C APIs.
         glfwSetWindowUserPointer(m_pWindow, this);
@@ -62,7 +62,7 @@ namespace qrk
         {
             glfwDestroyWindow(m_pWindow);
         }
-        qrk::terminate();
+        Cme::terminate();
     }
 
     void Window::activate() { glfwMakeContextCurrent(m_pWindow); }
@@ -411,7 +411,7 @@ namespace qrk
         // TODO: Add exception handling here.
         while (!glfwWindowShouldClose(m_pWindow))
         {
-            float currentTime = qrk::time();
+            float currentTime = Cme::time();
             m_fDeltaTime = currentTime - m_fLastTime;
             m_fLastTime = currentTime;
 
@@ -445,4 +445,4 @@ namespace qrk
         }
     }
 
-}  // namespace qrk
+}  // namespace Cme

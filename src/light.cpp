@@ -1,6 +1,6 @@
 #include "light.h"
 
-namespace qrk
+namespace Cme
 {
     void LightRegistry::addLight(std::shared_ptr<Light> light) 
     {
@@ -166,4 +166,4 @@ namespace qrk
         m_hasViewBeenApplied = true;
     }
 
-}  // namespace qrk
+}  // namespace Cme

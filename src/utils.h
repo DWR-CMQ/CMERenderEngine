@@ -7,7 +7,7 @@
 #include <regex>
 #include <string>
 
-namespace qrk
+namespace Cme
 {
 
     static inline float lerp(float a, float b, float weight)
@@ -90,6 +90,6 @@ namespace qrk
     {
         return regexReplace(s.cbegin(), s.cend(), re, f);
     }
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

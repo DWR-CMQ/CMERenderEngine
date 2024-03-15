@@ -4,7 +4,7 @@
 #include <assimp/Importer.hpp>
 #include <iostream>
 
-namespace qrk 
+namespace Cme 
 {
     namespace 
     {
@@ -248,4 +248,4 @@ namespace qrk
         return textureMaps;
     }
 
-}  // namespace qrk
+}  // namespace Cme

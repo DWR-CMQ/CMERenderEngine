@@ -5,7 +5,7 @@
 
 #include <glm/glm.hpp>
 
-namespace qrk
+namespace Cme
 {
     // A builtin shader for skyboxes. Should be used at the end of a frame to render
     // the skybox behind all other geometry.
@@ -45,6 +45,6 @@ namespace qrk
         ShadowMapShader();
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

@@ -19,7 +19,7 @@
 #include <tuple>
 #include <vector>
 
-namespace qrk 
+namespace Cme 
 {
 
     class WindowException : public QuarkException 
@@ -238,6 +238,6 @@ namespace qrk
         std::shared_ptr<Camera> m_spBoundCamera = nullptr;
         std::shared_ptr<CameraControls> m_spBoundCameraControls = nullptr;
     };
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

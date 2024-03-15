@@ -5,7 +5,7 @@
 
 #include <vector>
 
-namespace qrk
+namespace Cme
 {
 
 class VertexArray
@@ -52,6 +52,6 @@ class VertexArray
         unsigned int m_uiNextLayoutPosition = 0;
         unsigned int m_uiStride = 0;
     };
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

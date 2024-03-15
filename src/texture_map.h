@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace qrk
+namespace Cme
 {
     class TextureMapException : public QuarkException 
     {
@@ -88,6 +88,6 @@ namespace qrk
         // Whether the texture type is part of a packed texture.
         bool m_bPacked;
     };
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

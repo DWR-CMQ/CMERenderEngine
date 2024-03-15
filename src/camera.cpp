@@ -1,6 +1,6 @@
 #include "camera.h"
 
-namespace qrk
+namespace Cme
 {
     namespace 
     {
@@ -161,27 +161,27 @@ namespace qrk
         float velocity = m_fSpeed * deltaTime;
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         {
-            camera.move(qrk::CameraDirection::FORWARD, velocity);
+            camera.move(Cme::CameraDirection::FORWARD, velocity);
         }
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) 
         {
-            camera.move(qrk::CameraDirection::LEFT, velocity);
+            camera.move(Cme::CameraDirection::LEFT, velocity);
         }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         {
-            camera.move(qrk::CameraDirection::BACKWARD, velocity);
+            camera.move(Cme::CameraDirection::BACKWARD, velocity);
         }
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         {
-            camera.move(qrk::CameraDirection::RIGHT, velocity);
+            camera.move(Cme::CameraDirection::RIGHT, velocity);
         }
         if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) 
         {
-            camera.move(qrk::CameraDirection::UP, velocity);
+            camera.move(Cme::CameraDirection::UP, velocity);
         }
         if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
         {
-            camera.move(qrk::CameraDirection::DOWN, velocity);
+            camera.move(Cme::CameraDirection::DOWN, velocity);
         }
     }
 
@@ -245,4 +245,4 @@ namespace qrk
         camera.lookAt(m_vec3Center);
     }
 
-}  // namespace qrk
+}  // namespace Cme

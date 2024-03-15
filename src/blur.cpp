@@ -1,6 +1,6 @@
 #include "blur.h"
 
-namespace qrk
+namespace Cme
 {
     PingPongPass::PingPongPass(int width, int height)
         : m_Buffers{Framebuffer(width, height), Framebuffer(width, height)}

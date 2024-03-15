@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-namespace qrk 
+namespace Cme 
 {
     class Renderable 
     {
@@ -114,6 +114,6 @@ namespace qrk
         unsigned int m_uiInstanceCount;
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

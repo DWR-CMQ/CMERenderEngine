@@ -3,7 +3,7 @@
 
 #include <ostream>
 
-namespace qrk
+namespace Cme
 {
 
 	struct ImageSize
@@ -25,6 +25,6 @@ namespace qrk
 		return os << "(" << size.width << ", " << size.height << ")";
 	}
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

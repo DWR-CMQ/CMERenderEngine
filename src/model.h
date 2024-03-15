@@ -15,7 +15,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace qrk 
+namespace Cme 
 {
     class ModelLoaderException : public QuarkException
     {
@@ -82,6 +82,6 @@ namespace qrk
         std::unordered_map<std::string, TextureMap> m_unmapLoadedTextureMaps;
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

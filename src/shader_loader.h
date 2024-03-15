@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-namespace qrk
+namespace Cme
 {
     class ShaderLoaderException : public QuarkException 
     {
@@ -40,6 +40,6 @@ namespace qrk
         std::unordered_map<std::string, std::string> m_unmapCodeCache;
         std::unordered_set<std::string> m_unsetOnceCache;
     };
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

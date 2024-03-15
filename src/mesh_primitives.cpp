@@ -1,7 +1,7 @@
 #include "mesh_primitives.h"
 
 
-namespace qrk 
+namespace Cme 
 {
     // clang-format off
     constexpr float planeVertices[] =
@@ -538,4 +538,4 @@ namespace qrk
         }
     }
 
-}  // namespace qrk
+}  // namespace Cme

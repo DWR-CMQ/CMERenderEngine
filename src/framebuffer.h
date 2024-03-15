@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-namespace qrk 
+namespace Cme 
 {
 
     class FramebufferException : public QuarkException 
@@ -204,7 +204,7 @@ namespace qrk
         Attachment getRenderbuffer(BufferType type);
 
         // Copies the framebuffer to the target.
-        // TODO: Swap out GLenum for qrk type.
+        // TODO: Swap out GLenum for Cme type.
         void blit(Framebuffer& target, GLenum bits);
         // Copies the framebuffer to the default framebuffer.
         void blitToDefault(GLenum type);
@@ -248,6 +248,6 @@ namespace qrk
         void updateBufferSources();
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

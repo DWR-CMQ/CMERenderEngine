@@ -1,6 +1,6 @@
 #include "texture_registry.h"
 
-namespace qrk 
+namespace Cme 
 {
     void TextureRegistry::updateUniforms(Shader& shader) 
     {
@@ -28,4 +28,4 @@ namespace qrk
         m_vecLastAvailableUnits.pop_back();
     }
 
-}  // namespace qrk
+}  // namespace Cme

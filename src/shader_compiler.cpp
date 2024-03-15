@@ -1,7 +1,7 @@
 #include "shader_compiler.h"
 #include "shader_loader.h"
 
-namespace qrk 
+namespace Cme 
 {
     namespace 
     {
@@ -110,4 +110,4 @@ namespace qrk
         return shader;
     }
 
-}  // namespace qrk
+}  // namespace Cme

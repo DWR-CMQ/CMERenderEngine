@@ -1,6 +1,6 @@
 #include "deferred.h"
 
-namespace qrk
+namespace Cme
 {
 
     DeferredGeometryPassShader::DeferredGeometryPassShader()
@@ -13,13 +13,13 @@ namespace qrk
         setClearColor(glm::vec4(0.0f));
         // Create and attach all components of the G-Buffer.
         // Don't need to read from depth, so we attach as a renderbuffer.
-        attachRenderbuffer(qrk::BufferType::DEPTH_AND_STENCIL);
+        attachRenderbuffer(Cme::BufferType::DEPTH_AND_STENCIL);
         // Position and normal are stored as "HDR" colors for higher precision.
         // TODO: Positions can be un-projected from depth without storing them.
-        m_PositionAOBufferInstance = attachTexture(qrk::BufferType::COLOR_HDR_ALPHA);
-        m_NormalRoughnessBufferInstance = attachTexture(qrk::BufferType::COLOR_SNORM_ALPHA);
-        m_AlbedoMetallicBufferInstance = attachTexture(qrk::BufferType::COLOR_ALPHA);
-        m_EmissionBufferInstance = attachTexture(qrk::BufferType::COLOR_ALPHA);
+        m_PositionAOBufferInstance = attachTexture(Cme::BufferType::COLOR_HDR_ALPHA);
+        m_NormalRoughnessBufferInstance = attachTexture(Cme::BufferType::COLOR_SNORM_ALPHA);
+        m_AlbedoMetallicBufferInstance = attachTexture(Cme::BufferType::COLOR_ALPHA);
+        m_EmissionBufferInstance = attachTexture(Cme::BufferType::COLOR_ALPHA);
     }
 
     unsigned int GBuffer::bindTexture(unsigned int nextTextureUnit, Shader& shader) 
@@ -37,4 +37,4 @@ namespace qrk
         return nextTextureUnit + 4;
     }
 
-}  // namespace qrk
+}  // namespace Cme

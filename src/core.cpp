@@ -1,7 +1,7 @@
 #include "core.h"
 #include <cstdio>
 
-namespace qrk 
+namespace Cme 
 {
     /** Allows init() to be idempotent. */
     bool isInitialized = false;
@@ -38,7 +38,7 @@ namespace qrk
             glfwSetErrorCallback(glfwErrorCallback);
 
             glfwInit();
-            // TODO: Do we need this? Move into qrk::Window?
+            // TODO: Do we need this? Move into Cme::Window?
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -84,4 +84,4 @@ namespace qrk
     }
 
     float time() { return glfwGetTime(); }
-}  // namespace qrk
+}  // namespace Cme

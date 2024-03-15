@@ -1,6 +1,6 @@
 #include "shadows.h"
 
-namespace qrk
+namespace Cme
 {
 
     ShadowCamera::ShadowCamera(std::shared_ptr<DirectionalLight> light,
@@ -54,4 +54,4 @@ namespace qrk
         return nextTextureUnit + 1;
     }
 
-}  // namespace qrk
+}  // namespace Cme

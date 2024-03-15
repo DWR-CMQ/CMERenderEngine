@@ -1,6 +1,6 @@
 #include "random.h"
 
-namespace qrk
+namespace Cme
 {
 	unsigned int SeedGenerator::generateTrueRandomSeed()
 	{
@@ -8,4 +8,4 @@ namespace qrk
 		return rd_();
 	}
 
-}  // namespace qrk
+}  // namespace Cme

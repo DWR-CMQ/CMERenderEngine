@@ -9,7 +9,7 @@
 
 #include <glm/glm.hpp>
 
-namespace qrk
+namespace Cme
 {
     class DeferredShadingException : public QuarkException
     {
@@ -53,6 +53,6 @@ namespace qrk
         Attachment m_EmissionBufferInstance;
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

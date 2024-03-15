@@ -1,12 +1,12 @@
 #include "debug.h"
 
-namespace qrk
+namespace Cme
 {
-	qrk::DebugGroup::DebugGroup(const char* name)
+	Cme::DebugGroup::DebugGroup(const char* name)
 	{
 		glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, -1, name);
 	}
 
 	DebugGroup::~DebugGroup() { glPopDebugGroup(); }
 
-}  // namespace qrk
+}  // namespace Cme

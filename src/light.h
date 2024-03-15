@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace qrk 
+namespace Cme 
 {
     class LightException : public QuarkException 
     {
@@ -297,6 +297,6 @@ namespace qrk
         Attenuation m_stAttenuation;
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

@@ -1,8 +1,7 @@
 #include "fxaa.h"
 
-namespace qrk 
+namespace Cme 
 {
+	FXAAShader::FXAAShader() : ScreenShader(ShaderPath("assets/shaders/builtin/fxaa.frag")) {}
 
-FXAAShader::FXAAShader() : ScreenShader(ShaderPath("assets/shaders/builtin/fxaa.frag")) {}
-
-}  // namespace qrk
+}  // namespace Cme

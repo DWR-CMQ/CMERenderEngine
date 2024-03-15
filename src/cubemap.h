@@ -7,7 +7,7 @@
 #include "shader_primitives.h"
 #include "texture_registry.h"
 
-namespace qrk
+namespace Cme
 {
 
     class CubemapException : public QuarkException 
@@ -67,6 +67,6 @@ namespace qrk
         bool m_bGenerateMips;
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

@@ -11,7 +11,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-namespace qrk 
+namespace Cme 
 {
 
     class ShadowException : public QuarkException 
@@ -78,6 +78,6 @@ namespace qrk
         Attachment m_DepthAttachmentObj;
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

@@ -4,7 +4,7 @@
 #include <glm/gtx/norm.hpp>
 #include <random>
 
-namespace qrk 
+namespace Cme 
 {
 
     SsaoShader::SsaoShader()
@@ -96,7 +96,7 @@ namespace qrk
         // Make sure we're clearing properly.
         setClearColor(glm::vec4(0.0f));
         // Create and attach the SSAO buffer. Don't need a depth buffer.
-        m_SsaoBufferObj = attachTexture(qrk::BufferType::GRAYSCALE);
+        m_SsaoBufferObj = attachTexture(Cme::BufferType::GRAYSCALE);
     }
 
     unsigned int SsaoBuffer::bindTexture(unsigned int nextTextureUnit, Shader& shader) 
@@ -121,4 +121,4 @@ namespace qrk
         setInt("qrk_ssao", 0);
     }
 
-}  // namespace qrk
+}  // namespace Cme

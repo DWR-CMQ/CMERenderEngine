@@ -8,7 +8,7 @@
 #include "shader_primitives.h"
 #include "texture_registry.h"
 
-namespace qrk
+namespace Cme
 {
 
     class IblException : public QuarkException 
@@ -151,6 +151,6 @@ namespace qrk
         GGXBrdfIntegrationShader m_shaderInstance;
     };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

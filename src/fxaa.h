@@ -4,7 +4,7 @@
 #include "shader.h"
 #include "shader_primitives.h"
 
-namespace qrk {
+namespace Cme {
 
 class FXAAShader : public ScreenShader
 {
@@ -12,6 +12,6 @@ public:
     FXAAShader();
 };
 
-}  // namespace qrk
+}  // namespace Cme
 
 #endif

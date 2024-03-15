@@ -1,6 +1,6 @@
 #include "cubemap.h"
 
-namespace qrk 
+namespace Cme 
 {
     void CubemapRenderHelper::multipassDraw(Shader& shader,
                                             TextureRegistry* textureRegistry) 
@@ -84,4 +84,4 @@ namespace qrk
         return nextTextureUnit + 1;
     }
 
-}  // namespace qrk
+}  // namespace Cme
