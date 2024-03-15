@@ -129,7 +129,7 @@
     <ClCompile Include="3dparty\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="App.cpp">
+    <ClCompile Include="src\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -272,7 +272,7 @@
     <ClInclude Include="imguizmo_quat\vgMath.h">
       <Filter>imguizmo_quat</Filter>
     </ClInclude>
-    <ClInclude Include="App.h">
+    <ClInclude Include="src\App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
