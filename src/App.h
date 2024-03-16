@@ -31,17 +31,6 @@ namespace Cme
         COOK_TORRANCE_GGX,
     };
 
-    enum class SkyboxImage
-    {
-        ALEXS_APT = 0,
-        FROZEN_WATERFALL,
-        KLOPPENHEIM,
-        MILKYWAY,
-        MON_VALLEY,
-        UENO_SHRINE,
-        WINTER_FOREST,
-    };
-
     enum class GBufferVis
     {
         DISABLED = 0,
@@ -153,11 +142,6 @@ namespace Cme
 
         void RenderImGuiUI(ModelRenderOptions& opts, Cme::Camera camera, Cme::ShadowMap shadowMap, Cme::SsaoBuffer ssaoBuffer);
         std::unique_ptr<Cme::Model> LoadModelOrDefault();
-        void LoadSkyboxImage(
-            SkyboxImage skyboxImage, Cme::SkyboxMesh& skybox,
-            Cme::EquirectCubemapConverter& equirectCubemapConverter,
-            Cme::CubemapIrradianceCalculator& irradianceCalculator,
-            Cme::GGXPrefilteredEnvMapCalculator& prefilteredEnvMapCalculator);
 
     // GUI
     public:

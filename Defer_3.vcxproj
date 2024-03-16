@@ -153,6 +153,7 @@
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\App.cpp" />
+    <ClCompile Include="src\common_helper.cpp" />
     <ClCompile Include="src\fxaa.cpp" />
     <ClCompile Include="src\bloom.cpp" />
     <ClCompile Include="src\blur.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="src\App.h" />
+    <ClInclude Include="src\cme_defs.h" />
     <ClInclude Include="src\fxaa.h" />
     <ClInclude Include="src\bloom.h" />
     <ClInclude Include="src\blur.h" />
@@ -226,7 +228,7 @@
     <ClInclude Include="src\texture.h" />
     <ClInclude Include="src\texture_map.h" />
     <ClInclude Include="src\texture_registry.h" />
-    <ClInclude Include="src\utils.h" />
+    <ClInclude Include="src\common_helper.h" />
     <ClInclude Include="src\vertex_array.h" />
     <ClInclude Include="src\window.h" />
   </ItemGroup>

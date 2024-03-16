@@ -32,8 +32,9 @@
 #include "texture.h"
 #include "texture_map.h"
 #include "texture_registry.h"
-#include "utils.h"
+#include "common_helper.h"
 #include "vertex_array.h"
 #include "window.h"
+#include "cme_defs.h"
 
 #endif

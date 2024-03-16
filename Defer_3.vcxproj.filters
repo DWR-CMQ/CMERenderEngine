@@ -132,6 +132,9 @@
     <ClCompile Include="src\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\common_helper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\fxaa.h">
@@ -218,7 +221,7 @@
     <ClInclude Include="src\texture_registry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils.h">
+    <ClInclude Include="src\common_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\vertex_array.h">
@@ -273,6 +276,9 @@
       <Filter>imguizmo_quat</Filter>
     </ClInclude>
     <ClInclude Include="src\App.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cme_defs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

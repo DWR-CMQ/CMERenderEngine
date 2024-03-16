@@ -179,8 +179,8 @@ namespace Cme
         //Cme::SkyboxMesh skybox;
         m_spSkybox = std::make_shared<Cme::SkyboxMesh>();
         // Load the actual env map and generate IBL textures.
-        LoadSkyboxImage(m_OptsObj.skyboxImage, *m_spSkybox, *m_spEquirectCubemapConverter,
-            *m_spIrradianceCalculator, *m_spPrefilteredEnvMapCalculator);
+        CommonHelper::LoadSkyboxImage(m_OptsObj.skyboxImage, *m_spSkybox, *m_spEquirectCubemapConverter,
+                                        *m_spIrradianceCalculator, *m_spPrefilteredEnvMapCalculator);
 
         const char* lampShaderSource = R"SHADER(
     #version 460 core
@@ -287,7 +287,7 @@ namespace Cme
             }
             if (m_OptsObj.skyboxImage != prevOpts.skyboxImage)
             {
-                LoadSkyboxImage(m_OptsObj.skyboxImage, *m_spSkybox, *m_spEquirectCubemapConverter, *m_spIrradianceCalculator, *m_spPrefilteredEnvMapCalculator);
+                CommonHelper::LoadSkyboxImage(m_OptsObj.skyboxImage, *m_spSkybox, *m_spEquirectCubemapConverter, *m_spIrradianceCalculator, *m_spPrefilteredEnvMapCalculator);
             }
 
             m_pWindow->setMouseButtonBehavior(m_OptsObj.captureMouse
@@ -805,62 +805,6 @@ namespace Cme
         // Default to the gltf DamagedHelmet.
         auto helmet = std::make_unique<Cme::Model>("assets//models//DamagedHelmet/DamagedHelmet.gltf");
         return helmet;
-    }
-
-    /** Loads a skybox image as a cubemap and generates IBL info. */
-    void App::LoadSkyboxImage(
-        SkyboxImage skyboxImage, Cme::SkyboxMesh& skybox,
-        Cme::EquirectCubemapConverter& equirectCubemapConverter,
-        Cme::CubemapIrradianceCalculator& irradianceCalculator,
-        Cme::GGXPrefilteredEnvMapCalculator& prefilteredEnvMapCalculator)
-    {
-        std::string hdrPath;
-        switch (skyboxImage)
-        {
-        case SkyboxImage::ALEXS_APT:
-            hdrPath = "assets//models//ibl/AlexsApt.hdr";
-            break;
-        case SkyboxImage::FROZEN_WATERFALL:
-            hdrPath = "assets//models//ibl//FrozenWaterfall.hdr";
-            break;
-        case SkyboxImage::KLOPPENHEIM:
-            hdrPath = "assets//models//ibl//Kloppenheim.hdr";
-            break;
-        case SkyboxImage::MILKYWAY:
-            hdrPath = "assets//models//ibl//Milkyway.hdr";
-            break;
-        case SkyboxImage::MON_VALLEY:
-            hdrPath = "assets//models//ibl//MonValley.hdr";
-            break;
-        case SkyboxImage::UENO_SHRINE:
-            hdrPath = "assets//models//ibl//UenoShrine.hdr";
-            break;
-        case SkyboxImage::WINTER_FOREST:
-            hdrPath = "assets//models//ibl//WinterForest.hdr";
-            break;
-        }
-
-        Cme::Texture hdr = Cme::Texture::loadHdr(hdrPath.c_str());
-
-        // Process HDR cubemap
-        {
-            Cme::DebugGroup debugGroup("HDR equirect to cubemap");
-            equirectCubemapConverter.multipassDraw(hdr);
-        }
-        auto cubemap = equirectCubemapConverter.getCubemap();
-        {
-            Cme::DebugGroup debugGroup("Irradiance calculation");
-            irradianceCalculator.multipassDraw(cubemap);
-        }
-        {
-            Cme::DebugGroup debugGroup("Prefiltered env map calculation");
-            prefilteredEnvMapCalculator.multipassDraw(cubemap);
-        }
-
-        skybox.setTexture(cubemap);
-
-        // Don't need this anymore.
-        hdr.free();
     }
 
     // Helper to display a little (?) mark which shows a tooltip when hovered.
