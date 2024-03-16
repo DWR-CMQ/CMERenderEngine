@@ -82,7 +82,8 @@ namespace Cme
         m_FinalColorAttachmentObj = m_spFinalFb->attachTexture(Cme::BufferType::COLOR_ALPHA);
 
         // Build the G-Buffer and prepare deferred shading.
-        m_GeometryPassShaderObj.addUniformSource(m_spCamera);
+        m_spGeometryPassShader = std::make_shared<Cme::DeferredGeometryPassShader>();
+        m_spGeometryPassShader->addUniformSource(m_spCamera);
 
         // GBuffer
         m_spGBuffer = std::make_shared<Cme::GBuffer>(m_pWindow->getSize());
@@ -92,6 +93,7 @@ namespace Cme
         // Screen
         //Cme::ScreenQuadMesh screenQuad;
         //Cme::ScreenShader gBufferVisShader(Cme::ShaderPath("assets//model_shaders//gbuffer_vis.frag"));
+        m_spScreenQuad = std::make_shared<Cme::ScreenQuadMesh>();
         m_spGBufferVisShader = std::make_shared<Cme::ScreenShader>(Cme::ShaderPath("assets//model_shaders//gbuffer_vis.frag"));
         m_spLightingPassShader = std::make_shared<Cme::ScreenShader>(Cme::ShaderPath("assets//model_shaders//lighting_pass.frag"));
 
@@ -105,23 +107,27 @@ namespace Cme
         m_spLightingTextureRegistry->addTextureSource(m_spShadowMap);
 
         m_spShadowCamera = std::make_shared<Cme::ShadowCamera>(m_spDirectionalLight);
-        m_ShadowShaderObj.addUniformSource(m_spShadowCamera);
+
+        m_spShadowShader = std::make_shared<Cme::ShadowMapShader>();
+        m_spShadowShader->addUniformSource(m_spShadowCamera);
         m_spLightingPassShader->addUniformSource(m_spShadowCamera);
 
         // Setup SSAO.
         //Cme::SsaoShader ssaoShader;
-        m_SsaoShaderObj.addUniformSource(m_spCamera);
+        m_spSsaoShader = std::make_shared<Cme::SsaoShader>();
+        m_spSsaoShader->addUniformSource(m_spCamera);
 
         m_spSsaoKernel = std::make_shared<Cme::SsaoKernel>();
-        m_SsaoShaderObj.addUniformSource(m_spSsaoKernel);
+        m_spSsaoShader->addUniformSource(m_spSsaoKernel);
         m_spSsaoBuffer = std::make_shared<Cme::SsaoBuffer>(m_pWindow->getSize());
 
         m_spSsaoTextureRegistry = std::make_shared<Cme::TextureRegistry>();
         m_spSsaoTextureRegistry->addTextureSource(m_spGBuffer);
         m_spSsaoTextureRegistry->addTextureSource(m_spSsaoKernel);
-        m_SsaoShaderObj.addUniformSource(m_spSsaoTextureRegistry);
+        m_spSsaoShader->addUniformSource(m_spSsaoTextureRegistry);
 
         //Cme::SsaoBlurShader ssaoBlurShader;
+        m_spSsaoBlurShader = std::make_shared<Cme::SsaoBlurShader>();
         m_spSsaoBlurredBuffer = std::make_shared<Cme::SsaoBuffer>(m_pWindow->getSize());
         m_spLightingTextureRegistry->addTextureSource(m_spSsaoBlurredBuffer);
 
@@ -137,10 +143,12 @@ namespace Cme
         m_spPostprocessShader->addUniformSource(m_spPostprocessTextureRegistry);
 
         //Cme::FXAAShader fxaaShader;
+        m_spFxaaShader = std::make_shared<Cme::FXAAShader>();
 
         // Setup skybox and IBL.
         //Cme::SkyboxShader skyboxShader;
-        m_SkyboxShaderObj.addUniformSource(m_spCamera);
+        m_spSkyboxShader = std::make_shared<Cme::SkyboxShader>();
+        m_spSkyboxShader->addUniformSource(m_spCamera);
 
         constexpr int CUBEMAP_SIZE = 1024;
         m_spEquirectCubemapConverter = std::make_shared<Cme::EquirectCubemapConverter>(CUBEMAP_SIZE, CUBEMAP_SIZE, true);
@@ -169,9 +177,9 @@ namespace Cme
         m_spLightingTextureRegistry->addTextureSource(brdfLUT);
 
         //Cme::SkyboxMesh skybox;
-
+        m_spSkybox = std::make_shared<Cme::SkyboxMesh>();
         // Load the actual env map and generate IBL textures.
-        LoadSkyboxImage(m_OptsObj.skyboxImage, m_SkyboxObj, *m_spEquirectCubemapConverter,
+        LoadSkyboxImage(m_OptsObj.skyboxImage, *m_spSkybox, *m_spEquirectCubemapConverter,
             *m_spIrradianceCalculator, *m_spPrefilteredEnvMapCalculator);
 
         const char* lampShaderSource = R"SHADER(
@@ -279,7 +287,7 @@ namespace Cme
             }
             if (m_OptsObj.skyboxImage != prevOpts.skyboxImage)
             {
-                LoadSkyboxImage(m_OptsObj.skyboxImage, m_SkyboxObj, *m_spEquirectCubemapConverter, *m_spIrradianceCalculator, *m_spPrefilteredEnvMapCalculator);
+                LoadSkyboxImage(m_OptsObj.skyboxImage, *m_spSkybox, *m_spEquirectCubemapConverter, *m_spIrradianceCalculator, *m_spPrefilteredEnvMapCalculator);
             }
 
             m_pWindow->setMouseButtonBehavior(m_OptsObj.captureMouse
@@ -298,8 +306,8 @@ namespace Cme
 
                 m_spShadowMap->activate();
                 m_spShadowMap->clear();
-                m_ShadowShaderObj.updateUniforms();
-                m_upModel->draw(m_ShadowShaderObj);
+                m_spShadowShader->updateUniforms();
+                m_upModel->draw(*m_spShadowShader);
                 m_spShadowMap->deactivate();
             }
 
@@ -309,14 +317,14 @@ namespace Cme
                 m_spGBuffer->activate();
                 m_spGBuffer->clear();
 
-                m_GeometryPassShaderObj.updateUniforms();
+                m_spGeometryPassShader->updateUniforms();
 
                 // Draw model.
                 if (m_OptsObj.wireframe)
                 {
                     m_pWindow->enableWireframe();
                 }
-                m_upModel->draw(m_GeometryPassShaderObj);
+                m_upModel->draw(*m_spGeometryPassShader);
                 if (m_OptsObj.wireframe)
                 {
                     m_pWindow->disableWireframe();
@@ -333,24 +341,24 @@ namespace Cme
                     {
                     case GBufferVis::POSITIONS:
                     case GBufferVis::AO:
-                        m_ScreenQuadObj.setTexture(m_spGBuffer->getPositionAOTexture());
+                        m_spScreenQuad->setTexture(m_spGBuffer->getPositionAOTexture());
                         break;
                     case GBufferVis::NORMALS:
                     case GBufferVis::ROUGHNESS:
-                        m_ScreenQuadObj.setTexture(m_spGBuffer->getNormalRoughnessTexture());
+                        m_spScreenQuad->setTexture(m_spGBuffer->getNormalRoughnessTexture());
                         break;
                     case GBufferVis::ALBEDO:
                     case GBufferVis::METALLIC:
-                        m_ScreenQuadObj.setTexture(m_spGBuffer->getAlbedoMetallicTexture());
+                        m_spScreenQuad->setTexture(m_spGBuffer->getAlbedoMetallicTexture());
                         break;
                     case GBufferVis::EMISSION:
-                        m_ScreenQuadObj.setTexture(m_spGBuffer->getEmissionTexture());
+                        m_spScreenQuad->setTexture(m_spGBuffer->getEmissionTexture());
                         break;
                     case GBufferVis::DISABLED:
                         break;
                     };
                     m_spGBufferVisShader->setInt("gBufferVis", static_cast<int>(m_OptsObj.gBufferVis));
-                    m_ScreenQuadObj.draw(*m_spGBufferVisShader);
+                    m_spScreenQuad->draw(*m_spGBufferVisShader);
                 }
 
                 // TODO: Refactor avoid needing to copy this.
@@ -372,10 +380,10 @@ namespace Cme
                 m_spSsaoBuffer->activate();
                 m_spSsaoBuffer->clear();
 
-                m_SsaoShaderObj.updateUniforms();
+                m_spSsaoShader->updateUniforms();
 
-                m_ScreenQuadObj.unsetTexture();
-                m_ScreenQuadObj.draw(m_SsaoShaderObj, m_spSsaoTextureRegistry.get());
+                m_spScreenQuad->unsetTexture();
+                m_spScreenQuad->draw(*m_spSsaoShader, m_spSsaoTextureRegistry.get());
 
                 m_spSsaoBuffer->deactivate();
 
@@ -383,8 +391,8 @@ namespace Cme
                 m_spSsaoBlurredBuffer->activate();
                 m_spSsaoBlurredBuffer->clear();
 
-                m_SsaoBlurShaderObj.configureWith(*m_spSsaoKernel, *m_spSsaoBuffer);
-                m_ScreenQuadObj.draw(m_SsaoBlurShaderObj);
+                m_spSsaoBlurShader->configureWith(*m_spSsaoKernel, *m_spSsaoBuffer);
+                m_spScreenQuad->draw(*m_spSsaoBlurShader);
 
                 m_spSsaoBlurredBuffer->deactivate();
             }
@@ -414,8 +422,8 @@ namespace Cme
                 m_spLightingPassShader->setFloat("emissionAttenuation.quadratic",
                     m_OptsObj.emissionAttenuation.z);
 
-                m_ScreenQuadObj.unsetTexture();
-                m_ScreenQuadObj.draw(*m_spLightingPassShader, m_spLightingTextureRegistry.get());
+                m_spScreenQuad->unsetTexture();
+                m_spScreenQuad->draw(*m_spLightingPassShader, m_spLightingTextureRegistry.get());
 
                 m_spMainFb->deactivate();
             }
@@ -450,8 +458,8 @@ namespace Cme
                 }
 
                 // Draw skybox.
-                m_SkyboxShaderObj.updateUniforms();
-                m_SkyboxObj.draw(m_SkyboxShaderObj);
+                m_spSkyboxShader->updateUniforms();
+                m_spSkybox->draw(*m_spSkyboxShader);
 
                 m_spMainFb->deactivate();
             }
@@ -475,8 +483,8 @@ namespace Cme
                 m_spPostprocessShader->setInt("toneMapping", static_cast<int>(m_OptsObj.toneMapping));
                 m_spPostprocessShader->setBool("gammaCorrect", m_OptsObj.gammaCorrect);
                 m_spPostprocessShader->setFloat("gamma", static_cast<int>(m_OptsObj.gamma));
-                m_ScreenQuadObj.setTexture(m_MainColorAttachmentObj);
-                m_ScreenQuadObj.draw(*m_spPostprocessShader, m_spPostprocessTextureRegistry.get());
+                m_spScreenQuad->setTexture(m_MainColorAttachmentObj);
+                m_spScreenQuad->draw(*m_spPostprocessShader, m_spPostprocessTextureRegistry.get());
 
                 m_spFinalFb->deactivate();
             }
@@ -487,8 +495,8 @@ namespace Cme
             if (m_OptsObj.fxaa)
             {
                 Cme::DebugGroup debugGroup("FXAA");
-                m_ScreenQuadObj.setTexture(m_FinalColorAttachmentObj);
-                m_ScreenQuadObj.draw(m_FxaaShaderObj);
+                m_spScreenQuad->setTexture(m_FinalColorAttachmentObj);
+                m_spScreenQuad->draw(*m_spFxaaShader);
             }
             else
             {

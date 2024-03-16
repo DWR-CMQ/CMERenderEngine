@@ -181,14 +181,15 @@ namespace Cme
         std::shared_ptr<Cme::CameraControls> m_spCameraControls;
 
         std::shared_ptr<Cme::ShadowMap> m_spShadowMap;
-        Cme::ShadowMapShader m_ShadowShaderObj;
+        //Cme::ShadowMapShader m_ShadowShaderObj;
+        std::shared_ptr<Cme::ShadowMapShader> m_spShadowShader;
 
-        
         std::unique_ptr<Cme::Model> m_upModel;
 
         std::shared_ptr<Cme::DirectionalLight> m_spDirectionalLight;
 
-        Cme::SkyboxMesh m_SkyboxObj;
+        //Cme::SkyboxMesh m_SkyboxObj;
+        std::shared_ptr<Cme::SkyboxMesh> m_spSkybox;
         std::shared_ptr<Cme::ShadowCamera> m_spShadowCamera;
 
         std::shared_ptr<Cme::GGXPrefilteredEnvMapCalculator> m_spPrefilteredEnvMapCalculator;
@@ -198,24 +199,29 @@ namespace Cme
 
         std::shared_ptr<Cme::GBuffer> m_spGBuffer;
 
-        Cme::DeferredGeometryPassShader m_GeometryPassShaderObj;
+        //Cme::DeferredGeometryPassShader m_GeometryPassShaderObj;
+        std::shared_ptr<Cme::DeferredGeometryPassShader> m_spGeometryPassShader;
 
-        Cme::ScreenQuadMesh m_ScreenQuadObj;
+        //Cme::ScreenQuadMesh m_ScreenQuadObj;
+        std::shared_ptr<Cme::ScreenQuadMesh> m_spScreenQuad;
         std::shared_ptr<Cme::ScreenShader> m_spGBufferVisShader;
         std::shared_ptr<Cme::ScreenShader> m_spLightingPassShader;
 
         // SSAO
-        Cme::SsaoShader m_SsaoShaderObj;
+        //Cme::SsaoShader m_SsaoShaderObj;
+        std::shared_ptr<Cme::SsaoShader> m_spSsaoShader;
         std::shared_ptr<Cme::SsaoKernel> m_spSsaoKernel;
         std::shared_ptr<Cme::SsaoBuffer> m_spSsaoBuffer;
         std::shared_ptr<Cme::SsaoBuffer> m_spSsaoBlurredBuffer;
-        Cme::SsaoBlurShader m_SsaoBlurShaderObj;
+        //Cme::SsaoBlurShader m_SsaoBlurShaderObj;
+        std::shared_ptr<Cme::SsaoBlurShader> m_spSsaoBlurShader;
 
         std::shared_ptr<Cme::TextureRegistry> m_spSsaoTextureRegistry;
         std::shared_ptr<Cme::TextureRegistry> m_spLightingTextureRegistry;
 
         // Skybox
-        Cme::SkyboxShader m_SkyboxShaderObj;
+        // Cme::SkyboxShader m_SkyboxShaderObj;
+        std::shared_ptr<Cme::SkyboxShader> m_spSkyboxShader;
 
         // Debug Shader
         std::shared_ptr<Cme::Shader> m_spNormalShader;
@@ -230,7 +236,8 @@ namespace Cme
         std::shared_ptr<Cme::BloomPass> m_spBloomPass;
 
         // fxaa
-        Cme::FXAAShader m_FxaaShaderObj;
+        // Cme::FXAAShader m_FxaaShaderObj;
+        std::shared_ptr<Cme::FXAAShader> m_spFxaaShader;
 
         std::shared_ptr<Cme::TextureRegistry> m_spPostprocessTextureRegistry;
         std::shared_ptr<Cme::ScreenShader> m_spPostprocessShader;
