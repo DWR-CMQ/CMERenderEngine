@@ -23,7 +23,7 @@ namespace Cme
 
         Texture getBloomMipChainTexture()
         {
-            return m_BloomMipChainTextureInstance.asTexture();
+            return m_BloomMipChainTextureInstance.Transform2Texture();
         }
 
         int getNumMips() { return m_BloomMipChainTextureInstance.m_iNumMips; }

@@ -56,7 +56,7 @@ namespace Cme
         int m_iColorAttachmentIndex;
         TextureType m_eTextureType;
 
-        Texture asTexture();
+        Texture Transform2Texture();
 
         // TODO: Replace with Texture?
     };

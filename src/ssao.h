@@ -66,7 +66,7 @@ namespace Cme
         explicit SsaoBuffer(ImageSize size) : SsaoBuffer(size.width, size.height) {}
         virtual ~SsaoBuffer() = default;
 
-        Texture getSsaoTexture() { return m_SsaoBufferObj.asTexture(); }
+        Texture getSsaoTexture() { return m_SsaoBufferObj.Transform2Texture(); }
 
         unsigned int bindTexture(unsigned int nextTextureUnit,
                                 Shader& shader) override;

@@ -44,11 +44,6 @@ namespace Cme
         ImGui_ImplGlfw_InitForOpenGL(m_pWindow->getGlfwRef(), true);
         ImGui_ImplOpenGL3_Init("#version 460 core");
 
-        // == Main setup ==
-
-        // Prepare opts for usage.
-        //ModelRenderOptions opts;
-
         // Setup the camera.
         m_spCamera = std::make_shared<Cme::Camera>(glm::vec3(0.0f, 0.0f, 3.0f));
         m_spCameraControls = std::make_shared<Cme::OrbitCameraControls>(*m_spCamera);
@@ -103,13 +98,12 @@ namespace Cme
         // Setup shadow mapping.
         constexpr int SHADOW_MAP_SIZE = 1024;
         m_spShadowMap = std::make_shared<Cme::ShadowMap>(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
+        m_spShadowMapCamera = std::make_shared<Cme::ShadowMapCamera>(m_spDirectionalLight);
+        m_spShadowMapShader = std::make_shared<Cme::ShadowMapShader>();
+
         m_spLightingTextureRegistry->addTextureSource(m_spShadowMap);
-
-        m_spShadowCamera = std::make_shared<Cme::ShadowCamera>(m_spDirectionalLight);
-
-        m_spShadowShader = std::make_shared<Cme::ShadowMapShader>();
-        m_spShadowShader->addUniformSource(m_spShadowCamera);
-        m_spLightingPassShader->addUniformSource(m_spShadowCamera);
+        m_spShadowMapShader->addUniformSource(m_spShadowMapCamera);
+        m_spLightingPassShader->addUniformSource(m_spShadowMapCamera);
 
         // Setup SSAO.
         //Cme::SsaoShader ssaoShader;
@@ -298,15 +292,15 @@ namespace Cme
             if (m_OptsObj.shadowMapping)
             {
                 Cme::DebugGroup debugGroup("Directional shadow map");
-                m_spShadowCamera->setCuboidExtents(m_OptsObj.shadowCameraCuboidExtents);
-                m_spShadowCamera->setNearPlane(m_OptsObj.shadowCameraNear);
-                m_spShadowCamera->setFarPlane(m_OptsObj.shadowCameraFar);
-                m_spShadowCamera->setDistanceFromOrigin(m_OptsObj.shadowCameraDistance);
+                m_spShadowMapCamera->setCuboidExtents(m_OptsObj.shadowCameraCuboidExtents);
+                m_spShadowMapCamera->setNearPlane(m_OptsObj.shadowCameraNear);
+                m_spShadowMapCamera->setFarPlane(m_OptsObj.shadowCameraFar);
+                m_spShadowMapCamera->setDistanceFromOrigin(m_OptsObj.shadowCameraDistance);
 
                 m_spShadowMap->activate();
                 m_spShadowMap->clear();
-                m_spShadowShader->updateUniforms();
-                m_upModel->draw(*m_spShadowShader);
+                m_spShadowMapShader->updateUniforms();
+                m_upModel->draw(*m_spShadowMapShader);
                 m_spShadowMap->deactivate();
             }
 

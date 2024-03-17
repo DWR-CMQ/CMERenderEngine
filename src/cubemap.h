@@ -54,7 +54,7 @@ namespace Cme
         // Draw onto the allocated cubemap from the given texture as the source.
         void multipassDraw(Texture source);
 
-        Texture getCubemap() { return m_CubemapInstance.asTexture(); }
+        Texture getCubemap() { return m_CubemapInstance.Transform2Texture(); }
 
         unsigned int bindTexture(unsigned int nextTextureUnit,
                                 Shader& shader) override;

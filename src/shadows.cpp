@@ -3,7 +3,7 @@
 namespace Cme
 {
 
-    ShadowCamera::ShadowCamera(std::shared_ptr<DirectionalLight> light,
+    ShadowMapCamera::ShadowMapCamera(std::shared_ptr<DirectionalLight> light,
 
                                float cuboidExtents, float near, float far,
                                float shadowCameraDistanceFromOrigin,
@@ -15,20 +15,20 @@ namespace Cme
         m_fShadowCameraDistanceFromOrigin(shadowCameraDistanceFromOrigin),
         m_vec3WorldUp(worldUp) {}
 
-    glm::mat4 ShadowCamera::getViewTransform() 
+    glm::mat4 ShadowMapCamera::getViewTransform()
     {
         return glm::lookAt(m_fShadowCameraDistanceFromOrigin * -m_spLight->getDirection(),
                             glm::vec3(0.0f), m_vec3WorldUp);
     }
 
-    glm::mat4 ShadowCamera::getProjectionTransform() 
+    glm::mat4 ShadowMapCamera::getProjectionTransform()
     {
         // Directional lights cast orthographic shadows.
         return glm::ortho(-m_fCuboidExtents, m_fCuboidExtents, -m_fCuboidExtents,
             m_fCuboidExtents, m_fNear, m_fFar);
     }
 
-    void ShadowCamera::updateUniforms(Shader& shader) 
+    void ShadowMapCamera::updateUniforms(Shader& shader)
     {
         shader.setMat4("lightViewProjection",
                         getProjectionTransform() * getViewTransform());
@@ -48,7 +48,7 @@ namespace Cme
     unsigned int ShadowMap::bindTexture(unsigned int nextTextureUnit,
                                         Shader& shader) 
     {
-        m_DepthAttachmentObj.asTexture().bindToUnit(nextTextureUnit);
+        m_DepthAttachmentObj.Transform2Texture().bindToUnit(nextTextureUnit);
         // TODO: Make this more generic.
         shader.setInt("shadowMap", nextTextureUnit);
         return nextTextureUnit + 1;

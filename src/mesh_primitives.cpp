@@ -427,7 +427,7 @@ namespace Cme
 
     void SkyboxMesh::setTexture(Attachment attachment)
     {
-        setTexture(attachment.asTexture());
+        setTexture(attachment.Transform2Texture());
     }
 
     void SkyboxMesh::setTexture(Texture texture)
@@ -489,7 +489,7 @@ namespace Cme
 
     void ScreenQuadMesh::setTexture(Attachment attachment) 
     {
-        setTexture(attachment.asTexture());
+        setTexture(attachment.Transform2Texture());
     }
 
     void ScreenQuadMesh::setTexture(Texture texture) 

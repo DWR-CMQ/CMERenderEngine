@@ -29,16 +29,16 @@ namespace Cme
         explicit GBuffer(ImageSize size) : GBuffer(size.width, size.height) {}
         virtual ~GBuffer() = default;
 
-        Texture getPositionAOTexture() { return m_PositionAOBufferInstance.asTexture(); }
+        Texture getPositionAOTexture() { return m_PositionAOBufferInstance.Transform2Texture(); }
         Texture getNormalRoughnessTexture() 
         {
-            return m_NormalRoughnessBufferInstance.asTexture();
+            return m_NormalRoughnessBufferInstance.Transform2Texture();
         }
         Texture getAlbedoMetallicTexture()
         {
-            return m_AlbedoMetallicBufferInstance.asTexture();
+            return m_AlbedoMetallicBufferInstance.Transform2Texture();
         }
-        Texture getEmissionTexture() { return m_EmissionBufferInstance.asTexture(); }
+        Texture getEmissionTexture() { return m_EmissionBufferInstance.Transform2Texture(); }
 
         unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader) override;
 

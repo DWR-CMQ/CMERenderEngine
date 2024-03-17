@@ -53,7 +53,7 @@ namespace Cme
         // Draw onto the allocated cubemap from the given cubemap as the source.
         void multipassDraw(Texture source);
 
-        Texture getIrradianceMap() { return m_CubemapInstance.asTexture(); }
+        Texture getIrradianceMap() { return m_CubemapInstance.Transform2Texture(); }
 
         unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader) override;
 
@@ -98,7 +98,7 @@ namespace Cme
         // hotspot artifacts.
         void multipassDraw(Texture source);
 
-        Texture getPrefilteredEnvMap() { return m_CubemapInstance.asTexture(); }
+        Texture getPrefilteredEnvMap() { return m_CubemapInstance.Transform2Texture(); }
 
         void updateUniforms(Shader& shader) override;
         unsigned int bindTexture(unsigned int nextTextureUnit,
@@ -140,7 +140,7 @@ namespace Cme
         // of the BRDF and does not require any source data.
         void draw();
 
-        Texture getBrdfIntegrationMap() { return m_IntegrationMapInstance.asTexture(); }
+        Texture getBrdfIntegrationMap() { return m_IntegrationMapInstance.Transform2Texture(); }
 
         unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader) override;
 

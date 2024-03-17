@@ -3,7 +3,8 @@
 
 namespace Cme 
 {
-    Texture Attachment::asTexture() 
+    // 将附件转换为Texture 本质是将ID(句柄)传递给Texture
+    Texture Attachment::Transform2Texture() 
     {
         if (m_eTarget != AttachmentTarget::TEXTURE)
         {

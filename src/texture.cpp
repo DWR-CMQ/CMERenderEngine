@@ -117,16 +117,16 @@ namespace Cme
         return texture;
     }
 
-    Texture Texture::loadHdr(const char* path) 
+    Texture Texture::LoadHDR(const char* path)
     {
         TextureParams params;
 
         params.filtering = TextureFiltering::BILINEAR;
         params.wrapMode = TextureWrapMode::CLAMP_TO_EDGE;
-        return loadHdr(path, params);
+        return LoadHDR(path, params);
     }
 
-    Texture Texture::loadHdr(const char* path, const TextureParams& params) 
+    Texture Texture::LoadHDR(const char* path, const TextureParams& params)
     {
         Texture texture;
         texture.m_eType = TextureType::TEXTURE_2D;
@@ -458,10 +458,11 @@ namespace Cme
         case TextureFiltering::ANISOTROPIC:
             glTexParameteri(target, 0x2801, GL_LINEAR_MIPMAP_LINEAR);
             glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            if (params.filtering == TextureFiltering::ANISOTROPIC) {
-            constexpr float MAX_ANISOTROPY_SAMPLES = 4.0f;
-            glTexParameterf(target, GL_TEXTURE_MAX_ANISOTROPY,
-                            MAX_ANISOTROPY_SAMPLES);
+            if (params.filtering == TextureFiltering::ANISOTROPIC)
+            {
+                constexpr float MAX_ANISOTROPY_SAMPLES = 4.0f;
+                glTexParameterf(target, GL_TEXTURE_MAX_ANISOTROPY,
+                                MAX_ANISOTROPY_SAMPLES);
             }
             break;
         }
@@ -471,22 +472,25 @@ namespace Cme
         case TextureWrapMode::REPEAT:
             glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
             glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            if (type == TextureType::CUBEMAP) {
-            glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_REPEAT);
+            if (type == TextureType::CUBEMAP)
+            {
+                glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_REPEAT);
             }
             break;
         case TextureWrapMode::CLAMP_TO_EDGE:
             glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            if (type == TextureType::CUBEMAP) {
-            glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+            if (type == TextureType::CUBEMAP)
+            {
+                glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
             }
             break;
         case TextureWrapMode::CLAMP_TO_BORDER:
             glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
             glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-            if (type == TextureType::CUBEMAP) {
-            glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
+            if (type == TextureType::CUBEMAP)
+            {
+                glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
             }
             glTexParameterfv(target, GL_TEXTURE_BORDER_COLOR,
                             glm::value_ptr(params.borderColor));

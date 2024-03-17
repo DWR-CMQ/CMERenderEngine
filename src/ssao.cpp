@@ -1,12 +1,11 @@
 #include "ssao.h"
-#include "utils.h"
+#include "common_helper.h"
 
 #include <glm/gtx/norm.hpp>
 #include <random>
 
 namespace Cme 
 {
-
     SsaoShader::SsaoShader()
         : Shader(ShaderPath("assets//shaders//builtin//screen_quad.vert"),
                  ShaderPath("assets//shaders//builtin//ssao.frag")) {}
@@ -20,8 +19,8 @@ namespace Cme
 
     void SsaoKernel::regenerate(int kernelSize, int noiseTextureSideLength) 
     {
-        // Generate the kernel.
         m_vecKernel.resize(kernelSize);
+        // 法向半球 获取一个拥有最大64样本值的采样核心
         for (int i = 0; i < kernelSize; ++i) 
         {
             // Generate a hemisphere sample, with the normal vector pointing in the
@@ -43,7 +42,7 @@ namespace Cme
             // want to sample more points closer to the actual fragment, so we scale the
             // result.
             float scale = static_cast<float>(i) / kernelSize;
-            scale = lerp(0.1f, 1.0f, scale * scale);
+            scale = CommonHelper::lerp(0.1f, 1.0f, scale * scale);
             sample *= scale;
 
             m_vecKernel[i] = sample;
@@ -101,7 +100,7 @@ namespace Cme
 
     unsigned int SsaoBuffer::bindTexture(unsigned int nextTextureUnit, Shader& shader) 
     {
-        m_SsaoBufferObj.asTexture().bindToUnit(nextTextureUnit);
+        m_SsaoBufferObj.Transform2Texture().bindToUnit(nextTextureUnit);
         // Bind sampler uniforms.
         shader.setInt("qrk_ssao", nextTextureUnit);
 

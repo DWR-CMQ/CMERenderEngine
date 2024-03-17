@@ -70,14 +70,14 @@ namespace Cme
         if (m_bGenerateMips)
         {
             // Generate mips after having rendered to the cubemap.
-            m_CubemapInstance.asTexture().generateMips();
+            m_CubemapInstance.Transform2Texture().generateMips();
         }
     }
 
     unsigned int EquirectCubemapConverter::bindTexture(unsigned int nextTextureUnit,
                                                        Shader& shader) 
     {
-        m_CubemapInstance.asTexture().bindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);
+        m_CubemapInstance.Transform2Texture().bindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);
         // Bind sampler uniforms.
         shader.setInt("qrk_cubemap", nextTextureUnit);
 

@@ -116,7 +116,8 @@ namespace Cme
 
         // ShadowMap “ı”∞”≥…‰
         std::shared_ptr<Cme::ShadowMap> m_spShadowMap;
-        std::shared_ptr<Cme::ShadowMapShader> m_spShadowShader;
+        std::shared_ptr<Cme::ShadowMapShader> m_spShadowMapShader;
+        std::shared_ptr<Cme::ShadowMapCamera> m_spShadowMapCamera;
 
         // Model
         std::unique_ptr<Cme::Model> m_upModel;
@@ -124,7 +125,7 @@ namespace Cme
         std::shared_ptr<Cme::DirectionalLight> m_spDirectionalLight;
 
         std::shared_ptr<Cme::SkyboxMesh> m_spSkybox;
-        std::shared_ptr<Cme::ShadowCamera> m_spShadowCamera;
+        
 
         std::shared_ptr<Cme::GGXPrefilteredEnvMapCalculator> m_spPrefilteredEnvMapCalculator;
 
@@ -140,9 +141,9 @@ namespace Cme
         std::shared_ptr<Cme::ScreenShader> m_spLightingPassShader;
 
         // SSAO
-        //Cme::SsaoShader m_SsaoShaderObj;
         std::shared_ptr<Cme::SsaoShader> m_spSsaoShader;
         std::shared_ptr<Cme::SsaoKernel> m_spSsaoKernel;
+
         std::shared_ptr<Cme::SsaoBuffer> m_spSsaoBuffer;
         std::shared_ptr<Cme::SsaoBuffer> m_spSsaoBlurredBuffer;
         //Cme::SsaoBlurShader m_SsaoBlurShaderObj;

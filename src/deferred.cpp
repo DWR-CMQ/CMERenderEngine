@@ -24,10 +24,10 @@ namespace Cme
 
     unsigned int GBuffer::bindTexture(unsigned int nextTextureUnit, Shader& shader) 
     {
-        m_PositionAOBufferInstance.asTexture().bindToUnit(nextTextureUnit + 0);
-        m_NormalRoughnessBufferInstance.asTexture().bindToUnit(nextTextureUnit + 1);
-        m_AlbedoMetallicBufferInstance.asTexture().bindToUnit(nextTextureUnit + 2);
-        m_EmissionBufferInstance.asTexture().bindToUnit(nextTextureUnit + 3);
+        m_PositionAOBufferInstance.Transform2Texture().bindToUnit(nextTextureUnit + 0);
+        m_NormalRoughnessBufferInstance.Transform2Texture().bindToUnit(nextTextureUnit + 1);
+        m_AlbedoMetallicBufferInstance.Transform2Texture().bindToUnit(nextTextureUnit + 2);
+        m_EmissionBufferInstance.Transform2Texture().bindToUnit(nextTextureUnit + 3);
         // Bind sampler uniforms.
         shader.setInt("gPositionAO", nextTextureUnit + 0);
         shader.setInt("gNormalRoughness", nextTextureUnit + 1);

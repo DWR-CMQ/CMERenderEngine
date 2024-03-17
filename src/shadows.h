@@ -19,16 +19,16 @@ namespace Cme
         using QuarkException::QuarkException;
     };
 
-    class ShadowCamera : public UniformSource 
+    class ShadowMapCamera : public UniformSource 
     {
     public:
         // TODO: Currently only renders the origin. Make this more dynamic, and have
         // it automatically determine a best-fit frustum based on the scene.
-        ShadowCamera(std::shared_ptr<DirectionalLight> light,
+        ShadowMapCamera(std::shared_ptr<DirectionalLight> light,
                     float cuboidExtents = 10.0f, float near = 0.1f,
                     float far = 15.0f, float shadowCameraDistanceFromOrigin = 7.0f,
                     glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f));
-        virtual ~ShadowCamera() = default;
+        virtual ~ShadowMapCamera() = default;
 
         float getCuboidExtents() const { return m_fCuboidExtents; }
         void setCuboidExtents(float cuboidExtents) { m_fCuboidExtents = cuboidExtents; }
@@ -70,7 +70,7 @@ namespace Cme
         explicit ShadowMap(ImageSize size) : ShadowMap(size.width, size.height) {}
         virtual ~ShadowMap() = default;
 
-        Texture getDepthTexture() { return m_DepthAttachmentObj.asTexture(); }
+        Texture getDepthTexture() { return m_DepthAttachmentObj.Transform2Texture(); }
         unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader) override;
 
     private:

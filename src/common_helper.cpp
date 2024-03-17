@@ -34,7 +34,7 @@ namespace Cme
             break;
         }
 
-        Cme::Texture hdr = Cme::Texture::loadHdr(hdrPath.c_str());
+        Cme::Texture hdr = Cme::Texture::LoadHDR(hdrPath.c_str());
 
         // Process HDR cubemap
         {
@@ -90,5 +90,6 @@ namespace Cme
         // Flip the image.
         ImGui::Image(texID, ImVec2(size.x, size.y), ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));
         //ImGui::Image(texID, size, /*uv0=*/glm::vec2(0.0f, 1.0f),
+        //ImGui::Image(texID, ImGui::GetContentRegionAvail());
     }
 }

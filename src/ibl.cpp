@@ -33,7 +33,7 @@ namespace Cme
 
     unsigned int CubemapIrradianceCalculator::bindTexture(unsigned int nextTextureUnit, Shader& shader)
     {
-        m_CubemapInstance.asTexture().bindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);
+        m_CubemapInstance.Transform2Texture().bindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);
         // Bind sampler uniforms.
         shader.setInt("qrk_irradianceMap", nextTextureUnit);
 
@@ -94,7 +94,7 @@ namespace Cme
 
     unsigned int GGXPrefilteredEnvMapCalculator::bindTexture(unsigned int nextTextureUnit, Shader& shader) 
     {
-        m_CubemapInstance.asTexture().bindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);
+        m_CubemapInstance.Transform2Texture().bindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);
         // Bind sampler uniforms.
         shader.setInt("qrk_ggxPrefilteredEnvMap", nextTextureUnit);
 
@@ -130,7 +130,7 @@ namespace Cme
 
     unsigned int GGXBrdfIntegrationCalculator::bindTexture(unsigned int nextTextureUnit, Shader& shader)
     {
-        m_IntegrationMapInstance.asTexture().bindToUnit(nextTextureUnit);
+        m_IntegrationMapInstance.Transform2Texture().bindToUnit(nextTextureUnit);
         // Bind sampler uniforms.
         shader.setInt("qrk_ggxIntegrationMap", nextTextureUnit);
 

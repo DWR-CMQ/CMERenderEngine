@@ -120,6 +120,8 @@ namespace Cme
             textureRegistry->pushUsageBlock();
             textureUnit = textureRegistry->getNextTextureUnit();
         }
+
+        // 加载模型才会执行for循环
         for (TextureMap& textureMap : m_vecTextureMaps)
         {
             std::string samplerName;

@@ -20,17 +20,17 @@ namespace Cme
         {
             throw BloomException("ERROR::BLOOM::SOURCE_MIP_OUT_OF_RANGE");
         }
-        m_BloomMipChainTextureInstance.asTexture().setSamplerMipRange(mipLevel, mipLevel);
+        m_BloomMipChainTextureInstance.Transform2Texture().setSamplerMipRange(mipLevel, mipLevel);
     }
 
     void BloomBuffer::deselectMip()
     {
-        m_BloomMipChainTextureInstance.asTexture().unsetSamplerMipRange();
+        m_BloomMipChainTextureInstance.Transform2Texture().unsetSamplerMipRange();
     }
 
     unsigned int BloomBuffer::bindTexture(unsigned int nextTextureUnit, Shader& shader)
     {
-        m_BloomMipChainTextureInstance.asTexture().bindToUnit(nextTextureUnit);
+        m_BloomMipChainTextureInstance.Transform2Texture().bindToUnit(nextTextureUnit);
         // Bind sampler uniforms.
         shader.setInt("qrk_bloomMipChain", nextTextureUnit);
 

@@ -123,8 +123,8 @@ namespace Cme
         static Texture load(const char* path, bool isSRGB, const TextureParams& params);
 
         // Loads an HDR texture from the given path.
-        static Texture loadHdr(const char* path);
-        static Texture loadHdr(const char* path, const TextureParams& params);
+        static Texture LoadHDR(const char* path);
+        static Texture LoadHDR(const char* path, const TextureParams& params);
 
         // Loads a cubemap from a set of 6 textures for the faces. Textures must be
         // passed in order starting with GL_TEXTURE_CUBE_MAP_POSITIVE_X and
