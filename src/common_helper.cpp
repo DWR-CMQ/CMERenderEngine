@@ -56,4 +56,39 @@ namespace Cme
         // Don't need this anymore.
         hdr.free();
     }
+
+    // Helper to display a little (?) mark which shows a tooltip when hovered.
+    void CommonHelper::imguiHelpMarker(const char* desc)
+    {
+        ImGui::TextDisabled("(?)");
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort))
+        {
+            ImGui::BeginTooltip();
+            ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+            ImGui::TextUnformatted(desc);
+            ImGui::PopTextWrapPos();
+            ImGui::EndTooltip();
+        }
+    }
+
+    // Helper for a float slider value.
+    bool CommonHelper::imguiFloatSlider(const char* desc, float* value, float min,
+        float max, const char* fmt, Scale scale)
+    {
+        ImGuiSliderFlags flags = ImGuiSliderFlags_None;
+        if (scale == Scale::LOG)
+        {
+            flags = ImGuiSliderFlags_Logarithmic;
+        }
+        return ImGui::SliderScalar(desc, ImGuiDataType_Float, value, &min, &max, fmt, flags);
+    }
+
+    // Helper for an image control.
+    void CommonHelper::imguiImage(const Cme::Texture& texture, glm::vec2 size)
+    {
+        ImTextureID texID = reinterpret_cast<void*>(texture.getId());
+        // Flip the image.
+        ImGui::Image(texID, ImVec2(size.x, size.y), ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));
+        //ImGui::Image(texID, size, /*uv0=*/glm::vec2(0.0f, 1.0f),
+    }
 }

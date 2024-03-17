@@ -77,7 +77,11 @@ namespace Cme
         glViewport(0, 0, mipSize.width, mipSize.height);
     }
 
-    void Framebuffer::deactivate() { glBindFramebuffer(GL_FRAMEBUFFER, 0); }
+    void Framebuffer::deactivate() 
+    { 
+        // unbind fbo 解绑fbo
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); 
+    }
 
     ImageSize Framebuffer::getSize() 
     {
@@ -95,6 +99,10 @@ namespace Cme
         return attachTexture(type, params);
     }
 
+    /// @brief 创建纹理 并附加到帧缓冲上
+    /// @param type 
+    /// @param params 
+    /// @return 
     Attachment Framebuffer::attachTexture(BufferType type,
                                           const TextureParams& params) 
     {
@@ -228,6 +236,7 @@ namespace Cme
         deactivate();
     }
 
+    // defer shader专用 
     void Framebuffer::blitToDefault(GLenum bits)
     {
         glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_);
@@ -360,7 +369,7 @@ namespace Cme
             }
             // Always read from attachment 0.
             glReadBuffer(GL_COLOR_ATTACHMENT0);
-            } 
+        } 
         else 
         {
             glDrawBuffer(GL_NONE);

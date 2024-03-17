@@ -1,6 +1,39 @@
 #pragma once
 namespace Cme
 {
+    enum class CameraControlType
+    {
+        FLY = 0,
+        ORBIT,
+    };
+
+    enum class LightingModel
+    {
+        BLINN_PHONG = 0,
+        COOK_TORRANCE_GGX,
+    };
+
+    enum class GBufferVis
+    {
+        DISABLED = 0,
+        POSITIONS,
+        AO,
+        NORMALS,
+        ROUGHNESS,
+        ALBEDO,
+        METALLIC,
+        EMISSION,
+    };
+
+    enum class ToneMapping
+    {
+        NONE = 0,
+        REINHARD,
+        REINHARD_LUMINANCE,
+        ACES_APPROX,
+        AMD,
+    };
+
     enum class SkyboxImage
     {
         ALEXS_APT = 0,
@@ -10,5 +43,11 @@ namespace Cme
         MON_VALLEY,
         UENO_SHRINE,
         WINTER_FOREST,
+    };
+
+    enum class Scale
+    {
+        LINEAR = 0,
+        LOG,
     };
 }

@@ -3,11 +3,20 @@
 #include "ibl.h"
 #include "debug.h"
 #include "cme_defs.h"
+//#include "camera.h"
+//#include "shadows.h"
+//#include "ssao.h"
 
 #include <stdlib.h>
 #include <filesystem>
 #include <regex>
 #include <string>
+
+#include "../imguizmo_quat/imGuIZMOquat.h"
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_impl_glfw.h"
+#include "../imgui/imgui_impl_opengl3.h"
+
 
 namespace Cme
 {
@@ -101,6 +110,13 @@ namespace Cme
             Cme::EquirectCubemapConverter& equirectCubemapConverter,
             Cme::CubemapIrradianceCalculator& irradianceCalculator,
             Cme::GGXPrefilteredEnvMapCalculator& prefilteredEnvMapCalculator);
+
+        static void imguiHelpMarker(const char* desc);
+        // Helper for a float slider value.
+        static bool imguiFloatSlider(const char* desc, float* value, float min, float max, const char* fmt = nullptr,  Scale scale = Scale::LINEAR);
+
+        // Helper for an image control.
+        static void imguiImage(const Cme::Texture& texture, glm::vec2 size);
 
     };
 }  

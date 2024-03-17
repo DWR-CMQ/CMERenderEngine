@@ -19,39 +19,6 @@
 
 namespace Cme
 {
-    enum class CameraControlType
-    {
-        FLY = 0,
-        ORBIT,
-    };
-
-    enum class LightingModel
-    {
-        BLINN_PHONG = 0,
-        COOK_TORRANCE_GGX,
-    };
-
-    enum class GBufferVis
-    {
-        DISABLED = 0,
-        POSITIONS,
-        AO,
-        NORMALS,
-        ROUGHNESS,
-        ALBEDO,
-        METALLIC,
-        EMISSION,
-    };
-
-    enum class ToneMapping
-    {
-        NONE = 0,
-        REINHARD,
-        REINHARD_LUMINANCE,
-        ACES_APPROX,
-        AMD,
-    };
-
     // Non-normative context for UI rendering. Used for accessing renderer info.
     struct UIContext
     {
@@ -124,12 +91,6 @@ namespace Cme
         bool enableVsync = true;
     };
 
-    enum class Scale
-    {
-        LINEAR = 0,
-        LOG,
-    };
-
 	class App
 	{
 	public:
@@ -143,17 +104,6 @@ namespace Cme
         void RenderImGuiUI(ModelRenderOptions& opts, Cme::Camera camera, Cme::ShadowMap shadowMap, Cme::SsaoBuffer ssaoBuffer);
         std::unique_ptr<Cme::Model> LoadModelOrDefault();
 
-    // GUI
-    public:
-        void imguiHelpMarker(const char* desc);
-        // Helper for a float slider value.
-        bool imguiFloatSlider(const char* desc, float* value, float min,
-            float max, const char* fmt = nullptr,
-            Scale scale = Scale::LINEAR);
-
-        // Helper for an image control.
-        void imguiImage(const Cme::Texture& texture, glm::vec2 size);
-
     public:
         App();
         ~App();
@@ -164,15 +114,15 @@ namespace Cme
         std::shared_ptr<Cme::Camera> m_spCamera;
         std::shared_ptr<Cme::CameraControls> m_spCameraControls;
 
+        // ShadowMap “ı”∞”≥…‰
         std::shared_ptr<Cme::ShadowMap> m_spShadowMap;
-        //Cme::ShadowMapShader m_ShadowShaderObj;
         std::shared_ptr<Cme::ShadowMapShader> m_spShadowShader;
 
+        // Model
         std::unique_ptr<Cme::Model> m_upModel;
 
         std::shared_ptr<Cme::DirectionalLight> m_spDirectionalLight;
 
-        //Cme::SkyboxMesh m_SkyboxObj;
         std::shared_ptr<Cme::SkyboxMesh> m_spSkybox;
         std::shared_ptr<Cme::ShadowCamera> m_spShadowCamera;
 
@@ -183,10 +133,8 @@ namespace Cme
 
         std::shared_ptr<Cme::GBuffer> m_spGBuffer;
 
-        //Cme::DeferredGeometryPassShader m_GeometryPassShaderObj;
         std::shared_ptr<Cme::DeferredGeometryPassShader> m_spGeometryPassShader;
 
-        //Cme::ScreenQuadMesh m_ScreenQuadObj;
         std::shared_ptr<Cme::ScreenQuadMesh> m_spScreenQuad;
         std::shared_ptr<Cme::ScreenShader> m_spGBufferVisShader;
         std::shared_ptr<Cme::ScreenShader> m_spLightingPassShader;

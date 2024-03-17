@@ -71,8 +71,7 @@ namespace Cme
         virtual ~ShadowMap() = default;
 
         Texture getDepthTexture() { return m_DepthAttachmentObj.asTexture(); }
-        unsigned int bindTexture(unsigned int nextTextureUnit,
-                                Shader& shader) override;
+        unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader) override;
 
     private:
         Attachment m_DepthAttachmentObj;

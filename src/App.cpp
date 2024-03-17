@@ -50,7 +50,7 @@ namespace Cme
         //ModelRenderOptions opts;
 
         // Setup the camera.
-        m_spCamera = std::make_shared<Cme::Camera>(/* position */ glm::vec3(0.0f, 0.0f, 3.0f));
+        m_spCamera = std::make_shared<Cme::Camera>(glm::vec3(0.0f, 0.0f, 3.0f));
         m_spCameraControls = std::make_shared<Cme::OrbitCameraControls>(*m_spCamera);
 
         m_pWindow->bindCamera(m_spCamera);
@@ -72,12 +72,11 @@ namespace Cme
         lightSphere.setModelTransform(glm::scale(glm::translate(glm::mat4(1.0f), pointLight->getPosition()), glm::vec3(0.2f)));
 
         // Set up the main framebuffer that will store intermediate states.
-        //Cme::Framebuffer mainFb(m_pWindow->getSize());
         m_spMainFb = std::make_shared<Cme::Framebuffer>(m_pWindow->getSize());
         m_MainColorAttachmentObj = m_spMainFb->attachTexture(Cme::BufferType::COLOR_HDR_ALPHA);
         m_spMainFb->attachRenderbuffer(Cme::BufferType::DEPTH_AND_STENCIL);
 
-        //Cme::Framebuffer finalFb(m_pWindow->getSize());
+        // 
         m_spFinalFb = std::make_shared<Cme::Framebuffer>(m_pWindow->getSize());
         m_FinalColorAttachmentObj = m_spFinalFb->attachTexture(Cme::BufferType::COLOR_ALPHA);
 
@@ -183,18 +182,18 @@ namespace Cme
                                         *m_spIrradianceCalculator, *m_spPrefilteredEnvMapCalculator);
 
         const char* lampShaderSource = R"SHADER(
-    #version 460 core
-    out vec4 fragColor;
+        #version 460 core
+        out vec4 fragColor;
 
-    void main() { fragColor = vec4(1.0); }
-    )SHADER";
+        void main() { fragColor = vec4(1.0); }
+        )SHADER";
 
-        const char* normalShaderSource = R"SHADER(
-    #version 460 core
-    out vec4 fragColor;
+            const char* normalShaderSource = R"SHADER(
+        #version 460 core
+        out vec4 fragColor;
 
-    void main() { fragColor = vec4(1.0, 1.0, 0.0, 1.0); }
-    )SHADER";
+        void main() { fragColor = vec4(1.0, 1.0, 0.0, 1.0); }
+        )SHADER";
 
         // Prepare some debug shaders.
         m_spNormalShader = std::make_shared<Cme::Shader>(Cme::ShaderPath("assets//model_shaders//model.vert"),
@@ -530,6 +529,12 @@ namespace Cme
 
 	}
 
+    std::unique_ptr<Cme::Model> App::LoadModelOrDefault()
+    {
+        // Default to the gltf DamagedHelmet.
+        auto helmet = std::make_unique<Cme::Model>("assets//models//DamagedHelmet/DamagedHelmet.gltf");
+        return helmet;
+    }
 
     void App::RenderImGuiUI(ModelRenderOptions& opts, Cme::Camera camera, Cme::ShadowMap shadowMap, Cme::SsaoBuffer ssaoBuffer)
     {
@@ -543,17 +548,13 @@ namespace Cme
             // camera while still representing the same model rotation.
             glm::quat rotViewSpace = glm::quat_cast(camera.getViewTransform()) * opts.modelRotation;
             ImGui::gizmo3D("Model rotation", rotViewSpace, IMAGE_BASE_SIZE);
-            opts.modelRotation =
-                glm::quat_cast(glm::inverse(camera.getViewTransform())) *
-                glm::normalize(rotViewSpace);
+            opts.modelRotation = glm::quat_cast(glm::inverse(camera.getViewTransform())) * glm::normalize(rotViewSpace);
 
             ImGui::SameLine();
 
             // Perform some shenanigans so that the gizmo rotates along with the
             // camera while still representing the same light dir..
-            glm::vec3 dirViewSpace =
-                glm::vec3(camera.getViewTransform() *
-                    glm::vec4(opts.directionalDirection, 0.0f));
+            glm::vec3 dirViewSpace = glm::vec3(camera.getViewTransform() * glm::vec4(opts.directionalDirection, 0.0f));
             ImGui::gizmo3D("Light dir", dirViewSpace, IMAGE_BASE_SIZE);
             opts.directionalDirection =
                 glm::vec3(glm::inverse(camera.getViewTransform()) *
@@ -566,7 +567,7 @@ namespace Cme
             {
                 opts.modelRotation = glm::identity<glm::quat>();
             }
-            imguiFloatSlider("Model scale", &opts.modelScale, 0.0001f, 100.0f, "%.04f",
+            CommonHelper::imguiFloatSlider("Model scale", &opts.modelScale, 0.0001f, 100.0f, "%.04f",
                 Scale::LOG);
         }
 
@@ -580,7 +581,7 @@ namespace Cme
             ImGui::Combo("Lighting model", reinterpret_cast<int*>(&opts.lightingModel),
                 "Blinn-Phong\0Cook-Torrance GGX\0\0");
             ImGui::SameLine();
-            imguiHelpMarker("Which lighting model to use for shading.");
+            CommonHelper::imguiHelpMarker("Which lighting model to use for shading.");
 
             ImGui::Separator();
             if (ImGui::TreeNode("Directional light"))
@@ -596,28 +597,26 @@ namespace Cme
                 ImGui::EndDisabled();
                 ImGui::Checkbox("Lock specular", &lockSpecular);
                 ImGui::SameLine();
-                imguiHelpMarker(
-                    "Whether to lock the specular light color to the diffuse. Usually "
+                CommonHelper::imguiHelpMarker("Whether to lock the specular light color to the diffuse. Usually "
                     "desired for PBR.");
                 if (lockSpecular)
                 {
                     opts.directionalSpecular = opts.directionalDiffuse;
                 }
-                imguiFloatSlider("Intensity", &opts.directionalIntensity, 0.0f, 50.0f, nullptr, Scale::LINEAR);
+                CommonHelper::imguiFloatSlider("Intensity", &opts.directionalIntensity, 0.0f, 50.0f, nullptr, Scale::LINEAR);
 
                 ImGui::TreePop();
             }
 
             if (ImGui::TreeNode("Emission lights"))
             {
-                imguiFloatSlider("Emission intensity", &opts.emissionIntensity, 0.0f,
+                CommonHelper::imguiFloatSlider("Emission intensity", &opts.emissionIntensity, 0.0f,
                     1000.0f, nullptr, Scale::LOG);
                 ImGui::DragFloat3("Emission attenuation",
                     reinterpret_cast<float*>(&opts.emissionAttenuation),
                     /*v_speed=*/0.01f, 0.0f, 10.0f);
                 ImGui::SameLine();
-                imguiHelpMarker(
-                    "Constant, linear, and quadratic attenuation of emission lights.");
+                CommonHelper::imguiHelpMarker("Constant, linear, and quadratic attenuation of emission lights.");
 
                 ImGui::TreePop();
             }
@@ -628,13 +627,13 @@ namespace Cme
                 ImGui::BeginDisabled(!opts.shadowMapping);
                 // Shadow map texture is a square, so extend both width/height by the
                 // aspect ratio.
-                imguiImage(shadowMap.getDepthTexture(),
+                CommonHelper::imguiImage(shadowMap.getDepthTexture(),
                     glm::vec2(IMAGE_BASE_SIZE * camera.getAspectRatio(),
                         IMAGE_BASE_SIZE * camera.getAspectRatio()));
-                imguiFloatSlider("Cuboid extents", &opts.shadowCameraCuboidExtents, 0.1f,
+                CommonHelper::imguiFloatSlider("Cuboid extents", &opts.shadowCameraCuboidExtents, 0.1f,
                     50.0f, nullptr, Scale::LOG);
 
-                if (imguiFloatSlider("Near plane", &opts.shadowCameraNear, 0.01, 1000.0,
+                if (CommonHelper::imguiFloatSlider("Near plane", &opts.shadowCameraNear, 0.01, 1000.0,
                     nullptr, Scale::LOG))
                 {
                     if (opts.shadowCameraNear > opts.shadowCameraFar)
@@ -642,16 +641,16 @@ namespace Cme
                         opts.shadowCameraFar = opts.shadowCameraNear;
                     }
                 }
-                if (imguiFloatSlider("Far plane", &opts.shadowCameraFar, 0.01, 1000.0,
-                    nullptr, Scale::LOG)) {
+                if (CommonHelper::imguiFloatSlider("Far plane", &opts.shadowCameraFar, 0.01, 1000.0,
+                    nullptr, Scale::LOG))
+                {
                     if (opts.shadowCameraFar < opts.shadowCameraNear)
                     {
                         opts.shadowCameraNear = opts.shadowCameraFar;
                     }
                 }
-                imguiFloatSlider("Distance from origin", &opts.shadowCameraDistance, 0.01,
-                    100.0f, nullptr, Scale::LOG);
-                if (imguiFloatSlider("Bias min", &opts.shadowBiasMin, 0.0001, 1.0,
+                CommonHelper::imguiFloatSlider("Distance from origin", &opts.shadowCameraDistance, 0.01, 100.0f, nullptr, Scale::LOG);
+                if (CommonHelper::imguiFloatSlider("Bias min", &opts.shadowBiasMin, 0.0001, 1.0,
                     "%.04f", Scale::LOG))
                 {
                     if (opts.shadowBiasMin > opts.shadowBiasMax)
@@ -659,7 +658,7 @@ namespace Cme
                         opts.shadowBiasMax = opts.shadowBiasMin;
                     }
                 }
-                if (imguiFloatSlider("Bias max", &opts.shadowBiasMax, 0.0001, 1.0,
+                if (CommonHelper::imguiFloatSlider("Bias max", &opts.shadowBiasMax, 0.0001, 1.0,
                     "%.04f", Scale::LOG))
                 {
                     if (opts.shadowBiasMax < opts.shadowBiasMin)
@@ -689,27 +688,26 @@ namespace Cme
                     reinterpret_cast<float*>(&opts.ambientColor),
                     ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
                 ImGui::SameLine();
-                imguiHelpMarker("The color of the fixed ambient component.");
+                CommonHelper::imguiHelpMarker("The color of the fixed ambient component.");
                 ImGui::EndDisabled();
 
                 ImGui::Checkbox("SSAO", &opts.ssao);
                 ImGui::BeginDisabled(!opts.ssao);
-                imguiImage(ssaoBuffer.getSsaoTexture(),
+                CommonHelper::imguiImage(ssaoBuffer.getSsaoTexture(),
                     glm::vec2(IMAGE_BASE_SIZE * camera.getAspectRatio(),
                         IMAGE_BASE_SIZE));
 
-                imguiFloatSlider("SSAO radius", &opts.ssaoRadius, 0.01, 5.0, "%.04f",
+                CommonHelper::imguiFloatSlider("SSAO radius", &opts.ssaoRadius, 0.01, 5.0, "%.04f",
                     Scale::LOG);
-                imguiFloatSlider("SSAO bias", &opts.ssaoBias, 0.0001, 1.0, "%.04f",
+                CommonHelper::imguiFloatSlider("SSAO bias", &opts.ssaoBias, 0.0001, 1.0, "%.04f",
                     Scale::LOG);
                 ImGui::EndDisabled();
 
                 ImGui::BeginDisabled(opts.lightingModel != LightingModel::BLINN_PHONG);
-                imguiFloatSlider("Shininess", &opts.shininess, 1.0f, 1000.0f, nullptr,
+                CommonHelper::imguiFloatSlider("Shininess", &opts.shininess, 1.0f, 1000.0f, nullptr,
                     Scale::LOG);
                 ImGui::SameLine();
-                imguiHelpMarker(
-                    "Shininess of specular highlights. Only applies to Phong.");
+                CommonHelper::imguiHelpMarker("Shininess of specular highlights. Only applies to Phong.");
                 ImGui::EndDisabled();
 
                 ImGui::TreePop();
@@ -719,7 +717,7 @@ namespace Cme
             {
                 ImGui::Checkbox("Bloom", &opts.bloom);
                 ImGui::BeginDisabled(!opts.bloom);
-                imguiFloatSlider("Bloom mix", &opts.bloomMix, 0.001f, 1.0f, nullptr,
+                CommonHelper::imguiFloatSlider("Bloom mix", &opts.bloomMix, 0.001f, 1.0f, nullptr,
                     Scale::LOG);
                 ImGui::EndDisabled();
 
@@ -728,7 +726,8 @@ namespace Cme
                     "None\0Reinhard\0Reinhard luminance\0ACES (approx)\0AMD\0\0");
                 ImGui::Checkbox("Gamma correct", &opts.gammaCorrect);
                 ImGui::BeginDisabled(!opts.gammaCorrect);
-                imguiFloatSlider("Gamma", &opts.gamma, 0.01f, 8.0f, nullptr, Scale::LOG);
+                CommonHelper::imguiFloatSlider("Gamma", &opts.gamma, 0.01f, 8.0f, nullptr, Scale::LOG);
+
                 ImGui::EndDisabled();
 
                 ImGui::Checkbox("FXAA", &opts.fxaa);
@@ -747,11 +746,11 @@ namespace Cme
                 reinterpret_cast<int*>(&opts.cameraControlType),
                 static_cast<int>(CameraControlType::ORBIT));
 
-            imguiFloatSlider("Speed", &opts.speed, 0.1, 50.0);
-            imguiFloatSlider("Sensitivity", &opts.sensitivity, 0.01, 1.0, nullptr,
+            CommonHelper::imguiFloatSlider("Speed", &opts.speed, 0.1, 50.0);
+            CommonHelper::imguiFloatSlider("Sensitivity", &opts.sensitivity, 0.01, 1.0, nullptr,
                 Scale::LOG);
-            imguiFloatSlider("FoV", &opts.fov, Cme::MIN_FOV, Cme::MAX_FOV, "%.1f¡ã");
-            if (imguiFloatSlider("Near plane", &opts.near, 0.01, 1000.0, nullptr,
+            CommonHelper::imguiFloatSlider("FoV", &opts.fov, Cme::MIN_FOV, Cme::MAX_FOV, "%.1f¡ã");
+            if (CommonHelper::imguiFloatSlider("Near plane", &opts.near, 0.01, 1000.0, nullptr,
                 Scale::LOG))
             {
                 if (opts.near > opts.far)
@@ -759,7 +758,7 @@ namespace Cme
                     opts.far = opts.near;
                 }
             }
-            if (imguiFloatSlider("Far plane", &opts.far, 0.01, 1000.0, nullptr, Scale::LOG))
+            if (CommonHelper::imguiFloatSlider("Far plane", &opts.far, 0.01, 1000.0, nullptr, Scale::LOG))
             {
                 if (opts.far < opts.near)
                 {
@@ -777,7 +776,7 @@ namespace Cme
                 "Disabled\0Positions\0Ambient "
                 "occlusion\0Normals\0Roughness\0Albedo\0Metallic\0Emission\0\0");
             ImGui::SameLine();
-            imguiHelpMarker("What component of the G-Buffer to visualize.");
+            CommonHelper::imguiHelpMarker("What component of the G-Buffer to visualize.");
 
             ImGui::Checkbox("Wireframe", &opts.wireframe);
             ImGui::Checkbox("Draw vertex normals", &opts.drawNormals);
@@ -800,47 +799,6 @@ namespace Cme
         ImGui::Render();
     }
 
-    std::unique_ptr<Cme::Model> App::LoadModelOrDefault()
-    {
-        // Default to the gltf DamagedHelmet.
-        auto helmet = std::make_unique<Cme::Model>("assets//models//DamagedHelmet/DamagedHelmet.gltf");
-        return helmet;
-    }
-
-    // Helper to display a little (?) mark which shows a tooltip when hovered.
-    void App::imguiHelpMarker(const char* desc)
-    {
-        ImGui::TextDisabled("(?)");
-        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort))
-        {
-            ImGui::BeginTooltip();
-            ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-            ImGui::TextUnformatted(desc);
-            ImGui::PopTextWrapPos();
-            ImGui::EndTooltip();
-        }
-    }
-
-    // Helper for a float slider value.
-    bool App::imguiFloatSlider(const char* desc, float* value, float min,
-        float max, const char* fmt, Scale scale)
-    {
-        ImGuiSliderFlags flags = ImGuiSliderFlags_None;
-        if (scale == Scale::LOG)
-        {
-            flags = ImGuiSliderFlags_Logarithmic;
-        }
-        return ImGui::SliderScalar(desc, ImGuiDataType_Float, value, &min, &max, fmt, flags);
-    }
-
-    // Helper for an image control.
-    void App::imguiImage(const Cme::Texture& texture, glm::vec2 size)
-    {
-        ImTextureID texID = reinterpret_cast<void*>(texture.getId());
-        // Flip the image.
-        ImGui::Image(texID, ImVec2(size.x, size.y), ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));
-        //ImGui::Image(texID, size, /*uv0=*/glm::vec2(0.0f, 1.0f),
-    }
 }
 
 
