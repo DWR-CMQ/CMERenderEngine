@@ -1,7 +1,7 @@
 #include "exceptions.h"
 #include "shader_defs.h"
 #include "shader_loader.h"
-#include "utils.h"
+#include "common_helper.h"
 
 #include <fstream>
 #include <regex>
@@ -26,12 +26,12 @@ namespace Cme
     {
         // Allow ".glsl" as a generic shader suffix (e.g. for type-agnostic shader
         // code).
-        if (string_has_suffix(shaderPath, ".glsl")) return;
+        if (CommonHelper::string_has_suffix(shaderPath, ".glsl")) return;
 
         switch (m_eShaderType)
         {
         case ShaderType::VERTEX:
-            if (!string_has_suffix(shaderPath, ".vert"))
+            if (!CommonHelper::string_has_suffix(shaderPath, ".vert"))
             {
                 throw ShaderLoaderException(
                     "ERROR::SHADER_LOADER::INVALID_EXTENSION\n"
@@ -40,7 +40,7 @@ namespace Cme
             }
             break;
         case ShaderType::FRAGMENT:
-            if (!string_has_suffix(shaderPath, ".frag")) 
+            if (!CommonHelper::string_has_suffix(shaderPath, ".frag"))
             {
                 throw ShaderLoaderException(
                     "ERROR::SHADER_LOADER::INVALID_EXTENSION\n"
@@ -49,7 +49,7 @@ namespace Cme
             }
             break;
         case ShaderType::GEOMETRY:
-            if (!string_has_suffix(shaderPath, ".geom")) 
+            if (!CommonHelper::string_has_suffix(shaderPath, ".geom"))
             {
                 throw ShaderLoaderException(
                     "ERROR::SHADER_LOADER::INVALID_EXTENSION\n"
@@ -58,7 +58,7 @@ namespace Cme
             }
             break;
         case ShaderType::COMPUTE:
-            if (!string_has_suffix(shaderPath, ".comp")) 
+            if (!CommonHelper::string_has_suffix(shaderPath, ".comp"))
             {
                 throw ShaderLoaderException(
                     "ERROR::SHADER_LOADER::INVALID_EXTENSION\n"
@@ -71,7 +71,7 @@ namespace Cme
 
     bool ShaderLoader::alreadyLoadedOnce(std::string const& shaderPath) 
     {
-        std::string resolvedPathFuck = resolvePath(shaderPath);
+        std::string resolvedPathFuck = CommonHelper::resolvePath(shaderPath);
         //std::cout << "resolvedPathFuck: " << resolvedPathFuck << std::endl;
 
         std::string resolvedPath = shaderPath;
@@ -177,13 +177,13 @@ namespace Cme
         }
 
         std::regex includePattern(R"(((^|\r?\n)\s*)#pragma\s+qrk_include\s+(".*"|<.*>)(?=\r?\n|$))");
-        std::string processedCode = regexReplace(shaderCode, includePattern, [this, shaderPath](const std::smatch& m)
+        std::string processedCode = CommonHelper::regexReplace(shaderCode, includePattern, [this, shaderPath](const std::smatch& m)
         {
             std::string whitespace = m[1];
             // Extract the path.
             std::string incl = m[3];
             char inclType = incl[0];
-            std::string path = trim(incl.substr(1, incl.size() - 2));
+            std::string path = CommonHelper::trim(incl.substr(1, incl.size() - 2));
 
             //std::cout << "whitespace: " << whitespace << std::endl;
             //std::cout << "path: " << path << std::endl;

@@ -61,7 +61,7 @@ namespace Cme
         }
 
         template <class BidirIt, class Traits, class CharT, class UnaryFunction>
-        std::basic_string<CharT> regexReplace(BidirIt first, BidirIt last,
+        static std::basic_string<CharT> regexReplace(BidirIt first, BidirIt last,
             const std::basic_regex<CharT, Traits>& re,
             UnaryFunction f)
         {
@@ -98,7 +98,7 @@ namespace Cme
         }
 
         template <class Traits, class CharT, class UnaryFunction>
-        std::string regexReplace(const std::string& s,
+        static std::string regexReplace(const std::string& s,
             const std::basic_regex<CharT, Traits>& re,
             UnaryFunction f)
         {
