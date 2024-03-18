@@ -92,20 +92,19 @@ namespace Cme
         return size;
     }
 
-    Attachment Framebuffer::attachTexture(BufferType type) 
+    Attachment Framebuffer::AttachTexture2FB(BufferType type)
     {
         TextureParams params;
         params.filtering = TextureFiltering::BILINEAR;
         params.wrapMode = TextureWrapMode::CLAMP_TO_EDGE;
-        return attachTexture(type, params);
+        return AttachTexture2FB_i(type, params);
     }
 
     /// @brief 创建纹理 并附加到帧缓冲上
     /// @param type 
     /// @param params 
     /// @return 
-    Attachment Framebuffer::attachTexture(BufferType type,
-                                          const TextureParams& params) 
+    Attachment Framebuffer::AttachTexture2FB_i(BufferType type, const TextureParams& params)
     {
         checkFlags(type);
         activate();
@@ -139,11 +138,11 @@ namespace Cme
         }
         if (m_iSamples && textureType != TextureType::CUBEMAP)
         {
-            glTexStorage2DMultisample(textureTarget, m_iSamples, internalFormat, m_iWidth,
-                m_iHeight, GL_TRUE);
+            glTexStorage2DMultisample(textureTarget, m_iSamples, internalFormat, m_iWidth, m_iHeight, GL_TRUE);
         } 
         else 
         {
+            // 不可变存储 2D数组纹理 多样本函数
             glTexStorage2D(textureTarget, numMips, internalFormat, m_iWidth, m_iHeight);
         }
 

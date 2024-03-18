@@ -19,13 +19,13 @@ namespace Cme
     CubemapIrradianceCalculator::CubemapIrradianceCalculator(int width, int height)
         : m_BufferInstance(width, height), m_CubemapRenderHelperInstance(&m_BufferInstance)
     {
-        m_CubemapInstance = m_BufferInstance.attachTexture(BufferType::COLOR_CUBEMAP_HDR);
+        m_CubemapInstance = m_BufferInstance.AttachTexture2FB(BufferType::COLOR_CUBEMAP_HDR);
     }
 
     void CubemapIrradianceCalculator::multipassDraw(Texture source)
     {
         // Set up the source.
-        source.bindToUnit(0, TextureBindType::CUBEMAP);
+        source.BindToUnit(0, TextureBindType::CUBEMAP);
         m_IrradianceShaderInstance.setInt("qrk_environmentMap", 0);
 
         m_CubemapRenderHelperInstance.multipassDraw(m_IrradianceShaderInstance);
@@ -33,7 +33,7 @@ namespace Cme
 
     unsigned int CubemapIrradianceCalculator::bindTexture(unsigned int nextTextureUnit, Shader& shader)
     {
-        m_CubemapInstance.Transform2Texture().bindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);
+        m_CubemapInstance.Transform2Texture().BindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);
         // Bind sampler uniforms.
         shader.setInt("qrk_irradianceMap", nextTextureUnit);
 
@@ -68,13 +68,13 @@ namespace Cme
         textureParams.generateMips = MipGeneration::ALWAYS;
         textureParams.maxNumMips = maxNumMips;
 
-        m_CubemapInstance = m_BufferInstance.attachTexture(BufferType::COLOR_CUBEMAP_HDR, textureParams);
+        m_CubemapInstance = m_BufferInstance.AttachTexture2FB_i(BufferType::COLOR_CUBEMAP_HDR, textureParams);
     }
 
     void GGXPrefilteredEnvMapCalculator::multipassDraw(Texture source) 
     {
         // Set up the source.
-        source.bindToUnit(0, TextureBindType::CUBEMAP);
+        source.BindToUnit(0, TextureBindType::CUBEMAP);
         m_ShaderInstance.setInt("qrk_environmentMap", 0);
 
         for (int mip = 0; mip < m_CubemapInstance.m_iNumMips; ++mip)
@@ -94,7 +94,7 @@ namespace Cme
 
     unsigned int GGXPrefilteredEnvMapCalculator::bindTexture(unsigned int nextTextureUnit, Shader& shader) 
     {
-        m_CubemapInstance.Transform2Texture().bindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);
+        m_CubemapInstance.Transform2Texture().BindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);
         // Bind sampler uniforms.
         shader.setInt("qrk_ggxPrefilteredEnvMap", nextTextureUnit);
 
@@ -118,7 +118,7 @@ namespace Cme
         // The BRDF integration map contains values from [0..1] so we can use an SNORM
         // for greater precision.
         // TODO: Use a 2-channel SNORM texture instead.
-        m_IntegrationMapInstance = m_BufferInstance.attachTexture(BufferType::COLOR_SNORM);
+        m_IntegrationMapInstance = m_BufferInstance.AttachTexture2FB(BufferType::COLOR_SNORM);
     }
 
     void GGXBrdfIntegrationCalculator::draw() 
@@ -130,7 +130,7 @@ namespace Cme
 
     unsigned int GGXBrdfIntegrationCalculator::bindTexture(unsigned int nextTextureUnit, Shader& shader)
     {
-        m_IntegrationMapInstance.Transform2Texture().bindToUnit(nextTextureUnit);
+        m_IntegrationMapInstance.Transform2Texture().BindToUnit(nextTextureUnit);
         // Bind sampler uniforms.
         shader.setInt("qrk_ggxIntegrationMap", nextTextureUnit);
 

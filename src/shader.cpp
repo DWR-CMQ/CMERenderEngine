@@ -111,7 +111,7 @@ namespace Cme
     void ComputeShader::dispatchToTexture(Texture& texture) 
     {
         activate();
-        texture.bindToUnit(0, TextureBindType::IMAGE_TEXTURE);
+        texture.BindToUnit(0, TextureBindType::IMAGE_TEXTURE);
         glDispatchCompute(texture.getWidth(), texture.getHeight(), 1);
 
         // Guard until writing is complete.

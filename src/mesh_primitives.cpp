@@ -499,7 +499,10 @@ namespace Cme
         m_vecTextureMaps.emplace_back(texture, TextureMapType::DIFFUSE);
     }
 
-    void ScreenQuadMesh::unsetTexture() { m_vecTextureMaps.clear(); }
+    void ScreenQuadMesh::unsetTexture()
+    { 
+        m_vecTextureMaps.clear();
+    }
 
     void ScreenQuadMesh::initializeVertexAttributes()
     {
@@ -528,7 +531,7 @@ namespace Cme
         }
 
         Texture& texture = m_vecTextureMaps[0].getTexture();
-        texture.bindToUnit(textureUnit, TextureBindType::TEXTURE_2D);
+        texture.BindToUnit(textureUnit, TextureBindType::TEXTURE_2D);
 
         // Set the sampler to the correct texture unit.
         shader.setInt("qrk_screenTexture", textureUnit);

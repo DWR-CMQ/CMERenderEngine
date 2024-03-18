@@ -129,12 +129,12 @@ namespace Cme
             Texture& texture = textureMap.getTexture();
             if (type == TextureMapType::CUBEMAP) 
             {
-                texture.bindToUnit(textureUnit, TextureBindType::CUBEMAP);
+                texture.BindToUnit(textureUnit, TextureBindType::CUBEMAP);
                 samplerName = "skybox";
             } 
             else 
             {
-                texture.bindToUnit(textureUnit, TextureBindType::TEXTURE_2D);
+                texture.BindToUnit(textureUnit, TextureBindType::TEXTURE_2D);
                 static std::string materialName = "material";
                 std::ostringstream ss;
                 // TODO: Make this more configurable / less generic?
@@ -142,7 +142,8 @@ namespace Cme
 
                 // A subset of texture types can be packed into a single texture, which we
                 // set a uniform for.
-                switch (type) {
+                switch (type) 
+                {
                 case TextureMapType::DIFFUSE:
                     ss << "diffuseMaps[" << diffuseIdx << "]";
                     diffuseIdx++;

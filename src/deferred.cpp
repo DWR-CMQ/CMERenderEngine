@@ -16,18 +16,18 @@ namespace Cme
         attachRenderbuffer(Cme::BufferType::DEPTH_AND_STENCIL);
         // Position and normal are stored as "HDR" colors for higher precision.
         // TODO: Positions can be un-projected from depth without storing them.
-        m_PositionAOBufferInstance = attachTexture(Cme::BufferType::COLOR_HDR_ALPHA);
-        m_NormalRoughnessBufferInstance = attachTexture(Cme::BufferType::COLOR_SNORM_ALPHA);
-        m_AlbedoMetallicBufferInstance = attachTexture(Cme::BufferType::COLOR_ALPHA);
-        m_EmissionBufferInstance = attachTexture(Cme::BufferType::COLOR_ALPHA);
+        m_PositionAOBufferInstance = AttachTexture2FB(Cme::BufferType::COLOR_HDR_ALPHA);
+        m_NormalRoughnessBufferInstance = AttachTexture2FB(Cme::BufferType::COLOR_SNORM_ALPHA);
+        m_AlbedoMetallicBufferInstance = AttachTexture2FB(Cme::BufferType::COLOR_ALPHA);
+        m_EmissionBufferInstance = AttachTexture2FB(Cme::BufferType::COLOR_ALPHA);
     }
 
     unsigned int GBuffer::bindTexture(unsigned int nextTextureUnit, Shader& shader) 
     {
-        m_PositionAOBufferInstance.Transform2Texture().bindToUnit(nextTextureUnit + 0);
-        m_NormalRoughnessBufferInstance.Transform2Texture().bindToUnit(nextTextureUnit + 1);
-        m_AlbedoMetallicBufferInstance.Transform2Texture().bindToUnit(nextTextureUnit + 2);
-        m_EmissionBufferInstance.Transform2Texture().bindToUnit(nextTextureUnit + 3);
+        m_PositionAOBufferInstance.Transform2Texture().BindToUnit(nextTextureUnit + 0);
+        m_NormalRoughnessBufferInstance.Transform2Texture().BindToUnit(nextTextureUnit + 1);
+        m_AlbedoMetallicBufferInstance.Transform2Texture().BindToUnit(nextTextureUnit + 2);
+        m_EmissionBufferInstance.Transform2Texture().BindToUnit(nextTextureUnit + 3);
         // Bind sampler uniforms.
         shader.setInt("gPositionAO", nextTextureUnit + 0);
         shader.setInt("gNormalRoughness", nextTextureUnit + 1);

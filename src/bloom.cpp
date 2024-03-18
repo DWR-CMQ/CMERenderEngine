@@ -11,7 +11,7 @@ namespace Cme
         resampleParams.wrapMode = Cme::TextureWrapMode::CLAMP_TO_EDGE;
         resampleParams.generateMips = Cme::MipGeneration::ALWAYS;
 
-        m_BloomMipChainTextureInstance = attachTexture(Cme::BufferType::COLOR_HDR_ALPHA, resampleParams);
+        m_BloomMipChainTextureInstance = AttachTexture2FB_i(Cme::BufferType::COLOR_HDR_ALPHA, resampleParams);
     }
 
     void BloomBuffer::selectMip(int mipLevel)
@@ -30,7 +30,7 @@ namespace Cme
 
     unsigned int BloomBuffer::bindTexture(unsigned int nextTextureUnit, Shader& shader)
     {
-        m_BloomMipChainTextureInstance.Transform2Texture().bindToUnit(nextTextureUnit);
+        m_BloomMipChainTextureInstance.Transform2Texture().BindToUnit(nextTextureUnit);
         // Bind sampler uniforms.
         shader.setInt("qrk_bloomMipChain", nextTextureUnit);
 
@@ -41,7 +41,7 @@ namespace Cme
 
     void BloomDownsampleShader::configureWith(BloomBuffer& buffer) 
     {
-        buffer.getBloomMipChainTexture().bindToUnit(0);
+        buffer.getBloomMipChainTexture().BindToUnit(0);
         setInt("qrk_bloomMipChain", 0);
     }
 
@@ -54,7 +54,7 @@ namespace Cme
     {
         // The bloom shader only needs a single texture, so we just bind it
         // directly.
-        buffer.getBloomMipChainTexture().bindToUnit(0);
+        buffer.getBloomMipChainTexture().BindToUnit(0);
         setInt("qrk_bloomMipChain", 0);
     }
 
@@ -97,7 +97,7 @@ namespace Cme
 
     unsigned int BloomPass::bindTexture(unsigned int nextTextureUnit, Shader& shader)
     {
-        getOutput().bindToUnit(nextTextureUnit);
+        getOutput().BindToUnit(nextTextureUnit);
         // Bind sampler uniforms.
         shader.setInt("qrk_bloom", nextTextureUnit);
 

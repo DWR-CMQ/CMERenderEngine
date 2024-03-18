@@ -3,20 +3,6 @@
 #include <memory>
 #include <iostream>
 
-//const char* lampShaderSource = R"SHADER(
-//    #version 460 core
-//    out vec4 fragColor;
-//
-//    void main() { fragColor = vec4(1.0); }
-//    )SHADER";
-//
-//const char* normalShaderSource = R"SHADER(
-//    #version 460 core
-//    out vec4 fragColor;
-//
-//    void main() { fragColor = vec4(1.0, 1.0, 0.0, 1.0); }
-//    )SHADER";
-
 namespace Cme
 {
     // Non-normative context for UI rendering. Used for accessing renderer info.
@@ -121,14 +107,11 @@ namespace Cme
 
         // Model
         std::unique_ptr<Cme::Model> m_upModel;
+        // Model
 
         std::shared_ptr<Cme::DirectionalLight> m_spDirectionalLight;
-
-        std::shared_ptr<Cme::SkyboxMesh> m_spSkybox;
         
-
         std::shared_ptr<Cme::GGXPrefilteredEnvMapCalculator> m_spPrefilteredEnvMapCalculator;
-
         std::shared_ptr<Cme::EquirectCubemapConverter> m_spEquirectCubemapConverter;
         std::shared_ptr<Cme::CubemapIrradianceCalculator> m_spIrradianceCalculator;
 
@@ -141,39 +124,45 @@ namespace Cme
         std::shared_ptr<Cme::ScreenShader> m_spLightingPassShader;
 
         // SSAO
-        std::shared_ptr<Cme::SsaoShader> m_spSsaoShader;
+        std::shared_ptr<Cme::SsaoShader> m_spSsaoShader;              
+        std::shared_ptr<Cme::SsaoBlurShader> m_spSsaoBlurShader;      
+        
+        std::shared_ptr<Cme::SsaoBuffer> m_spSsaoBuffer;                // 环境遮蔽
+        std::shared_ptr<Cme::SsaoBuffer> m_spSsaoBlurredBuffer;         // 环境遮蔽模糊
+
         std::shared_ptr<Cme::SsaoKernel> m_spSsaoKernel;
+        std::shared_ptr<Cme::TextureRegistry> m_spSsaoTextureRegistry;  // Render的时候更新Uniform变量
+        // SSAO 
 
-        std::shared_ptr<Cme::SsaoBuffer> m_spSsaoBuffer;
-        std::shared_ptr<Cme::SsaoBuffer> m_spSsaoBlurredBuffer;
-        //Cme::SsaoBlurShader m_SsaoBlurShaderObj;
-        std::shared_ptr<Cme::SsaoBlurShader> m_spSsaoBlurShader;
-
-        std::shared_ptr<Cme::TextureRegistry> m_spSsaoTextureRegistry;
+        // ***
         std::shared_ptr<Cme::TextureRegistry> m_spLightingTextureRegistry;
 
         // Skybox
-        // Cme::SkyboxShader m_SkyboxShaderObj;
         std::shared_ptr<Cme::SkyboxShader> m_spSkyboxShader;
+        std::shared_ptr<Cme::SkyboxMesh> m_spSkybox;
+        // Skybox
 
-        // Debug Shader
-        std::shared_ptr<Cme::Shader> m_spNormalShader;
-        std::shared_ptr<Cme::Shader> m_spLampShader;
-
-        //
         std::shared_ptr<Cme::Framebuffer> m_spMainFb;
         Attachment m_MainColorAttachmentObj;
         std::shared_ptr<Cme::Framebuffer> m_spFinalFb;
         Attachment m_FinalColorAttachmentObj;
 
+        // Bloom
         std::shared_ptr<Cme::BloomPass> m_spBloomPass;
+        // Bloom
 
-        // fxaa
-        // Cme::FXAAShader m_FxaaShaderObj;
+        // FXAA
         std::shared_ptr<Cme::FXAAShader> m_spFxaaShader;
+        // FXAA
 
+        // PostProcess
         std::shared_ptr<Cme::TextureRegistry> m_spPostprocessTextureRegistry;
         std::shared_ptr<Cme::ScreenShader> m_spPostprocessShader;
+        // PostProcess
+
+        // Debug Shader
+        std::shared_ptr<Cme::Shader> m_spNormalShader;
+        std::shared_ptr<Cme::Shader> m_spLampShader;
 	};
 }
 

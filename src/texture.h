@@ -156,8 +156,7 @@ namespace Cme
         // Unit should be a number starting from 0, not the actual texture unit's
         // GLenum. This will bind samplers normally, but will bind cubemaps as
         // cubemaps and custom textures as image textures.
-        void bindToUnit(unsigned int textureUnit,
-                        TextureBindType bindType = TextureBindType::BY_TEXTURE_TYPE);
+        void BindToUnit(unsigned int textureUnit, TextureBindType bindType = TextureBindType::BY_TEXTURE_TYPE);
 
         // Generates mipmaps for the current texture. Note that this will not succeed
         // for textures with immutable storage.

@@ -378,7 +378,8 @@ namespace Cme
         return texture;
     }
 
-    void Texture::bindToUnit(unsigned int textureUnit, TextureBindType bindType)
+
+    void Texture::BindToUnit(unsigned int textureUnit, TextureBindType bindType)
     {
         // TODO: Take into account GL_MAX_TEXTURE_UNITS here.
         glActiveTexture(GL_TEXTURE0 + textureUnit);
@@ -398,8 +399,7 @@ namespace Cme
             break;
         case TextureBindType::IMAGE_TEXTURE:
             // Bind image unit.
-            glBindImageTexture(textureUnit, m_uiID, /*level=*/0, /*layered=*/GL_FALSE, 0,
-                                GL_READ_WRITE, m_uiInternalFormat);
+            glBindImageTexture(textureUnit, m_uiID, 0, GL_FALSE, 0, GL_READ_WRITE, m_uiInternalFormat);
             break;
         default:
             throw TextureException("ERROR::TEXTURE::INVALID_TEXTURE_BIND_TYPE\n" +
@@ -421,7 +421,10 @@ namespace Cme
         setSamplerMipRange(0, 1000);
     }
 
-    void Texture::free() { glDeleteTextures(1, &m_uiID); }
+    void Texture::free() 
+    { 
+        glDeleteTextures(1, &m_uiID);
+    }
 
     void Texture::generateMips(int maxNumMips)
     {
@@ -498,4 +501,4 @@ namespace Cme
         }
     }
 
-}  // namespace Cme
+} 

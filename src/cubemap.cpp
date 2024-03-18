@@ -56,13 +56,13 @@ namespace Cme
         params.wrapMode = TextureWrapMode::CLAMP_TO_EDGE;
         params.generateMips = generateMips ? MipGeneration::ALWAYS : MipGeneration::NEVER;
 
-        m_CubemapInstance = m_BufferInstance.attachTexture(BufferType::COLOR_CUBEMAP_HDR, params);
+        m_CubemapInstance = m_BufferInstance.AttachTexture2FB_i(BufferType::COLOR_CUBEMAP_HDR, params);
     }
 
     void EquirectCubemapConverter::multipassDraw(Texture source)
     {
         // Set up the source.
-        source.bindToUnit(0, TextureBindType::TEXTURE_2D);
+        source.BindToUnit(0, TextureBindType::TEXTURE_2D);
         m_EquirectCubemapShaderInstance.setInt("qrk_equirectMap", 0);
 
         m_CubemapRenderHelperInstance.multipassDraw(m_EquirectCubemapShaderInstance);
@@ -77,7 +77,7 @@ namespace Cme
     unsigned int EquirectCubemapConverter::bindTexture(unsigned int nextTextureUnit,
                                                        Shader& shader) 
     {
-        m_CubemapInstance.Transform2Texture().bindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);
+        m_CubemapInstance.Transform2Texture().BindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);
         // Bind sampler uniforms.
         shader.setInt("qrk_cubemap", nextTextureUnit);
 

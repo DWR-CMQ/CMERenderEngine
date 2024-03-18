@@ -194,8 +194,8 @@ namespace Cme
 
         ImageSize getSize();
 
-        Attachment attachTexture(BufferType type);
-        Attachment attachTexture(BufferType type, const TextureParams& params);
+        Attachment AttachTexture2FB(BufferType type);
+        Attachment AttachTexture2FB_i(BufferType type, const TextureParams& params);
         Attachment attachRenderbuffer(BufferType type);
 
         // Returns the first texture attachment of the given type.

@@ -42,13 +42,13 @@ namespace Cme
         params.filtering = TextureFiltering::NEAREST;
         params.wrapMode = TextureWrapMode::CLAMP_TO_BORDER;
         params.borderColor = glm::vec4(1.0f);
-        m_DepthAttachmentObj = attachTexture(BufferType::DEPTH, params);
+        m_DepthAttachmentObj = AttachTexture2FB_i(BufferType::DEPTH, params);
     }
 
     unsigned int ShadowMap::bindTexture(unsigned int nextTextureUnit,
                                         Shader& shader) 
     {
-        m_DepthAttachmentObj.Transform2Texture().bindToUnit(nextTextureUnit);
+        m_DepthAttachmentObj.Transform2Texture().BindToUnit(nextTextureUnit);
         // TODO: Make this more generic.
         shader.setInt("shadowMap", nextTextureUnit);
         return nextTextureUnit + 1;

@@ -55,8 +55,8 @@ namespace Cme
         float m_fRadius;
         float m_fBias;
         std::vector<glm::vec3> m_vecKernel;
-        Texture m_NoiseTextureObj;
-        UniformRandom m_RandObj;
+        Texture m_NoiseTextureObj;       // 随机核心转动作为纹理数据
+        UniformRandom m_RandObj;         // 随机浮点数 范围0.0-1.0
     };
 
     class SsaoBuffer : public Framebuffer, public TextureSource 
@@ -66,13 +66,15 @@ namespace Cme
         explicit SsaoBuffer(ImageSize size) : SsaoBuffer(size.width, size.height) {}
         virtual ~SsaoBuffer() = default;
 
-        Texture getSsaoTexture() { return m_SsaoBufferObj.Transform2Texture(); }
+        Texture getSsaoTexture()
+        { 
+            return m_SsaoBufferAttachmentObj.Transform2Texture(); 
+        }
 
-        unsigned int bindTexture(unsigned int nextTextureUnit,
-                                Shader& shader) override;
+        unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader) override;
 
     private:
-        Attachment m_SsaoBufferObj;
+        Attachment m_SsaoBufferAttachmentObj;
     };
 
     // A simple shader that blurs a precomputed SSAO buffer.
