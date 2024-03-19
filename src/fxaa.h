@@ -1,8 +1,8 @@
 #ifndef QUARKGL_AA_H_
 #define QUARKGL_AA_H_
 
-#include "shader.h"
-#include "shader_primitives.h"
+#include "shader/shader.h"
+#include "shader/shader_primitives.h"
 
 namespace Cme {
 

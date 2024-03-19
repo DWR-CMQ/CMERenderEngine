@@ -3,7 +3,7 @@
 
 #include <glad/glad.h>
 
-#include "../shader.h"
+#include "../shader/shader.h"
 #include "../texture_map.h"
 #include "../texture_registry.h"
 #include "../vertex_array.h"

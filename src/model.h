@@ -5,7 +5,7 @@
 
 #include "exceptions.h"
 #include "shape/mesh.h"
-#include "shader.h"
+#include "shader/shader.h"
 #include "texture_map.h"
 #include "texture_map.h"
 

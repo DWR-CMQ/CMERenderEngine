@@ -2,7 +2,6 @@
 
 namespace Cme
 {
-
     DeferredGeometryPassShader::DeferredGeometryPassShader()
         : Shader(ShaderPath("assets//shaders//builtin//deferred.vert"),
                  ShaderPath("assets//shaders//builtin//deferred.frag")) {}

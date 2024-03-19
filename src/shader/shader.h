@@ -2,9 +2,9 @@
 #define QUARKGL_SHADER_H_
 
 #include <glad/glad.h>
-#include "exceptions.h"
+#include "../exceptions.h"
 #include "shader_defs.h"
-#include "texture.h"
+#include "../texture.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>

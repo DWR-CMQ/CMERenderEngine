@@ -1,7 +1,7 @@
-#include "exceptions.h"
+#include "../exceptions.h"
 #include "shader_defs.h"
 #include "shader_loader.h"
-#include "common_helper.h"
+#include "../common_helper.h"
 
 #include <fstream>
 #include <regex>
@@ -71,9 +71,6 @@ namespace Cme
 
     bool ShaderLoader::alreadyLoadedOnce(std::string const& shaderPath) 
     {
-        std::string resolvedPathFuck = CommonHelper::resolvePath(shaderPath);
-        //std::cout << "resolvedPathFuck: " << resolvedPathFuck << std::endl;
-
         std::string resolvedPath = shaderPath;
 
         auto item = m_unsetOnceCache.find(resolvedPath);
@@ -184,9 +181,6 @@ namespace Cme
             std::string incl = m[3];
             char inclType = incl[0];
             std::string path = CommonHelper::trim(incl.substr(1, incl.size() - 2));
-
-            //std::cout << "whitespace: " << whitespace << std::endl;
-            //std::cout << "path: " << path << std::endl;
 
             if (inclType == '<')
             {

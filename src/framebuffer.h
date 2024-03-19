@@ -1,7 +1,7 @@
 #ifndef QUARKGL_FRAMEBUFFER_H_
 #define QUARKGL_FRAMEBUFFER_H_
 
-#include "shader.h"
+#include "shader/shader.h"
 #include "texture.h"
 #include "window.h"
 

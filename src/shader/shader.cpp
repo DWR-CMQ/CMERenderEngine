@@ -1,4 +1,4 @@
-#include "core.h"
+#include "../core.h"
 #include "shader.h"
 #include "shader_compiler.h"
 #include "shader_loader.h"

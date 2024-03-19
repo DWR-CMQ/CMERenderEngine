@@ -1,7 +1,7 @@
 #ifndef QUARKGL_SHADER_LOADER_H_
 #define QUARKGL_SHADER_LOADER_H_
 
-#include "exceptions.h"
+#include "../exceptions.h"
 #include "shader_defs.h"
 
 #include <deque>

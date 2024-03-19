@@ -2,7 +2,7 @@
 #define QUARKGL_LIGHT_H_
 
 #include "exceptions.h"
-#include "shader.h"
+#include "shader/shader.h"
 
 #include <glm/glm.hpp>
 #include <string>

@@ -3,7 +3,7 @@
 
 #include "exceptions.h"
 #include "framebuffer.h"
-#include "shader.h"
+#include "shader/shader.h"
 #include "texture.h"
 #include "texture_registry.h"
 

@@ -25,6 +25,9 @@
     <Filter Include="src\shape">
       <UniqueIdentifier>{1166503d-7c9c-41df-970a-6351852c9cae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\shader">
+      <UniqueIdentifier>{0cc3aa23-73ff-4e4e-bc57-f93235a57316}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -108,18 +111,6 @@
     <ClCompile Include="src\random.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\shader.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\shader_compiler.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\shader_loader.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\shader_primitives.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\shadows.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -155,6 +146,18 @@
     </ClCompile>
     <ClCompile Include="src\shape\screenquad_mesh.cpp">
       <Filter>src\shape</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shader\shader.cpp">
+      <Filter>src\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shader\shader_compiler.cpp">
+      <Filter>src\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shader\shader_loader.cpp">
+      <Filter>src\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shader\shader_primitives.cpp">
+      <Filter>src\shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -260,21 +263,6 @@
     <ClInclude Include="src\screen.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\shader.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\shader_compiler.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\shader_defs.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\shader_loader.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\shader_primitives.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\shadows.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -316,6 +304,21 @@
     </ClInclude>
     <ClInclude Include="src\shape\screenquad_mesh.h">
       <Filter>src\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader\shader.h">
+      <Filter>src\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader\shader_compiler.h">
+      <Filter>src\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader\shader_defs.h">
+      <Filter>src\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader\shader_loader.h">
+      <Filter>src\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader\shader_primitives.h">
+      <Filter>src\shader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

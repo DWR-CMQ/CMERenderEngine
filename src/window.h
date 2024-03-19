@@ -11,7 +11,7 @@
 #include "camera.h"
 #include "exceptions.h"
 #include "screen.h"
-#include "shader.h"
+#include "shader/shader.h"
 
 #include <functional>
 #include <glm/glm.hpp>

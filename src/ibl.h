@@ -4,8 +4,8 @@
 #include "cubemap.h"
 #include "framebuffer.h"
 #include "shape/screenquad_mesh.h"
-#include "shader.h"
-#include "shader_primitives.h"
+#include "shader/shader.h"
+#include "shader/shader_primitives.h"
 #include "texture_registry.h"
 
 namespace Cme
