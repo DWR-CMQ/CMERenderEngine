@@ -2,7 +2,6 @@
 #define QUARKGL_BLUR_H_
 
 #include "framebuffer.h"
-#include "mesh_primitives.h"
 #include "shader.h"
 #include "shader_primitives.h"
 #include "texture_registry.h"

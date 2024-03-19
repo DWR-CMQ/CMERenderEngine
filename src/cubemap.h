@@ -2,7 +2,7 @@
 #define QUARKGL_CUBEMAP_H_
 
 #include "framebuffer.h"
-#include "mesh_primitives.h"
+#include "shape/room_mesh.h"
 #include "shader.h"
 #include "shader_primitives.h"
 #include "texture_registry.h"

@@ -3,9 +3,7 @@
 #include "ibl.h"
 #include "debug.h"
 #include "cme_defs.h"
-//#include "camera.h"
-//#include "shadows.h"
-//#include "ssao.h"
+#include "shape/skybox_mesh.h"
 
 #include <stdlib.h>
 #include <filesystem>

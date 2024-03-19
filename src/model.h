@@ -1,11 +1,10 @@
-#ifndef QUARKGL_MODEL_H_
-#define QUARKGL_MODEL_H_
+#pragma once
 
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
 #include "exceptions.h"
-#include "mesh.h"
+#include "shape/mesh.h"
 #include "shader.h"
 #include "texture_map.h"
 #include "texture_map.h"
@@ -84,4 +83,3 @@ namespace Cme
 
 }  // namespace Cme
 
-#endif

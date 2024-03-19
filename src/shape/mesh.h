@@ -3,10 +3,10 @@
 
 #include <glad/glad.h>
 
-#include "shader.h"
-#include "texture_map.h"
-#include "texture_registry.h"
-#include "vertex_array.h"
+#include "../shader.h"
+#include "../texture_map.h"
+#include "../texture_registry.h"
+#include "../vertex_array.h"
 
 #include <functional>
 #include <glm/glm.hpp>

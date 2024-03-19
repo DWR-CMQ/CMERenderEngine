@@ -17,8 +17,11 @@
 #include "framebuffer.h"
 #include "ibl.h"
 #include "light.h"
-#include "mesh.h"
-#include "mesh_primitives.h"
+
+#include "shape/mesh.h"
+#include "shape/screenquad_mesh.h"
+#include "shape/sphere_mesh.h"
+
 #include "model.h"
 #include "random.h"
 #include "screen.h"

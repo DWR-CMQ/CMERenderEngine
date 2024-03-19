@@ -19,86 +19,14 @@
     <Filter Include="imguizmo_quat">
       <UniqueIdentifier>{aed09fc6-747d-4a4a-99d3-c21d470b3da3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{5ff94b51-df9e-40ef-944d-46cc54ea5b2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\shape">
+      <UniqueIdentifier>{1166503d-7c9c-41df-970a-6351852c9cae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\fxaa.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bloom.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\blur.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\cubemap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\debug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\deferred.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\exceptions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\framebuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ibl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\light.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mesh_primitives.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\random.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\shader_compiler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\shader_loader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\shader_primitives.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\shadows.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ssao.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\texture_registry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\vertex_array.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="imgui\imgui.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
@@ -123,116 +51,113 @@
     <ClCompile Include="imguizmo_quat\imGuIZMOquat.cpp">
       <Filter>imguizmo_quat</Filter>
     </ClCompile>
-    <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="3dparty\glad.c">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\shape\mesh.cpp">
+      <Filter>src\shape</Filter>
     </ClCompile>
     <ClCompile Include="src\App.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bloom.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\blur.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\camera.cpp">
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\common_helper.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cubemap.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\debug.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\deferred.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\exceptions.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\framebuffer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fxaa.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="3dparty\glad.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ibl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\light.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\model.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\random.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shader_compiler.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shader_loader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shader_primitives.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shadows.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ssao.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\texture.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\texture_registry.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vertex_array.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shape\plane_mesh.cpp">
+      <Filter>src\shape</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shape\skybox_mesh.cpp">
+      <Filter>src\shape</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shape\sphere_mesh.cpp">
+      <Filter>src\shape</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shape\cube_mesh.cpp">
+      <Filter>src\shape</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shape\room_mesh.cpp">
+      <Filter>src\shape</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shape\screenquad_mesh.cpp">
+      <Filter>src\shape</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\fxaa.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\bloom.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\blur.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\cubemap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\debug.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\deferred.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\exceptions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\framebuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ibl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\light.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\mesh_primitives.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\quarkgl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\random.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\screen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\shader_compiler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\shader_defs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\shader_loader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\shader_primitives.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\shadows.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ssao.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\texture_map.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\texture_registry.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\common_helper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\vertex_array.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\stb_image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="imgui\imconfig.h">
       <Filter>imgui</Filter>
     </ClInclude>
@@ -275,11 +200,122 @@
     <ClInclude Include="imguizmo_quat\vgMath.h">
       <Filter>imguizmo_quat</Filter>
     </ClInclude>
+    <ClInclude Include="src\shape\mesh.h">
+      <Filter>src\shape</Filter>
+    </ClInclude>
     <ClInclude Include="src\App.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bloom.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\blur.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\camera.h">
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\cme_defs.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common_helper.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cubemap.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\debug.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\deferred.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\exceptions.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\framebuffer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fxaa.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ibl.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\light.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\model.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\quarkgl.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\random.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\screen.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader_compiler.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader_defs.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader_loader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader_primitives.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shadows.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ssao.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stb_image.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\texture.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\texture_map.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\texture_registry.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vertex_array.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\window.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shape\plane_mesh.h">
+      <Filter>src\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shape\skybox_mesh.h">
+      <Filter>src\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shape\sphere_mesh.h">
+      <Filter>src\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shape\cube_mesh.h">
+      <Filter>src\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shape\room_mesh.h">
+      <Filter>src\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shape\screenquad_mesh.h">
+      <Filter>src\shape</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

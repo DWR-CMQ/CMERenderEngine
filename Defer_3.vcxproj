@@ -167,8 +167,6 @@
     <ClCompile Include="src\ibl.cpp" />
     <ClCompile Include="src\light.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\mesh.cpp" />
-    <ClCompile Include="src\mesh_primitives.cpp" />
     <ClCompile Include="src\model.cpp" />
     <ClCompile Include="src\random.cpp" />
     <ClCompile Include="src\shader.cpp" />
@@ -176,6 +174,13 @@
     <ClCompile Include="src\shader_loader.cpp" />
     <ClCompile Include="src\shader_primitives.cpp" />
     <ClCompile Include="src\shadows.cpp" />
+    <ClCompile Include="src\shape\cube_mesh.cpp" />
+    <ClCompile Include="src\shape\mesh.cpp" />
+    <ClCompile Include="src\shape\plane_mesh.cpp" />
+    <ClCompile Include="src\shape\room_mesh.cpp" />
+    <ClCompile Include="src\shape\screenquad_mesh.cpp" />
+    <ClCompile Include="src\shape\skybox_mesh.cpp" />
+    <ClCompile Include="src\shape\sphere_mesh.cpp" />
     <ClCompile Include="src\ssao.cpp" />
     <ClCompile Include="src\texture.cpp" />
     <ClCompile Include="src\texture_registry.cpp" />
@@ -211,8 +216,6 @@
     <ClInclude Include="src\framebuffer.h" />
     <ClInclude Include="src\ibl.h" />
     <ClInclude Include="src\light.h" />
-    <ClInclude Include="src\mesh.h" />
-    <ClInclude Include="src\mesh_primitives.h" />
     <ClInclude Include="src\model.h" />
     <ClInclude Include="src\quarkgl.h" />
     <ClInclude Include="src\random.h" />
@@ -223,6 +226,13 @@
     <ClInclude Include="src\shader_loader.h" />
     <ClInclude Include="src\shader_primitives.h" />
     <ClInclude Include="src\shadows.h" />
+    <ClInclude Include="src\shape\cube_mesh.h" />
+    <ClInclude Include="src\shape\mesh.h" />
+    <ClInclude Include="src\shape\plane_mesh.h" />
+    <ClInclude Include="src\shape\room_mesh.h" />
+    <ClInclude Include="src\shape\screenquad_mesh.h" />
+    <ClInclude Include="src\shape\skybox_mesh.h" />
+    <ClInclude Include="src\shape\sphere_mesh.h" />
     <ClInclude Include="src\ssao.h" />
     <ClInclude Include="src\stb_image.h" />
     <ClInclude Include="src\texture.h" />
