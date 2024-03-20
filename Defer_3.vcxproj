@@ -164,7 +164,9 @@
     <ClCompile Include="src\deferred.cpp" />
     <ClCompile Include="src\exceptions.cpp" />
     <ClCompile Include="src\framebuffer.cpp" />
-    <ClCompile Include="src\ibl.cpp" />
+    <ClCompile Include="src\ibl\brdf_map.cpp" />
+    <ClCompile Include="src\ibl\irradiance_map.cpp" />
+    <ClCompile Include="src\ibl\prefilter_map.cpp" />
     <ClCompile Include="src\light.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\model.cpp" />
@@ -214,7 +216,9 @@
     <ClInclude Include="src\deferred.h" />
     <ClInclude Include="src\exceptions.h" />
     <ClInclude Include="src\framebuffer.h" />
-    <ClInclude Include="src\ibl.h" />
+    <ClInclude Include="src\ibl\brdf_map.h" />
+    <ClInclude Include="src\ibl\irradiance_map.h" />
+    <ClInclude Include="src\ibl\prefilter_map.h" />
     <ClInclude Include="src\light.h" />
     <ClInclude Include="src\model.h" />
     <ClInclude Include="src\quarkgl.h" />

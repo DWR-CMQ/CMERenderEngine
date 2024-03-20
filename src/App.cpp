@@ -136,22 +136,23 @@ namespace Cme
 
         // IBL
         constexpr int CUBEMAP_SIZE = 1024;
-        m_spEquirectCubemapConverter = std::make_shared<Cme::EquirectCubemapConverter>(CUBEMAP_SIZE, CUBEMAP_SIZE, true);
+        // µÈ¾àÖù×´Í¶Ó°Í¼
+        m_spEquirectCubeMap = std::make_shared<Cme::EquirectCubemap>(CUBEMAP_SIZE, CUBEMAP_SIZE, true);
 
         // ·øÕÕÌùÍ¼ Irradiance map averages radiance uniformly so it doesn't have a lot of high frequency details and can thus be small.
-        m_spIrradianceCalculator = std::make_shared<Cme::CubemapIrradianceCalculator>(32, 32);
-        auto irradianceMap = m_spIrradianceCalculator->getIrradianceMap();
-        m_spLightingTextureRegistry->addTextureSource(m_spIrradianceCalculator);
+        m_spIrradianceMap = std::make_shared<Cme::IrradianceMap>(32, 32);
+        auto irradianceMap = m_spIrradianceMap->getIrradianceMap();
+        m_spLightingTextureRegistry->addTextureSource(m_spIrradianceMap);
 
         // Ô¤¾í»ýÌùÍ¼  Create prefiltered envmap for specular IBL. It doesn't have to be super large.
-        m_spPrefilteredEnvMapCalculator = std::make_shared<Cme::GGXPrefilteredEnvMapCalculator>(CUBEMAP_SIZE, CUBEMAP_SIZE);
-        auto prefilteredEnvMap = m_spPrefilteredEnvMapCalculator->getPrefilteredEnvMap();
-        m_spLightingPassShader->addUniformSource(m_spPrefilteredEnvMapCalculator);
+        m_spPrefilterMap = std::make_shared<Cme::PrefilterMap>(CUBEMAP_SIZE, CUBEMAP_SIZE);
+        auto prefilteredEnvMap = m_spPrefilterMap->getPrefilteredEnvMap();
+        m_spLightingPassShader->addUniformSource(m_spPrefilterMap);
 
-        m_spLightingTextureRegistry->addTextureSource(m_spPrefilteredEnvMapCalculator);    /// --------------------------------
+        m_spLightingTextureRegistry->addTextureSource(m_spPrefilterMap);              /// --------------------------------
 
         // BRDF
-        auto brdfLUT = std::make_shared<Cme::GGXBrdfIntegrationCalculator>(CUBEMAP_SIZE, CUBEMAP_SIZE);
+        auto brdfLUT = std::make_shared<Cme::BrdfMap>(CUBEMAP_SIZE, CUBEMAP_SIZE);
         {
             // Only needs to be calculated once up front.
             Cme::DebugGroup debugGroup("BRDF LUT calculation");
@@ -167,8 +168,8 @@ namespace Cme
         m_spSkyboxShader->addUniformSource(m_spCamera);
 
         // Load the actual env map and generate IBL textures.
-        CommonHelper::LoadSkyboxImage(m_OptsObj.skyboxImage, *m_spSkybox, *m_spEquirectCubemapConverter,
-                                        *m_spIrradianceCalculator, *m_spPrefilteredEnvMapCalculator);
+        CommonHelper::LoadSkyboxImage(m_OptsObj.skyboxImage, *m_spSkybox, *m_spEquirectCubeMap,
+                                        *m_spIrradianceMap, *m_spPrefilterMap);
 
         const char* lampShaderSource = R"SHADER(
         #version 460 core
@@ -275,7 +276,7 @@ namespace Cme
             }
             if (m_OptsObj.skyboxImage != prevOpts.skyboxImage)
             {
-                CommonHelper::LoadSkyboxImage(m_OptsObj.skyboxImage, *m_spSkybox, *m_spEquirectCubemapConverter, *m_spIrradianceCalculator, *m_spPrefilteredEnvMapCalculator);
+                CommonHelper::LoadSkyboxImage(m_OptsObj.skyboxImage, *m_spSkybox, *m_spEquirectCubeMap, *m_spIrradianceMap, *m_spPrefilterMap);
             }
 
             m_pWindow->setMouseButtonBehavior(m_OptsObj.captureMouse

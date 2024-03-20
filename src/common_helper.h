@@ -1,7 +1,11 @@
 #pragma once
 #include "cubemap.h"
-#include "ibl.h"
 #include "debug.h"
+
+#include "ibl/brdf_map.h"
+#include "ibl/irradiance_map.h"
+#include "ibl/prefilter_map.h"
+
 #include "cme_defs.h"
 #include "shape/skybox_mesh.h"
 
@@ -105,9 +109,9 @@ namespace Cme
 
         static void LoadSkyboxImage(
             SkyboxImage skyboxImage, Cme::SkyboxMesh& skybox,
-            Cme::EquirectCubemapConverter& equirectCubemapConverter,
-            Cme::CubemapIrradianceCalculator& irradianceCalculator,
-            Cme::GGXPrefilteredEnvMapCalculator& prefilteredEnvMapCalculator);
+            Cme::EquirectCubemap& equirectCubemapConverter,
+            Cme::IrradianceMap& irradianceCalculator,
+            Cme::PrefilterMap& prefilteredEnvMapCalculator);
 
         static void imguiHelpMarker(const char* desc);
         // Helper for a float slider value.

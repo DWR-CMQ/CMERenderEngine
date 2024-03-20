@@ -1,10 +1,6 @@
-#ifndef QUARKGL_QUARKGL_H_
-#define QUARKGL_QUARKGL_H_
+#pragma once
 
-// clang-format off
-// Must be included first.
 #include "core.h"
-// clang-format on
 
 #include "fxaa.h"
 #include "bloom.h"
@@ -15,7 +11,11 @@
 #include "deferred.h"
 #include "exceptions.h"
 #include "framebuffer.h"
-#include "ibl.h"
+
+#include "ibl/brdf_map.h"
+#include "ibl/irradiance_map.h"
+#include "ibl/prefilter_map.h"
+
 #include "light.h"
 
 #include "shape/mesh.h"
@@ -40,4 +40,3 @@
 #include "window.h"
 #include "cme_defs.h"
 
-#endif

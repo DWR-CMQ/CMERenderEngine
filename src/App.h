@@ -111,13 +111,14 @@ namespace Cme
 
         std::shared_ptr<Cme::DirectionalLight> m_spDirectionalLight;
         
-        std::shared_ptr<Cme::GGXPrefilteredEnvMapCalculator> m_spPrefilteredEnvMapCalculator;
-        std::shared_ptr<Cme::EquirectCubemapConverter> m_spEquirectCubemapConverter;
-        std::shared_ptr<Cme::CubemapIrradianceCalculator> m_spIrradianceCalculator;
+        // IBL
+        std::shared_ptr<Cme::PrefilterMap> m_spPrefilterMap;                       // 预卷积贴图
+        std::shared_ptr<Cme::EquirectCubemap> m_spEquirectCubeMap;                 // 立方体贴图
+        std::shared_ptr<Cme::IrradianceMap> m_spIrradianceMap;                     // 辐照贴图
+        // IBL
 
-        std::shared_ptr<Cme::GBuffer> m_spGBuffer;
-
-        std::shared_ptr<Cme::DeferredGeometryPassShader> m_spGeometryPassShader;
+        std::shared_ptr<Cme::GBuffer> m_spGBuffer;                                  // 几何渲染阶段 初始化一个帧缓冲对象 也就是GBuffer
+        std::shared_ptr<Cme::DeferredGeometryPassShader> m_spGeometryPassShader;    // GBuffer几何渲染阶段
 
         std::shared_ptr<Cme::ScreenQuadMesh> m_spScreenQuad;
         std::shared_ptr<Cme::ScreenShader> m_spGBufferVisShader;

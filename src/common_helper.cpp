@@ -4,9 +4,9 @@ namespace Cme
 {
     void CommonHelper::LoadSkyboxImage(
         SkyboxImage skyboxImage, Cme::SkyboxMesh& skybox,
-        Cme::EquirectCubemapConverter& equirectCubemapConverter,
-        Cme::CubemapIrradianceCalculator& irradianceCalculator,
-        Cme::GGXPrefilteredEnvMapCalculator& prefilteredEnvMapCalculator)
+        Cme::EquirectCubemap& equirectCubemapConverter,
+        Cme::IrradianceMap& irradianceCalculator,
+        Cme::PrefilterMap& prefilteredEnvMapCalculator)
     {
         std::string hdrPath;
         switch (skyboxImage)

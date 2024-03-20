@@ -9,7 +9,6 @@
 
 namespace Cme
 {
-
     class CubemapException : public QuarkException 
     {
         using QuarkException::QuarkException;
@@ -27,8 +26,7 @@ namespace Cme
         // Draws with the given shader to each face of the cubemap. This results in 6
         // different draw calls. Shader should be prepared (i.e. necessary textures
         // should either be bound or be in the registry, uniforms should be set, etc).
-        void multipassDraw(Shader& shader,
-                            TextureRegistry* textureRegistry = nullptr);
+        void multipassDraw(Shader& shader, TextureRegistry* textureRegistry = nullptr);
 
     private:
         Framebuffer* m_pBuffer;
@@ -36,20 +34,14 @@ namespace Cme
         int m_iTargetMip = 0;
     };
 
-    class EquirectCubemapShader : public Shader 
-    {
-    public:
-        EquirectCubemapShader();
-    };
-
     // Converts an equirect texture to a cubemap.
-    class EquirectCubemapConverter : public TextureSource 
+    class EquirectCubemap : public TextureSource 
     {
     public:
-        EquirectCubemapConverter(int width, int height, bool generateMips = false);
-        explicit EquirectCubemapConverter(ImageSize size, bool generateMips = false)
-            : EquirectCubemapConverter(size.width, size.height, generateMips) {}
-        virtual ~EquirectCubemapConverter() = default;
+        EquirectCubemap(int width, int height, bool generateMips = false);
+        explicit EquirectCubemap(ImageSize size, bool generateMips = false)
+            : EquirectCubemap(size.width, size.height, generateMips) {}
+        virtual ~EquirectCubemap() = default;
 
         // Draw onto the allocated cubemap from the given texture as the source.
         void multipassDraw(Texture source);

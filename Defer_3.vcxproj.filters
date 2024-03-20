@@ -28,6 +28,9 @@
     <Filter Include="src\shader">
       <UniqueIdentifier>{0cc3aa23-73ff-4e4e-bc57-f93235a57316}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ibl">
+      <UniqueIdentifier>{f5f27d43-3cf7-4158-8320-1dc2dce0df98}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -96,9 +99,6 @@
     <ClCompile Include="3dparty\glad.c">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ibl.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\light.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -158,6 +158,15 @@
     </ClCompile>
     <ClCompile Include="src\shader\shader_primitives.cpp">
       <Filter>src\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ibl\prefilter_map.cpp">
+      <Filter>src\ibl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ibl\irradiance_map.cpp">
+      <Filter>src\ibl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ibl\brdf_map.cpp">
+      <Filter>src\ibl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -245,9 +254,6 @@
     <ClInclude Include="src\fxaa.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\ibl.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\light.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -319,6 +325,15 @@
     </ClInclude>
     <ClInclude Include="src\shader\shader_primitives.h">
       <Filter>src\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ibl\prefilter_map.h">
+      <Filter>src\ibl</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ibl\irradiance_map.h">
+      <Filter>src\ibl</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ibl\brdf_map.h">
+      <Filter>src\ibl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

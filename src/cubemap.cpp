@@ -39,11 +39,7 @@ namespace Cme
         m_pBuffer->deactivate();
     }
 
-    EquirectCubemapShader::EquirectCubemapShader()
-        : Shader(ShaderPath("assets//shaders//builtin//cubemap.vert"),
-                 ShaderPath("assets//shaders//builtin//equirect_cubemap.frag")) {}
-
-    EquirectCubemapConverter::EquirectCubemapConverter(int width, int height,
+    EquirectCubemap::EquirectCubemap(int width, int height,
                                                        bool generateMips)
         : m_BufferInstance(width, height),
         m_CubemapRenderHelperInstance(&m_BufferInstance),
@@ -59,7 +55,7 @@ namespace Cme
         m_CubemapInstance = m_BufferInstance.AttachTexture2FB_i(BufferType::COLOR_CUBEMAP_HDR, params);
     }
 
-    void EquirectCubemapConverter::multipassDraw(Texture source)
+    void EquirectCubemap::multipassDraw(Texture source)
     {
         // Set up the source.
         source.BindToUnit(0, TextureBindType::TEXTURE_2D);
@@ -74,7 +70,7 @@ namespace Cme
         }
     }
 
-    unsigned int EquirectCubemapConverter::bindTexture(unsigned int nextTextureUnit,
+    unsigned int EquirectCubemap::bindTexture(unsigned int nextTextureUnit,
                                                        Shader& shader) 
     {
         m_CubemapInstance.Transform2Texture().BindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);

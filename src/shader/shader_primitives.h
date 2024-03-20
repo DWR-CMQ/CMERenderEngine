@@ -1,6 +1,4 @@
-#ifndef QUARKGL_SHADER_PRIMITIVES_H_
-#define QUARKGL_SHADER_PRIMITIVES_H_
-
+#pragma once
 #include "shader.h"
 
 #include <glm/glm.hpp>
@@ -45,6 +43,53 @@ namespace Cme
         ShadowMapShader();
     };
 
-}  // namespace Cme
+    // HDR---立方体贴图Shader
+    class EquirectCubemapShader : public Shader
+    {
+    public:
+        EquirectCubemapShader();
+    };
 
-#endif
+    // IBL---辐照Shader
+    class CubemapIrradianceShader : public Shader
+    {
+    public:
+        CubemapIrradianceShader();
+
+        float getHemisphereSampleDelta() const { return m_fHemisphereSampleDelta; }
+        void setHemisphereSampleDelta(float delta);
+
+    private:
+        float m_fHemisphereSampleDelta = 0.025f;
+    };
+
+    // IBL---预卷积Shader
+    class GGXPrefilterShader : public Shader
+    {
+    public:
+        GGXPrefilterShader();
+
+        unsigned int getNumSamples() const { return m_uiNumSamples; }
+        void setNumSamples(unsigned int samples);
+
+        void setRoughness(float roughness);
+
+    private:
+        unsigned int m_uiNumSamples = 1024;
+    };
+
+    // IBL---双向反射分布函数Shader
+    class GGXBrdfIntegrationShader : public ScreenShader
+    {
+    public:
+        GGXBrdfIntegrationShader();
+
+        unsigned int getNumSamples() const { return m_uiNumSamples; }
+        void setNumSamples(unsigned int samples);
+
+    private:
+        unsigned int m_uiNumSamples = 1024;
+    };
+}  
+
+
