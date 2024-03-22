@@ -111,7 +111,7 @@ namespace Cme
         }
 
         constexpr unsigned int sphereVertexSizeBytes = 11 * sizeof(float);
-        loadMeshData(vertexData.data(),
+        LoadMeshData(vertexData.data(),
             (sizeof(float) * vertexData.size()) / sphereVertexSizeBytes,
             sphereVertexSizeBytes, indices, textureMaps);
     }
@@ -119,14 +119,14 @@ namespace Cme
     void SphereMesh::initializeVertexAttributes()
     {
         // Positions.
-        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(3, GL_FLOAT);
         // Normals.
-        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(3, GL_FLOAT);
         // Tangents.
-        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(3, GL_FLOAT);
         // Texture coordinates.
-        m_VertexArrayObj.addVertexAttrib(2, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(2, GL_FLOAT);
 
-        m_VertexArrayObj.finalizeVertexAttribs();
+        m_VertexArrayObj.SetVertexAttribs();
     }
 }

@@ -27,9 +27,9 @@ class VertexArray
         void loadInstanceVertexData(const void* data, unsigned int size);
         void loadElementData(const std::vector<unsigned int>& indices);
         void loadElementData(const unsigned int* indices, unsigned int size);
-        void addVertexAttrib(unsigned int size, unsigned int type,
+        void AddVertexAttrib(unsigned int size, unsigned int type,
                             unsigned int instanceDivisor = 0);
-        void finalizeVertexAttribs();
+        void SetVertexAttribs();
 
     private:
         struct VertexAttrib

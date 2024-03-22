@@ -22,7 +22,7 @@ namespace Cme
         virtual ~Renderable() = default;
 
         glm::mat4 getModelTransform() const { return m_mat4Model; }
-        void setModelTransform(const glm::mat4& model) { m_mat4Model = model; }
+        void setModelTransform(const glm::mat4& mat4Model) { m_mat4Model = mat4Model; }
 
         // TODO: Add translation, rotation, scale methods.
 
@@ -76,8 +76,8 @@ namespace Cme
     public:
         virtual ~Mesh() = default;
 
-        void loadInstanceModels(const std::vector<glm::mat4>& models);
-        void loadInstanceModels(const glm::mat4* models, unsigned int size);
+        void LoadNodeMatrixByVectorInMesh(const std::vector<glm::mat4>& models);
+        void LoadNodeMatrixByPointerInMesh(const glm::mat4* models, unsigned int size);
         void drawWithTransform(const glm::mat4& transform, Shader& shader,
                                 TextureRegistry* textureRegistry = nullptr) override;
 
@@ -88,7 +88,7 @@ namespace Cme
         // Loads mesh data into the mesh. Calls initializeVertexAttributes and
         // initializeVertexArrayInstanceData under the hood. Must be called
         // immediately after construction.
-        virtual void loadMeshData(const void* vertexData, unsigned int numVertices,
+        virtual void LoadMeshData(const void* vertexData, unsigned int numVertices,
                                 unsigned int vertexSizeBytes,
                                 const std::vector<unsigned int>& indices,
                                 const std::vector<TextureMap>& textureMaps,

@@ -32,7 +32,7 @@ namespace Cme
         }
     }
 
-    void Mesh::loadMeshData(const void* vertexData, unsigned int numVertices,
+    void Mesh::LoadMeshData(const void* vertexData, unsigned int numVertices,
                         unsigned int vertexSizeBytes,
                         const std::vector<unsigned int>& indices,
                         const std::vector<TextureMap>& textureMaps,
@@ -57,12 +57,12 @@ namespace Cme
         }
     }
 
-    void Mesh::loadInstanceModels(const std::vector<glm::mat4>& models) 
+    void Mesh::LoadNodeMatrixByVectorInMesh(const std::vector<glm::mat4>& models)
     {
         m_VertexArrayObj.loadInstanceVertexData(&models[0], models.size() * sizeof(glm::mat4));
     }
 
-    void Mesh::loadInstanceModels(const glm::mat4* models, unsigned int size) 
+    void Mesh::LoadNodeMatrixByPointerInMesh(const glm::mat4* models, unsigned int size)
     {
         m_VertexArrayObj.loadInstanceVertexData(&models[0], size * sizeof(glm::mat4));
     }
@@ -94,11 +94,11 @@ namespace Cme
             // Allocate space for mat4 model transforms for the instancing.
             m_VertexArrayObj.allocateInstanceVertexData(m_uiInstanceCount * sizeof(glm::mat4));
             // Add vertex attributes (max attribute size is vec4, so we need 4 of them).
-            m_VertexArrayObj.addVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
-            m_VertexArrayObj.addVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
-            m_VertexArrayObj.addVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
-            m_VertexArrayObj.addVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
-            m_VertexArrayObj.finalizeVertexAttribs();
+            m_VertexArrayObj.AddVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
+            m_VertexArrayObj.AddVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
+            m_VertexArrayObj.AddVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
+            m_VertexArrayObj.AddVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
+            m_VertexArrayObj.SetVertexAttribs();
         }
     }
 

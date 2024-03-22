@@ -48,7 +48,10 @@ namespace Cme
          1.0f, -1.0f,  1.0f
     };
 
-    SkyboxMesh::SkyboxMesh() { loadMesh(); }
+    SkyboxMesh::SkyboxMesh() 
+    { 
+        loadMesh(); 
+    }
 
     SkyboxMesh::SkyboxMesh(std::vector<std::string> faces)
         : SkyboxMesh(Texture::loadCubemap(faces)) {}
@@ -80,14 +83,14 @@ namespace Cme
     void SkyboxMesh::loadMesh()
     {
         constexpr unsigned int skyboxVertexSizeBytes = 3 * sizeof(float);
-        loadMeshData(skyboxVertices, sizeof(skyboxVertices) / skyboxVertexSizeBytes,
+        LoadMeshData(skyboxVertices, sizeof(skyboxVertices) / skyboxVertexSizeBytes,
             skyboxVertexSizeBytes, /*indices=*/{}, /*textureMaps=*/{});
     }
 
     void SkyboxMesh::initializeVertexAttributes()
     {
         // Skybox only has vertex positions.
-        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
-        m_VertexArrayObj.finalizeVertexAttribs();
+        m_VertexArrayObj.AddVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.SetVertexAttribs();
     }
 }

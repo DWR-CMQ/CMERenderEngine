@@ -18,38 +18,35 @@ namespace Cme
 
         glm::mat4 aiMatrix4x4ToGlm(const aiMatrix4x4& m) 
         {
-          // clang-format off
           return glm::mat4(
               m.a1, m.b1, m.c1, m.d1,
               m.a2, m.b2, m.c2, m.d2,
               m.a3, m.b3, m.c3, m.d3,
               m.a4, m.b4, m.c4, m.d4);
-          // clang-format on
         }
-    }  // namespace
+    }  
 
     ModelMesh::ModelMesh(const std::vector<ModelVertex>& vertices,
                          const std::vector<unsigned int>& indices,
                          const std::vector<TextureMap>& textureMaps,
                          unsigned int instanceCount)
-        : m_vecVertices(vertices)
     {
-        loadMeshData(&m_vecVertices[0], m_vecVertices.size(), sizeof(ModelVertex), indices,
-                    textureMaps, instanceCount);
+        m_vecVertices = vertices;
+        LoadMeshData(&m_vecVertices[0], m_vecVertices.size(), sizeof(ModelVertex), indices, textureMaps, instanceCount);
     }
 
     void ModelMesh::initializeVertexAttributes() 
     {
         // Positions.
-        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(3, GL_FLOAT);
         // Normals.
-        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(3, GL_FLOAT);
         // Tangents.
-        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(3, GL_FLOAT);
         // Texture coordinates.
-        m_VertexArrayObj.addVertexAttrib(2, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(2, GL_FLOAT);
 
-        m_VertexArrayObj.finalizeVertexAttribs();
+        m_VertexArrayObj.SetVertexAttribs();
     }
 
     Model::Model(const char* path, unsigned int instanceCount)
@@ -64,23 +61,23 @@ namespace Cme
         loadModel(pathString);
     }
 
-    void Model::loadInstanceModels(const std::vector<glm::mat4>& models) 
+    void Model::LoadNodeMatrixByVectorInModel(const std::vector<glm::mat4>& vecModelMat)
     {
         m_RootNodeObj.visitRenderables([&](Renderable* renderable)
         {
             // All renderables in a Model are ModelMeshes.
-            ModelMesh* mesh = static_cast<ModelMesh*>(renderable);
-            mesh->loadInstanceModels(models);
+            ModelMesh* pMesh = static_cast<ModelMesh*>(renderable);
+            pMesh->LoadNodeMatrixByVectorInMesh(vecModelMat);
         });
     }
 
-    void Model::loadInstanceModels(const glm::mat4* models, unsigned int size)
+    void Model::LoadNodeMatrixByPointerInModel(const glm::mat4* pModelMat, unsigned int size)
     {
         m_RootNodeObj.visitRenderables([&](Renderable* renderable)
         {
             // All renderables in a Model are ModelMeshes.
-            ModelMesh* mesh = static_cast<ModelMesh*>(renderable);
-            mesh->loadInstanceModels(models, size);
+            ModelMesh* pMesh = static_cast<ModelMesh*>(renderable);
+            pMesh->LoadNodeMatrixByPointerInMesh(pModelMat, size);
         });
     }
 
@@ -96,47 +93,47 @@ namespace Cme
         Assimp::Importer importer;
         // Scene is freed by the importer.
         //const aiScene* scene = importer.ReadFile(path, DEFAULT_LOAD_FLAGS);
-        const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_OptimizeMeshes | aiProcess_CalcTangentSpace | aiProcess_FlipUVs);
+        const aiScene* pScene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_OptimizeMeshes | aiProcess_CalcTangentSpace | aiProcess_FlipUVs);
   
-        if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
-            !scene->mRootNode)
+        if (!pScene || pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !pScene->mRootNode)
         {
             std::cout << "importer.GetErrorString(): " << importer.GetErrorString() << std::endl;
             throw ModelLoaderException("ERROR::MODEL::" + std::string(importer.GetErrorString()));
         }
 
-        processNode(m_RootNodeObj, scene->mRootNode, scene);
+        ProcessNode(m_RootNodeObj, pScene->mRootNode, pScene);
     }
 
-    void Model::processNode(RenderableNode& target, aiNode* node,
-                            const aiScene* scene) 
+    // 从Scene中获取根节点后，就可以从根节点开始，不断递归遍历其下的子节点，最终做到处理完所有节点拥有的数据
+    void Model::ProcessNode(RenderableNode& target, aiNode* node, const aiScene* scene)
     {
-        // Consume the transform.
+        // mTransformation是相对于上一级node的变换矩阵
         target.setModelTransform(aiMatrix4x4ToGlm(node->mTransformation));
 
-        // Process each mesh in the node.
+        // 处理节点下的每一个网格
+        // 如果在该节点下找到挂载的Mesh，就直接处理该Mesh数据并将其添加至meshes容器当中，需要注意的是aiNode仅仅保存Mesh对应的索引，所以需要真正获得aiMesh还需要到Scene中去查找
         for (unsigned int i = 0; i < node->mNumMeshes; i++) 
         {
             // TODO: This might be creating meshes multiple times when they are
             // referenced by multiple nodes.
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-            target.addRenderable(processMesh(mesh, scene));
+            target.addRenderable(ProcessMesh(mesh, scene));
         }
 
         // Recurse for children. Recursion stops when no children left.
         for (unsigned int i = 0; i < node->mNumChildren; i++) 
         {
             auto childTarget = std::make_unique<RenderableNode>();
-            processNode(*childTarget, node->mChildren[i], scene);
+            ProcessNode(*childTarget, node->mChildren[i], scene);
             target.addChildNode(std::move(childTarget));
         }
     }
 
-    std::unique_ptr<ModelMesh> Model::processMesh(aiMesh* mesh, const aiScene* scene) 
+    std::unique_ptr<ModelMesh> Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
     {
-        std::vector<ModelVertex> vertices;
-        std::vector<unsigned int> indices;
-        std::vector<TextureMap> textureMaps;
+        std::vector<ModelVertex> vecModelVertices;
+        std::vector<unsigned int> vecIndices;
+        std::vector<TextureMap> vecTextureMaps;
 
         for (unsigned int i = 0; i < mesh->mNumVertices; i++) 
         {
@@ -178,31 +175,32 @@ namespace Cme
                 vertex.texCoords = glm::vec2(0.0f);
             }
 
-            vertices.push_back(vertex);
+            vecModelVertices.push_back(vertex);
         }
 
         // Process indices.
+        // 需要注意的是，索引并非直接存储在aiMesh中，而是存储在aiMesh下的aiFace中，由于在导入模型时使用了aiProcess_Triangulate，
+        // 这里的Face也就基本是三角形图元，拥有3个Indices，将它们读取出来添加进总的索引即可
         for (unsigned int i = 0; i < mesh->mNumFaces; i++) 
         {
             aiFace face = mesh->mFaces[i];
             for (unsigned int j = 0; j < face.mNumIndices; j++) 
             {
-                indices.push_back(face.mIndices[j]);
+                vecIndices.push_back(face.mIndices[j]);
             }
         }
 
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
         for (auto type : loaderSupportedTextureMapTypes)
         {
-            auto loadedMaps = loadMaterialTextureMaps(material, type);
-            textureMaps.insert(textureMaps.end(), loadedMaps.begin(),
-                                loadedMaps.end());
+            auto loadedMaps = LoadMaterialTextureMaps(material, type);
+            vecTextureMaps.insert(vecTextureMaps.end(), loadedMaps.begin(), loadedMaps.end());
         }
 
-        return std::make_unique<ModelMesh>(vertices, indices, textureMaps, m_uiInstanceCount);
+        return std::make_unique<ModelMesh>(vecModelVertices, vecIndices, vecTextureMaps, m_uiInstanceCount);
     }
 
-    std::vector<TextureMap> Model::loadMaterialTextureMaps(aiMaterial* material,
+    std::vector<TextureMap> Model::LoadMaterialTextureMaps(aiMaterial* material,
                                                            TextureMapType type)
     {
         std::vector<aiTextureType> aiTypes = textureMapTypeToAiTextureTypes(type);

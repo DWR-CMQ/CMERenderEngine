@@ -34,21 +34,21 @@ namespace Cme
     void PlaneMesh::loadMeshAndTextures(const std::vector<TextureMap>& textureMaps)
     {
         constexpr unsigned int planeVertexSizeBytes = 11 * sizeof(float);
-        loadMeshData(planeVertices, sizeof(planeVertices) / planeVertexSizeBytes,
+        LoadMeshData(planeVertices, sizeof(planeVertices) / planeVertexSizeBytes,
             planeVertexSizeBytes, /*indices=*/{}, textureMaps);
     }
 
     void PlaneMesh::initializeVertexAttributes()
     {
         // Positions.
-        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(3, GL_FLOAT);
         // Normals.
-        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(3, GL_FLOAT);
         // Tangents.
-        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(3, GL_FLOAT);
         // Texture coordinates.
-        m_VertexArrayObj.addVertexAttrib(2, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(2, GL_FLOAT);
 
-        m_VertexArrayObj.finalizeVertexAttribs();
+        m_VertexArrayObj.SetVertexAttribs();
     }
 }

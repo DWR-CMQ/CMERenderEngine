@@ -26,7 +26,7 @@ namespace Cme
     void ScreenQuadMesh::loadMesh()
     {
         constexpr unsigned int quadVertexSizeBytes = 4 * sizeof(float);
-        loadMeshData(screenQuadVertices,
+        LoadMeshData(screenQuadVertices,
             sizeof(screenQuadVertices) / quadVertexSizeBytes,
             quadVertexSizeBytes, /*indices=*/{}, /*textureMaps=*/{});
     }
@@ -51,10 +51,10 @@ namespace Cme
     void ScreenQuadMesh::initializeVertexAttributes()
     {
         // Screen positions.
-        m_VertexArrayObj.addVertexAttrib(2, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(2, GL_FLOAT);
         // Texture coordinates.
-        m_VertexArrayObj.addVertexAttrib(2, GL_FLOAT);
-        m_VertexArrayObj.finalizeVertexAttribs();
+        m_VertexArrayObj.AddVertexAttrib(2, GL_FLOAT);
+        m_VertexArrayObj.SetVertexAttribs();
     }
 
     void ScreenQuadMesh::bindTextures(Shader& shader,

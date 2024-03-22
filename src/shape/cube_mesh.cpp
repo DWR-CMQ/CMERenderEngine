@@ -74,21 +74,21 @@ namespace Cme
     void CubeMesh::loadMeshAndTextures(const std::vector<TextureMap>& textureMaps)
     {
         constexpr unsigned int cubeVertexSizeBytes = 11 * sizeof(float);
-        loadMeshData(cubeVertices, sizeof(cubeVertices) / cubeVertexSizeBytes,
+        LoadMeshData(cubeVertices, sizeof(cubeVertices) / cubeVertexSizeBytes,
             cubeVertexSizeBytes, /*indices=*/{}, textureMaps);
     }
 
     void CubeMesh::initializeVertexAttributes()
     {
         // Positions.
-        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(3, GL_FLOAT);
         // Normals.
-        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(3, GL_FLOAT);
         // Tangents.
-        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(3, GL_FLOAT);
         // Texture coordinates.
-        m_VertexArrayObj.addVertexAttrib(2, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(2, GL_FLOAT);
 
-        m_VertexArrayObj.finalizeVertexAttribs();
+        m_VertexArrayObj.SetVertexAttribs();
     }
 }

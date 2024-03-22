@@ -75,21 +75,20 @@ namespace Cme
     void RoomMesh::loadMeshAndTextures(const std::vector<TextureMap>& textureMaps)
     {
         constexpr unsigned int roomVertexSizeBytes = 11 * sizeof(float);
-        loadMeshData(roomVertices, sizeof(roomVertices) / roomVertexSizeBytes,
-            roomVertexSizeBytes, /*indices=*/{}, textureMaps);
+        LoadMeshData(roomVertices, sizeof(roomVertices) / roomVertexSizeBytes, roomVertexSizeBytes, {}, textureMaps);
     }
 
     void RoomMesh::initializeVertexAttributes()
     {
         // Positions.
-        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(3, GL_FLOAT);
         // Normals.
-        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(3, GL_FLOAT);
         // Tangents.
-        m_VertexArrayObj.addVertexAttrib(3, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(3, GL_FLOAT);
         // Texture coordinates.
-        m_VertexArrayObj.addVertexAttrib(2, GL_FLOAT);
+        m_VertexArrayObj.AddVertexAttrib(2, GL_FLOAT);
 
-        m_VertexArrayObj.finalizeVertexAttribs();
+        m_VertexArrayObj.SetVertexAttribs();
     }
 }
