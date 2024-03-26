@@ -42,7 +42,8 @@ class VertexArray
 
         unsigned int m_uiVao = 0;
         unsigned int m_uiVbo = 0;
-        unsigned int m_uiInstanceVbo = 0;
+
+        unsigned int m_uiInstanceVbo = 0;     // 这个VBO有点特殊
         unsigned int m_uiEbo = 0;
 
         unsigned int m_uiVertexSizeBytes = 0;

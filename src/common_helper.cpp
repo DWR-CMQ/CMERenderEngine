@@ -2,8 +2,9 @@
 
 namespace Cme
 {
+    // 需要换位置 还有天空盒哪有继承Mesh 天空盒就应该独立
     void CommonHelper::LoadSkyboxImage(
-        SkyboxImage skyboxImage, Cme::SkyboxMesh& skybox,
+        SkyboxImage skyboxImage, Cme::Skybox& skybox,
         Cme::EquirectCubemap& equirectCubemapConverter,
         Cme::IrradianceMap& irradianceCalculator,
         Cme::PrefilterMap& prefilteredEnvMapCalculator)
@@ -32,29 +33,43 @@ namespace Cme
         case SkyboxImage::WINTER_FOREST:
             hdrPath = "assets//models//ibl//WinterForest.hdr";
             break;
+        case SkyboxImage::Six_Face:
+            hdrPath = "assets//models//skybox//jajsundown1";
+            break;
         }
 
-        Cme::Texture hdr = Cme::Texture::LoadHDR(hdrPath.c_str());
+        //Cme::Texture hdr = Cme::Texture::LoadHDR(hdrPath.c_str());
 
-        // Process HDR cubemap
-        {
-            Cme::DebugGroup debugGroup("HDR equirect to cubemap");
-            equirectCubemapConverter.multipassDraw(hdr);
-        }
-        auto cubemap = equirectCubemapConverter.getCubemap();
-        {
-            Cme::DebugGroup debugGroup("Irradiance calculation");
-            irradianceCalculator.multipassDraw(cubemap);
-        }
-        {
-            Cme::DebugGroup debugGroup("Prefiltered env map calculation");
-            prefilteredEnvMapCalculator.multipassDraw(cubemap);
-        }
+        //// Process HDR cubemap
+        //{
+        //    Cme::DebugGroup debugGroup("HDR equirect to cubemap");
+        //    equirectCubemapConverter.multipassDraw(hdr);
+        //}
+        //auto cubemap = equirectCubemapConverter.getCubemap();
+        //{
+        //    Cme::DebugGroup debugGroup("Irradiance calculation");
+        //    irradianceCalculator.multipassDraw(cubemap);
+        //}
+        //{
+        //    Cme::DebugGroup debugGroup("Prefiltered env map calculation");
+        //    prefilteredEnvMapCalculator.multipassDraw(cubemap);
+        //}
 
-        skybox.setTexture(cubemap);
+        //std::vector<std::string> faces
+        //{
+        //    "assets//models//skybox//jajsundown1//right.jpg",
+        //    "assets//models//skybox//jajsundown1//left.jpg",
+        //    "assets//models//skybox//jajsundown1//top.jpg",
+        //    "assets//models//skybox//jajsundown1//bottom.jpg",
+        //    "assets//models//skybox//jajsundown1//front.jpg",
+        //    "assets//models//skybox//jajsundown1//back.jpg",
+        //};
+        //auto cubemap = Cme::Texture::loadCubemap(faces);
+
+        //skybox.setTexture(cubemap);
 
         // Don't need this anymore.
-        hdr.free();
+        //hdr.free();
     }
 
     // Helper to display a little (?) mark which shows a tooltip when hovered.
@@ -91,5 +106,32 @@ namespace Cme
         ImGui::Image(texID, ImVec2(size.x, size.y), ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));
         //ImGui::Image(texID, size, /*uv0=*/glm::vec2(0.0f, 1.0f),
         //ImGui::Image(texID, ImGui::GetContentRegionAvail());
+    }
+
+    int CommonHelper::calculateNumMips(int width, int height)
+    {
+        return 1 + static_cast<int>(std::floor(std::log2(std::max(width, height))));
+    }
+
+    ImageSize CommonHelper::calculateNextMip(const ImageSize& mipSize)
+    {
+        ImageSize temp;
+        temp.width = std::max(mipSize.width / 2, 1);
+        temp.height = std::max(mipSize.height / 2, 1);
+        return temp;
+    }
+
+    ImageSize CommonHelper::calculateMipLevel(int mip0Width, int mip0Height, int level)
+    {
+        ImageSize size = { mip0Width, mip0Height };
+        if (level == 0)
+        {
+            return size;
+        }
+        for (int mip = 0; mip < level; ++mip)
+        {
+            size = calculateNextMip(size);
+        }
+        return size;
     }
 }

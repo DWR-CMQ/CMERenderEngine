@@ -7,7 +7,7 @@
 #include "ibl/prefilter_map.h"
 
 #include "cme_defs.h"
-#include "shape/skybox_mesh.h"
+#include "shape/skybox.h"
 
 #include <stdlib.h>
 #include <filesystem>
@@ -108,7 +108,7 @@ namespace Cme
         }
 
         static void LoadSkyboxImage(
-            SkyboxImage skyboxImage, Cme::SkyboxMesh& skybox,
+            SkyboxImage skyboxImage, Cme::Skybox& skybox,
             Cme::EquirectCubemap& equirectCubemapConverter,
             Cme::IrradianceMap& irradianceCalculator,
             Cme::PrefilterMap& prefilteredEnvMapCalculator);
@@ -119,6 +119,15 @@ namespace Cme
 
         // Helper for an image control.
         static void imguiImage(const Cme::Texture& texture, glm::vec2 size);
+
+        // Returns the number of mips for an image of a given width/height.
+        static int calculateNumMips(int width, int height);
+
+        // Returns the next mip size given an initial size.
+        static ImageSize calculateNextMip(const ImageSize& mipSize);
+
+        // Returns the calculated size for a mip level.
+        static ImageSize calculateMipLevel(int mip0Width, int mip0Height, int level);
 
     };
 }  

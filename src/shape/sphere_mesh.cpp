@@ -8,7 +8,7 @@ namespace Cme
         std::vector<TextureMap> textureMaps;
         if (!texturePath.empty())
         {
-            TextureMap textureMap(Texture::load(texturePath.c_str()), TextureMapType::DIFFUSE);
+            TextureMap textureMap(Texture::LoadTexture(texturePath.c_str()), TextureMapType::DIFFUSE);
             textureMaps.push_back(textureMap);
         }
         loadMeshAndTextures(textureMaps);

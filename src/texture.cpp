@@ -1,58 +1,25 @@
 #include <glad/glad.h>
 #include "texture.h"
 
-#define STB_IMAGE_IMPLEMENTATION
+//#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 #include <glm/gtc/type_ptr.hpp>
+#include "common_helper.h"
 
 namespace Cme 
 {
-    int calculateNumMips(int width, int height) 
-    {
-        return 1 + static_cast<int>(std::floor(std::log2(std::max(width, height))));
-    }
-
-    ImageSize calculateNextMip(const ImageSize& mipSize)
-    {
-        ImageSize temp;
-        temp.width = std::max(mipSize.width / 2, 1);
-        temp.height = std::max(mipSize.height / 2, 1);
-        return temp;
-    }
-
-    ImageSize calculateMipLevel(int mip0Width, int mip0Height, int level)
-    {
-        ImageSize size = {mip0Width, mip0Height};
-        if (level == 0)
-        {
-            return size;
-        }
-        for (int mip = 0; mip < level; ++mip) 
-        {
-            size = calculateNextMip(size);
-        }
-        return size;
-    }
-
-    Texture Texture::load(const char* path, bool isSRGB)
+    Texture Texture::LoadTexture(const char* path, bool isSRGB)
     {
         TextureParams params;
         params.filtering = TextureFiltering::ANISOTROPIC;
         params.wrapMode = TextureWrapMode::REPEAT;
-        return load(path, isSRGB, params);
-    }
 
-    Texture Texture::load(const char* path, bool isSRGB,
-                          const TextureParams& params)
-    {
         Texture texture;
         texture.m_eType = TextureType::TEXTURE_2D;
 
         stbi_set_flip_vertically_on_load(params.flipVerticallyOnLoad);
-        unsigned char* data =
-            stbi_load(path, &texture.m_iWidth, &texture.m_iHeight, &texture.m_iNumChannels,
-                    /*desired_channels=*/0);
+        unsigned char* data = stbi_load(path, &texture.m_iWidth, &texture.m_iHeight, &texture.m_iNumChannels, 0);
 
         if (data == nullptr) 
         {
@@ -101,7 +68,7 @@ namespace Cme
         if (params.generateMips >= MipGeneration::ON_LOAD)
         {
             glGenerateMipmap(GL_TEXTURE_2D);
-            texture.m_iNumMips = calculateNumMips(texture.m_iWidth, texture.m_iHeight);
+            texture.m_iNumMips = CommonHelper::calculateNumMips(texture.m_iWidth, texture.m_iHeight);
             // TODO: Take into account params.maxNumMips
         } 
         else 
@@ -123,18 +90,13 @@ namespace Cme
 
         params.filtering = TextureFiltering::BILINEAR;
         params.wrapMode = TextureWrapMode::CLAMP_TO_EDGE;
-        return LoadHDR(path, params);
-    }
 
-    Texture Texture::LoadHDR(const char* path, const TextureParams& params)
-    {
         Texture texture;
         texture.m_eType = TextureType::TEXTURE_2D;
         texture.m_iNumMips = 1;
 
         stbi_set_flip_vertically_on_load(true);
-        float* data = stbi_loadf(path, &texture.m_iWidth, &texture.m_iHeight,
-                                &texture.m_iNumChannels, /*desired_channels=*/0);
+        float* data = stbi_loadf(path, &texture.m_iWidth, &texture.m_iHeight, &texture.m_iNumChannels, 0);
 
         if (data == nullptr) 
         {
@@ -177,9 +139,8 @@ namespace Cme
         glBindTexture(GL_TEXTURE_2D, texture.m_uiID);
 
         // TODO: Replace with glTexStorage2D
-        glTexImage2D(GL_TEXTURE_2D, /*mip=*/0, texture.m_uiInternalFormat,
-                    texture.m_iWidth, texture.m_iHeight, 0,
-                    /*tex data format=*/dataFormat, GL_FLOAT, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, texture.m_uiInternalFormat,
+                    texture.m_iWidth, texture.m_iHeight, 0, dataFormat, GL_FLOAT, data);
 
         // Set texture-wrapping/filtering options.
         applyParams(params, texture.m_eType);
@@ -189,24 +150,18 @@ namespace Cme
         return texture;
     }
 
-    Texture Texture::loadCubemap(std::vector<std::string> faces) 
-    {
-        TextureParams params;
-        params.filtering = TextureFiltering::BILINEAR;
-        params.wrapMode = TextureWrapMode::CLAMP_TO_EDGE;
-
-        return loadCubemap(faces, params);
-    }
-
-    Texture Texture::loadCubemap(std::vector<std::string> faces,
-                                 const TextureParams& params)
+    Texture Texture::loadCubemap(std::vector<std::string> faces)
     {
         if (faces.size() != 6) 
         {
-        throw TextureException(
-            "ERROR::TEXTURE::INVALID_ARGUMENT\nMust pass exactly 6 faces to "
-            "loadCubemap");
+            throw TextureException(
+                "ERROR::TEXTURE::INVALID_ARGUMENT\nMust pass exactly 6 faces to "
+                "loadCubemap");
         }
+
+        TextureParams params;
+        params.filtering = TextureFiltering::BILINEAR;
+        params.wrapMode = TextureWrapMode::CLAMP_TO_EDGE;
 
         Texture texture;
         texture.m_eType = TextureType::CUBEMAP;
@@ -291,7 +246,7 @@ namespace Cme
         texture.m_iNumMips = 1;
         if (params.generateMips == MipGeneration::ALWAYS) 
         {
-            texture.m_iNumMips = calculateNumMips(texture.m_iWidth, texture.m_iHeight);
+            texture.m_iNumMips = CommonHelper::calculateNumMips(texture.m_iWidth, texture.m_iHeight);
             if (params.maxNumMips >= 0) 
             {
                 texture.m_iNumMips = std::min(texture.m_iNumMips, params.maxNumMips);
@@ -331,7 +286,7 @@ namespace Cme
         texture.m_iNumMips = 1;
         if (params.generateMips == MipGeneration::ALWAYS)
         {
-            texture.m_iNumMips = calculateNumMips(texture.m_iWidth, texture.m_iHeight);
+            texture.m_iNumMips = CommonHelper::calculateNumMips(texture.m_iWidth, texture.m_iHeight);
             if (params.maxNumMips >= 0) 
             {
                 texture.m_iNumMips = std::min(texture.m_iNumMips, params.maxNumMips);

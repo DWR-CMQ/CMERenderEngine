@@ -140,7 +140,7 @@ namespace Cme
 
         // Skybox
         std::shared_ptr<Cme::SkyboxShader> m_spSkyboxShader;
-        std::shared_ptr<Cme::SkyboxMesh> m_spSkybox;
+        std::shared_ptr<Cme::Skybox> m_spSkybox;
         // Skybox
 
         std::shared_ptr<Cme::Framebuffer> m_spMainFb;

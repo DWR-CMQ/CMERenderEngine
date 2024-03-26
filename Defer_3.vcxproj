@@ -154,6 +154,11 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\common_helper.cpp" />
+    <ClCompile Include="src\core\sampler.cpp" />
+    <ClCompile Include="src\core\sampler_manager.cpp" />
+    <ClCompile Include="src\core\texture1.cpp" />
+    <ClCompile Include="src\core\textureManager.cpp" />
+    <ClCompile Include="src\core\vertex_buffer_object.cpp" />
     <ClCompile Include="src\fxaa.cpp" />
     <ClCompile Include="src\bloom.cpp" />
     <ClCompile Include="src\blur.cpp" />
@@ -181,7 +186,7 @@
     <ClCompile Include="src\shape\plane_mesh.cpp" />
     <ClCompile Include="src\shape\room_mesh.cpp" />
     <ClCompile Include="src\shape\screenquad_mesh.cpp" />
-    <ClCompile Include="src\shape\skybox_mesh.cpp" />
+    <ClCompile Include="src\shape\skybox.cpp" />
     <ClCompile Include="src\shape\sphere_mesh.cpp" />
     <ClCompile Include="src\ssao.cpp" />
     <ClCompile Include="src\texture.cpp" />
@@ -206,6 +211,11 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="src\App.h" />
     <ClInclude Include="src\cme_defs.h" />
+    <ClInclude Include="src\core\sampler.h" />
+    <ClInclude Include="src\core\sampler_manager.h" />
+    <ClInclude Include="src\core\texture1.h" />
+    <ClInclude Include="src\core\textureManager.h" />
+    <ClInclude Include="src\core\vertex_buffer_object.h" />
     <ClInclude Include="src\fxaa.h" />
     <ClInclude Include="src\bloom.h" />
     <ClInclude Include="src\blur.h" />
@@ -235,7 +245,7 @@
     <ClInclude Include="src\shape\plane_mesh.h" />
     <ClInclude Include="src\shape\room_mesh.h" />
     <ClInclude Include="src\shape\screenquad_mesh.h" />
-    <ClInclude Include="src\shape\skybox_mesh.h" />
+    <ClInclude Include="src\shape\skybox.h" />
     <ClInclude Include="src\shape\sphere_mesh.h" />
     <ClInclude Include="src\ssao.h" />
     <ClInclude Include="src\stb_image.h" />

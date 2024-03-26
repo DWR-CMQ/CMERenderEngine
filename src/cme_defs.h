@@ -43,6 +43,7 @@ namespace Cme
         MON_VALLEY,
         UENO_SHRINE,
         WINTER_FOREST,
+        Six_Face
     };
 
     enum class Scale

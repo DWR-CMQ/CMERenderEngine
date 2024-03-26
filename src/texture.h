@@ -105,34 +105,19 @@ namespace Cme
         int maxNumMips = -1;
     };
 
-    // Returns the number of mips for an image of a given width/height.
-    int calculateNumMips(int width, int height);
-
-    // Returns the next mip size given an initial size.
-    ImageSize calculateNextMip(const ImageSize& mipSize);
-
-    // Returns the calculated size for a mip level.
-    ImageSize calculateMipLevel(int mip0Width, int mip0Height, int level);
-
     class Texture 
     {
     public:
         // Loads a texture from a given path.
         // TODO: Consider putting this in a TextureLoader class.
-        static Texture load(const char* path, bool isSRGB = true);
-        static Texture load(const char* path, bool isSRGB, const TextureParams& params);
-
-        // Loads an HDR texture from the given path.
+        static Texture LoadTexture(const char* path, bool isSRGB = true);
         static Texture LoadHDR(const char* path);
-        static Texture LoadHDR(const char* path, const TextureParams& params);
 
         // Loads a cubemap from a set of 6 textures for the faces. Textures must be
         // passed in order starting with GL_TEXTURE_CUBE_MAP_POSITIVE_X and
         // incrementing from there; namely, in the order right, left, top, bottom,
         // front, and back.
         static Texture loadCubemap(std::vector<std::string> faces);
-        static Texture loadCubemap(std::vector<std::string> faces,
-                                    const TextureParams& params);
 
         // Creates a custom texture of the given size and format.
         static Texture create(int width, int height, GLenum internalFormat);

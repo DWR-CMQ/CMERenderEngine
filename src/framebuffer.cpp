@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 #include "framebuffer.h"
+#include "common_helper.h"
 
 namespace Cme 
 {
@@ -74,7 +75,7 @@ namespace Cme
             }
         }
 
-        ImageSize mipSize = calculateMipLevel(m_iWidth, m_iHeight, mipLevel);
+        ImageSize mipSize = CommonHelper::calculateMipLevel(m_iWidth, m_iHeight, mipLevel);
         glViewport(0, 0, mipSize.width, mipSize.height);
     }
 
@@ -130,7 +131,7 @@ namespace Cme
         int numMips = 1;
         if (params.generateMips == MipGeneration::ALWAYS) 
         {
-            numMips = calculateNumMips(m_iWidth, m_iHeight);
+            numMips = CommonHelper::calculateNumMips(m_iWidth, m_iHeight);
             if (params.maxNumMips >= 0) 
             {
                 numMips = std::min(numMips, params.maxNumMips);

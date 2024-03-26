@@ -31,6 +31,9 @@
     <Filter Include="src\ibl">
       <UniqueIdentifier>{f5f27d43-3cf7-4158-8320-1dc2dce0df98}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\core">
+      <UniqueIdentifier>{87655358-c59a-440b-a261-33012c580f4b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -132,7 +135,7 @@
     <ClCompile Include="src\shape\plane_mesh.cpp">
       <Filter>src\shape</Filter>
     </ClCompile>
-    <ClCompile Include="src\shape\skybox_mesh.cpp">
+    <ClCompile Include="src\shape\skybox.cpp">
       <Filter>src\shape</Filter>
     </ClCompile>
     <ClCompile Include="src\shape\sphere_mesh.cpp">
@@ -167,6 +170,21 @@
     </ClCompile>
     <ClCompile Include="src\ibl\brdf_map.cpp">
       <Filter>src\ibl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\vertex_buffer_object.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\texture1.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\textureManager.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\sampler.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\sampler_manager.cpp">
+      <Filter>src\core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -296,7 +314,7 @@
     <ClInclude Include="src\shape\plane_mesh.h">
       <Filter>src\shape</Filter>
     </ClInclude>
-    <ClInclude Include="src\shape\skybox_mesh.h">
+    <ClInclude Include="src\shape\skybox.h">
       <Filter>src\shape</Filter>
     </ClInclude>
     <ClInclude Include="src\shape\sphere_mesh.h">
@@ -334,6 +352,21 @@
     </ClInclude>
     <ClInclude Include="src\ibl\brdf_map.h">
       <Filter>src\ibl</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\vertex_buffer_object.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\texture1.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\textureManager.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\sampler.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\sampler_manager.h">
+      <Filter>src\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -37,7 +37,10 @@ namespace Cme
         return uniform;
     }
 
-    void Shader::activate() { glUseProgram(m_uiShaderProgram); }
+    void Shader::activate() 
+    { 
+        glUseProgram(m_uiShaderProgram);
+    }
     void Shader::deactivate() { glUseProgram(0); }
 
     // TODO: Is shared_ptr really the best approach here?
