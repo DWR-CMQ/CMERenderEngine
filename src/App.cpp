@@ -77,20 +77,20 @@ namespace Cme
 
         // Build the G-Buffer and prepare deferred shading.
         m_spGeometryPassShader = std::make_shared<Cme::DeferredGeometryPassShader>();
-        m_spGeometryPassShader->addUniformSource(m_spCamera);
+        m_spGeometryPassShader->addUniformSource(m_spCamera);                // 说明m_spGeometryPassShader需要相机的数据
 
         // GBuffer
         m_spGBuffer = std::make_shared<Cme::GBuffer>(m_pWindow->getSize());
-        m_spLightingTextureRegistry = std::make_shared<Cme::TextureRegistry>();
-        m_spLightingTextureRegistry->addTextureSource(m_spGBuffer);
+        m_spLightingTextureUniformSource = std::make_shared<Cme::TextureUniformSource>();
+        m_spLightingTextureUniformSource->addTextureSource(m_spGBuffer);
 
         // Screen
         m_spScreenQuad = std::make_shared<Cme::ScreenQuadMesh>();
-        m_spGBufferVisShader = std::make_shared<Cme::ScreenShader>(Cme::ShaderPath("assets//model_shaders//gbuffer_vis.frag"));
+        m_spGBufferVisualShader = std::make_shared<Cme::ScreenShader>(Cme::ShaderPath("assets//model_shaders//gbuffer_visual.frag"));
         m_spLightingPassShader = std::make_shared<Cme::ScreenShader>(Cme::ShaderPath("assets//model_shaders//lighting_pass.frag"));
 
         m_spLightingPassShader->addUniformSource(m_spCamera);
-        m_spLightingPassShader->addUniformSource(m_spLightingTextureRegistry);
+        m_spLightingPassShader->addUniformSource(m_spLightingTextureUniformSource);
         m_spLightingPassShader->addUniformSource(lightRegistry);
 
         // shadow mapping.
@@ -102,7 +102,7 @@ namespace Cme
         m_spShadowMapShader->addUniformSource(m_spShadowMapCamera);
         m_spLightingPassShader->addUniformSource(m_spShadowMapCamera);
 
-        m_spLightingTextureRegistry->addTextureSource(m_spShadowMap);                    ///  -------------------------
+        m_spLightingTextureUniformSource->addTextureSource(m_spShadowMap);                    ///  -------------------------
 
         // SSAO.
         m_spSsaoShader = std::make_shared<Cme::SsaoShader>();
@@ -112,24 +112,24 @@ namespace Cme
         m_spSsaoShader->addUniformSource(m_spSsaoKernel);
         m_spSsaoBuffer = std::make_shared<Cme::SsaoBuffer>(m_pWindow->getSize());
 
-        m_spSsaoTextureRegistry = std::make_shared<Cme::TextureRegistry>();
-        m_spSsaoTextureRegistry->addTextureSource(m_spGBuffer);
-        m_spSsaoTextureRegistry->addTextureSource(m_spSsaoKernel);
-        m_spSsaoShader->addUniformSource(m_spSsaoTextureRegistry);         // 将准备更新的uniform变量添加到shader中
+        m_spSsaoTextureUniformSource = std::make_shared<Cme::TextureUniformSource>();
+        m_spSsaoTextureUniformSource->addTextureSource(m_spGBuffer);
+        m_spSsaoTextureUniformSource->addTextureSource(m_spSsaoKernel);
+        m_spSsaoShader->addUniformSource(m_spSsaoTextureUniformSource);         // 将准备更新的uniform变量添加到shader中
 
         m_spSsaoBlurShader = std::make_shared<Cme::SsaoBlurShader>();
         m_spSsaoBlurredBuffer = std::make_shared<Cme::SsaoBuffer>(m_pWindow->getSize());
 
-        m_spLightingTextureRegistry->addTextureSource(m_spSsaoBlurredBuffer);            /// ------------------------
+        m_spLightingTextureUniformSource->addTextureSource(m_spSsaoBlurredBuffer);            /// ------------------------
 
         // post processing.
         m_spBloomPass = std::make_shared<Cme::BloomPass>(m_pWindow->getSize());
 
-        m_spPostprocessTextureRegistry = std::make_shared<Cme::TextureRegistry>();
-        m_spPostprocessTextureRegistry->addTextureSource(m_spBloomPass);
+        m_spPostprocessTextureUniformSource = std::make_shared<Cme::TextureUniformSource>();
+        m_spPostprocessTextureUniformSource->addTextureSource(m_spBloomPass);
 
         m_spPostprocessShader = std::make_shared<Cme::ScreenShader>(Cme::ShaderPath("assets//model_shaders//post_processing.frag"));
-        m_spPostprocessShader->addUniformSource(m_spPostprocessTextureRegistry);
+        m_spPostprocessShader->addUniformSource(m_spPostprocessTextureUniformSource);
 
         // FXAA
         m_spFxaaShader = std::make_shared<Cme::FXAAShader>();
@@ -142,14 +142,14 @@ namespace Cme
         // 辐照贴图 Irradiance map averages radiance uniformly so it doesn't have a lot of high frequency details and can thus be small.
         m_spIrradianceMap = std::make_shared<Cme::IrradianceMap>(32, 32);
         auto irradianceMap = m_spIrradianceMap->getIrradianceMap();
-        m_spLightingTextureRegistry->addTextureSource(m_spIrradianceMap);
+        m_spLightingTextureUniformSource->addTextureSource(m_spIrradianceMap);
 
         // 预卷积贴图  Create prefiltered envmap for specular IBL. It doesn't have to be super large.
         m_spPrefilterMap = std::make_shared<Cme::PrefilterMap>(CUBEMAP_SIZE, CUBEMAP_SIZE);
         auto prefilteredEnvMap = m_spPrefilterMap->getPrefilteredEnvMap();
         m_spLightingPassShader->addUniformSource(m_spPrefilterMap);
 
-        m_spLightingTextureRegistry->addTextureSource(m_spPrefilterMap);              /// --------------------------------
+        m_spLightingTextureUniformSource->addTextureSource(m_spPrefilterMap);              /// --------------------------------
 
         // BRDF
         auto brdfLUT = std::make_shared<Cme::BrdfMap>(CUBEMAP_SIZE, CUBEMAP_SIZE);
@@ -160,18 +160,14 @@ namespace Cme
         }
         auto brdfIntegrationMap = brdfLUT->getBrdfIntegrationMap();
 
-        m_spLightingTextureRegistry->addTextureSource(brdfLUT);                          /// ----------------------------------
+        m_spLightingTextureUniformSource->addTextureSource(brdfLUT);                          /// ----------------------------------
 
         // 天空盒
-        m_spSkybox = std::make_shared<Cme::Skybox>("F://ToGithub//CMERenderEngine//assets//models//skybox//jajsnow1", "jpg", true, false, false);
-        // m_spSkybox = std::make_shared<Cme::SkyboxMesh>();
+        m_spSkybox = std::make_shared<Cme::Skybox>(true, false, false);
+        m_spSkybox->LoadSkyboxImage(m_OptsObj.skyboxImage, *m_spEquirectCubeMap, *m_spIrradianceMap, *m_spPrefilterMap);
 
         m_spSkyboxShader = std::make_shared<Cme::SkyboxShader>();
         m_spSkyboxShader->addUniformSource(m_spCamera);
-
-        // Load the actual env map and generate IBL textures.
-        //CommonHelper::LoadSkyboxImage(m_OptsObj.skyboxImage, *m_spSkybox, *m_spEquirectCubeMap,
-        //                                *m_spIrradianceMap, *m_spPrefilterMap);
 
         const char* lampShaderSource = R"SHADER(
         #version 460 core
@@ -278,7 +274,7 @@ namespace Cme
             }
             if (m_OptsObj.skyboxImage != prevOpts.skyboxImage)
             {
-                // CommonHelper::LoadSkyboxImage(m_OptsObj.skyboxImage, *m_spSkybox, *m_spEquirectCubeMap, *m_spIrradianceMap, *m_spPrefilterMap);
+                m_spSkybox->LoadSkyboxImage(m_OptsObj.skyboxImage, *m_spEquirectCubeMap, *m_spIrradianceMap, *m_spPrefilterMap);
             }
 
             m_pWindow->setMouseButtonBehavior(m_OptsObj.captureMouse
@@ -348,8 +344,8 @@ namespace Cme
                     case GBufferVis::DISABLED:
                         break;
                     };
-                    m_spGBufferVisShader->setInt("gBufferVis", static_cast<int>(m_OptsObj.gBufferVis));
-                    m_spScreenQuad->draw(*m_spGBufferVisShader);
+                    m_spGBufferVisualShader->setInt("gBufferVis", static_cast<int>(m_OptsObj.gBufferVis));
+                    m_spScreenQuad->draw(*m_spGBufferVisualShader);
                 }
 
                 // TODO: Refactor avoid needing to copy this.
@@ -371,10 +367,12 @@ namespace Cme
                 m_spSsaoBuffer->activate();
                 m_spSsaoBuffer->clear();           // 清除颜色缓冲
 
+                // SsaoShader更新Uniform变量
+                m_spSsaoShader->setFloat("qrk_time", Cme::time());
                 m_spSsaoShader->updateUniforms();
 
                 m_spScreenQuad->unsetTexture();
-                m_spScreenQuad->draw(*m_spSsaoShader, m_spSsaoTextureRegistry.get());
+                m_spScreenQuad->draw(*m_spSsaoShader, m_spSsaoTextureUniformSource.get());
 
                 m_spSsaoBuffer->deactivate();
 
@@ -406,15 +404,12 @@ namespace Cme
                 m_spLightingPassShader->setVec3("ambient", m_OptsObj.ambientColor);
                 m_spLightingPassShader->setFloat("shininess", m_OptsObj.shininess);
                 m_spLightingPassShader->setFloat("emissionIntensity", m_OptsObj.emissionIntensity);
-                m_spLightingPassShader->setFloat("emissionAttenuation.constant",
-                    m_OptsObj.emissionAttenuation.x);
-                m_spLightingPassShader->setFloat("emissionAttenuation.linear",
-                    m_OptsObj.emissionAttenuation.y);
-                m_spLightingPassShader->setFloat("emissionAttenuation.quadratic",
-                    m_OptsObj.emissionAttenuation.z);
+                m_spLightingPassShader->setFloat("emissionAttenuation.constant", m_OptsObj.emissionAttenuation.x);
+                m_spLightingPassShader->setFloat("emissionAttenuation.linear", m_OptsObj.emissionAttenuation.y);
+                m_spLightingPassShader->setFloat("emissionAttenuation.quadratic", m_OptsObj.emissionAttenuation.z);
 
                 m_spScreenQuad->unsetTexture();
-                m_spScreenQuad->draw(*m_spLightingPassShader, m_spLightingTextureRegistry.get());
+                m_spScreenQuad->draw(*m_spLightingPassShader, m_spLightingTextureUniformSource.get());
 
                 m_spMainFb->deactivate();
             }
@@ -476,7 +471,7 @@ namespace Cme
                 m_spPostprocessShader->setBool("gammaCorrect", m_OptsObj.gammaCorrect);
                 m_spPostprocessShader->setFloat("gamma", static_cast<int>(m_OptsObj.gamma));
                 m_spScreenQuad->setTexture(m_MainColorAttachmentObj);
-                m_spScreenQuad->draw(*m_spPostprocessShader, m_spPostprocessTextureRegistry.get());
+                m_spScreenQuad->draw(*m_spPostprocessShader, m_spPostprocessTextureUniformSource.get());
 
                 m_spFinalFb->deactivate();
             }
@@ -669,7 +664,7 @@ namespace Cme
             {
                 ImGui::Combo("Skybox image", reinterpret_cast<int*>(&opts.skyboxImage),
                     "Alex's apt\0Frozen waterfall\0Kloppenheim\0Milkyway\0Mon "
-                    "Valley\0Ueno shrine\0Winter forest\0");
+                    "Valley\0Ueno shrine\0Winter forest\0Six_Face\0");
 
                 ImGui::BeginDisabled(opts.lightingModel == LightingModel::BLINN_PHONG);
                 ImGui::Checkbox("Use IBL", &opts.useIBL);

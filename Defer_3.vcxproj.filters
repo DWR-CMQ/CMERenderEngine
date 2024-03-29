@@ -34,6 +34,12 @@
     <Filter Include="src\core">
       <UniqueIdentifier>{87655358-c59a-440b-a261-33012c580f4b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\texture">
+      <UniqueIdentifier>{3f2ac085-771b-4dd9-b86d-9cdf55331a8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\advanced_lighting">
+      <UniqueIdentifier>{17e128a5-196b-4014-ab99-28acb1357e0b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -117,13 +123,10 @@
     <ClCompile Include="src\shadows.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ssao.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\texture.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\texture_registry.cpp">
+    <ClCompile Include="src\texture_uniform_source.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\vertex_array.cpp">
@@ -177,14 +180,17 @@
     <ClCompile Include="src\core\texture1.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\textureManager.cpp">
-      <Filter>src\core</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\sampler.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
     <ClCompile Include="src\core\sampler_manager.cpp">
       <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\advanced_lighting\ssao.cpp">
+      <Filter>src\advanced_lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="src\advanced_lighting\ssao_kernel.cpp">
+      <Filter>src\advanced_lighting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -290,9 +296,6 @@
     <ClInclude Include="src\shadows.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\ssao.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\stb_image.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -302,7 +305,7 @@
     <ClInclude Include="src\texture_map.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\texture_registry.h">
+    <ClInclude Include="src\texture_uniform_source.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\vertex_array.h">
@@ -359,14 +362,17 @@
     <ClInclude Include="src\core\texture1.h">
       <Filter>src\core</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\textureManager.h">
-      <Filter>src\core</Filter>
-    </ClInclude>
     <ClInclude Include="src\core\sampler.h">
       <Filter>src\core</Filter>
     </ClInclude>
     <ClInclude Include="src\core\sampler_manager.h">
       <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\advanced_lighting\ssao.h">
+      <Filter>src\advanced_lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\advanced_lighting\ssao_kernel.h">
+      <Filter>src\advanced_lighting</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

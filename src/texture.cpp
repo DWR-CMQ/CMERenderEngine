@@ -62,9 +62,8 @@ namespace Cme
         glBindTexture(GL_TEXTURE_2D, texture.m_uiID);
 
         // TODO: Replace with glTexStorage2D
-        glTexImage2D(GL_TEXTURE_2D, /* mipmap level */ 0, texture.m_uiInternalFormat,
-                    texture.m_iWidth, texture.m_iHeight, 0,
-                    /* tex data format */ dataFormat, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, texture.m_uiInternalFormat, texture.m_iWidth, texture.m_iHeight, 0,
+                        dataFormat, GL_UNSIGNED_BYTE, data);
         if (params.generateMips >= MipGeneration::ON_LOAD)
         {
             glGenerateMipmap(GL_TEXTURE_2D);
@@ -77,7 +76,7 @@ namespace Cme
         }
 
         // Set texture-wrapping/filtering options.
-        applyParams(params, texture.m_eType);
+        ApplyParams(params, texture.m_eType);
 
         stbi_image_free(data);
 
@@ -143,7 +142,7 @@ namespace Cme
                     texture.m_iWidth, texture.m_iHeight, 0, dataFormat, GL_FLOAT, data);
 
         // Set texture-wrapping/filtering options.
-        applyParams(params, texture.m_eType);
+        ApplyParams(params, texture.m_eType);
 
         stbi_image_free(data);
 
@@ -221,22 +220,12 @@ namespace Cme
             stbi_image_free(data);
         }
 
-        applyParams(params, texture.m_eType);
+        ApplyParams(params, texture.m_eType);
 
         return texture;
     }
 
-    Texture Texture::create(int width, int height, GLenum internalFormat) 
-    {
-        TextureParams params;
-
-        params.filtering = TextureFiltering::BILINEAR;
-        params.wrapMode = TextureWrapMode::CLAMP_TO_EDGE;
-        return create(width, height, internalFormat, params);
-    }
-
-    Texture Texture::create(int width, int height, GLenum internalFormat,
-                            const TextureParams& params) 
+    Texture Texture::create(int width, int height, GLenum internalFormat, const TextureParams& params)
     {
         Texture texture;
         texture.m_eType = TextureType::TEXTURE_2D;
@@ -261,7 +250,7 @@ namespace Cme
                         texture.m_iWidth, texture.m_iHeight);
 
         // Set texture-wrapping/filtering options.
-        applyParams(params, texture.m_eType);
+        ApplyParams(params, texture.m_eType);
 
         return texture;
     }
@@ -272,12 +261,7 @@ namespace Cme
 
         params.filtering = TextureFiltering::BILINEAR;
         params.wrapMode = TextureWrapMode::CLAMP_TO_EDGE;
-        return createCubemap(size, internalFormat, params);
-    }
 
-    Texture Texture::createCubemap(int size, GLenum internalFormat,
-                                   const TextureParams& params)
-    {
         Texture texture;
         texture.m_eType = TextureType::CUBEMAP;
         texture.m_iWidth = size;
@@ -300,25 +284,12 @@ namespace Cme
         glTexStorage2D(GL_TEXTURE_CUBE_MAP, texture.m_iNumMips, texture.m_uiInternalFormat,
                         texture.m_iWidth, texture.m_iHeight);
 
-        applyParams(params, texture.m_eType);
+        ApplyParams(params, texture.m_eType);
 
         return texture;
     }
 
-    Texture Texture::createFromData(int width, int height, GLenum internalFormat,
-                                    const std::vector<glm::vec3>& data) 
-    {
-        TextureParams params;
-
-        params.filtering = TextureFiltering::BILINEAR;
-        params.wrapMode = TextureWrapMode::CLAMP_TO_EDGE;
-
-        return createFromData(width, height, internalFormat, data, params);
-    }
-
-    Texture Texture::createFromData(int width, int height, GLenum internalFormat,
-                                    const std::vector<glm::vec3>& data,
-                                    const TextureParams& params)
+    Texture Texture::createFromData(int width, int height, GLenum internalFormat, const std::vector<glm::vec3>& data, const TextureParams& params)
     {
         if (data.size() != (width * height)) 
         {
@@ -332,7 +303,6 @@ namespace Cme
                         /*format=*/GL_RGB, GL_FLOAT, data.data());
         return texture;
     }
-
 
     void Texture::BindToUnit(unsigned int textureUnit, TextureBindType bindType)
     {
@@ -398,7 +368,7 @@ namespace Cme
         }
     }
 
-    void Texture::applyParams(const TextureParams& params, TextureType type) 
+    void Texture::ApplyParams(const TextureParams& params, TextureType type) 
     {
         GLenum target = textureTypeToGlTarget(type);
 

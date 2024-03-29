@@ -4,19 +4,19 @@ namespace Cme
 {
     void RenderableNode::drawWithTransform(const glm::mat4& transform,
                                         Shader& shader,
-                                        TextureRegistry* textureRegistry) 
+                                        TextureUniformSource* TextureUniformSource) 
     {
         // Combined incoming transform with the node's.
         const glm::mat4 mat = transform * getModelTransform();
         for (auto& renderable : m_vecRenderables)
         {
-            renderable->drawWithTransform(mat, shader, textureRegistry);
+            renderable->drawWithTransform(mat, shader, TextureUniformSource);
         }
 
         // Render children.
         for (auto& childNode : m_vecChildNodes)
         {
-            childNode->drawWithTransform(mat, shader, textureRegistry);
+            childNode->drawWithTransform(mat, shader, TextureUniformSource);
         }
     }
 
@@ -68,12 +68,12 @@ namespace Cme
     }
 
     void Mesh::drawWithTransform(const glm::mat4& transform, Shader& shader,
-                                TextureRegistry* textureRegistry)
+                                TextureUniformSource* TextureUniformSource)
     {
         // First we set the model transform, combining with the incoming transform.
         shader.setMat4("model", transform * getModelTransform());
 
-        bindTextures(shader, textureRegistry);
+        bindTextures(shader, TextureUniformSource);
 
         // Draw using the VAO.
         shader.activate();
@@ -102,7 +102,7 @@ namespace Cme
         }
     }
 
-    void Mesh::bindTextures(Shader& shader, TextureRegistry* textureRegistry)
+    void Mesh::bindTextures(Shader& shader, TextureUniformSource* TextureUniformSource)
     {
         // Bind textures. Assumes uniform naming is "material.textureMapType[idx]".
         unsigned int diffuseIdx = 0;
@@ -113,12 +113,12 @@ namespace Cme
         unsigned int emissionIdx = 0;
         bool hasNormalMap = false;
 
-        // If a TextureRegistry isn't provided, just start with texture unit 0.
+        // If a TextureUniformSource isn't provided, just start with texture unit 0.
         unsigned int textureUnit = 0;
-        if (textureRegistry != nullptr) 
+        if (TextureUniformSource != nullptr) 
         {
-            textureRegistry->pushUsageBlock();
-            textureUnit = textureRegistry->getNextTextureUnit();
+            TextureUniformSource->pushUsageBlock();
+            textureUnit = TextureUniformSource->getNextTextureUnit();
         }
 
         // 加载模型才会执行for循环
@@ -192,18 +192,18 @@ namespace Cme
             // Set the sampler to the correct texture unit.
             shader.setInt(samplerName, textureUnit);
 
-            if (textureRegistry != nullptr)
+            if (TextureUniformSource != nullptr)
             {
-                textureUnit = textureRegistry->getNextTextureUnit();
+                textureUnit = TextureUniformSource->getNextTextureUnit();
             } 
             else 
             {
                 textureUnit++;
             }
         }
-        if (textureRegistry != nullptr) 
+        if (TextureUniformSource != nullptr) 
         {
-            textureRegistry->popUsageBlock();
+            TextureUniformSource->popUsageBlock();
         }
         shader.setInt("material.diffuseCount", diffuseIdx);
         shader.setInt("material.specularCount", specularIdx);

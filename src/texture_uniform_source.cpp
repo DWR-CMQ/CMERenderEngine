@@ -1,8 +1,8 @@
-#include "texture_registry.h"
+#include "texture_uniform_source.h"
 
 namespace Cme 
 {
-    void TextureRegistry::updateUniforms(Shader& shader) 
+    void TextureUniformSource::updateUniforms(Shader& shader)
     {
         m_uiNextTextureUnit = 0;
         m_vecLastAvailableUnits.clear();
@@ -13,16 +13,16 @@ namespace Cme
         }
     }
 
-    void TextureRegistry::pushUsageBlock() 
+    void TextureUniformSource::pushUsageBlock()
     {
         m_vecLastAvailableUnits.push_back(m_uiNextTextureUnit);
     }
 
-    void TextureRegistry::popUsageBlock() 
+    void TextureUniformSource::popUsageBlock()
     {
         if (m_vecLastAvailableUnits.empty())
         {
-            throw TextureRegistryException("ERROR::TEXTURE_REGISTRY::POP");
+            throw TextureUniformSourceException("ERROR::TEXTURE_REGISTRY::POP");
         }
         m_uiNextTextureUnit = m_vecLastAvailableUnits.back();
         m_vecLastAvailableUnits.pop_back();

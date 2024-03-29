@@ -107,12 +107,6 @@ namespace Cme
             return regexReplace(s.cbegin(), s.cend(), re, f);
         }
 
-        static void LoadSkyboxImage(
-            SkyboxImage skyboxImage, Cme::Skybox& skybox,
-            Cme::EquirectCubemap& equirectCubemapConverter,
-            Cme::IrradianceMap& irradianceCalculator,
-            Cme::PrefilterMap& prefilteredEnvMapCalculator);
-
         static void imguiHelpMarker(const char* desc);
         // Helper for a float slider value.
         static bool imguiFloatSlider(const char* desc, float* value, float min, float max, const char* fmt = nullptr,  Scale scale = Scale::LINEAR);

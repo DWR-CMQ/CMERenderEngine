@@ -52,11 +52,11 @@ namespace Cme
     void Shader::updateUniforms() 
     {
         // Update core uniforms.
-        setFloat("qrk_time", Cme::time());
+        // setFloat("qrk_time", Cme::time());
 
-        for (auto uniformSource : m_vecUniformSources)
+        for (auto item : m_vecUniformSources)
         {
-            uniformSource->updateUniforms(*this);
+            item->updateUniforms(*this);
         }
     }
 

@@ -44,26 +44,15 @@ namespace Cme
         glm::vec3(0.0f, -1.0f, 0.0f), // Bottom face
     };
 
-    Skybox::Skybox(const std::string& baseDirectory, const std::string& imageExtension, bool withPositions, bool withTextureCoordinates, bool withNormals)
+    Skybox::Skybox(bool withPositions, bool withTextureCoordinates, bool withNormals)
     {
-        m_sBaseDirectory = baseDirectory;
-        m_sImageExtension = imageExtension;
+        //m_sBaseDirectory = baseDirectory;
+        //m_sImageExtension = imageExtension;
         m_hasPositions = withPositions;
         m_hasTextureCoordinates = withTextureCoordinates;
         m_hasNormals = withNormals;
 
         InitializeData();
-
-        std::vector<std::string> vecFaces
-        {
-            "assets//models//skybox//jajsundown1//right.jpg",
-            "assets//models//skybox//jajsundown1//left.jpg",
-            "assets//models//skybox//jajsundown1//top.jpg",
-            "assets//models//skybox//jajsundown1//bottom.jpg",
-            "assets//models//skybox//jajsundown1//front.jpg",
-            "assets//models//skybox//jajsundown1//back.jpg",
-        };
-        m_Texture = Cme::Texture::loadCubemap(vecFaces);
     }
 
     Skybox::Skybox() 
@@ -128,6 +117,65 @@ namespace Cme
         m_VBO.UploadDataToGPU(GL_STATIC_DRAW);
         SetVertexAttributesPointers(numVertices);
         m_bInitialized = true;
+    }
+
+    void Skybox::LoadSkyboxImage(SkyboxImage eSkyboxImage,
+                                Cme::EquirectCubemap& equirectCubemapConverter,
+                                Cme::IrradianceMap& irradianceCalculator,
+                                Cme::PrefilterMap& prefilteredEnvMapCalculator)
+    {
+        std::string hdrPath;
+        switch (eSkyboxImage)
+        {
+        case SkyboxImage::ALEXS_APT:
+            hdrPath = "assets//models//ibl/AlexsApt.hdr";
+            break;
+        case SkyboxImage::FROZEN_WATERFALL:
+            hdrPath = "assets//models//ibl//FrozenWaterfall.hdr";
+            break;
+        case SkyboxImage::KLOPPENHEIM:
+            hdrPath = "assets//models//ibl//Kloppenheim.hdr";
+            break;
+        case SkyboxImage::MILKYWAY:
+            hdrPath = "assets//models//ibl//Milkyway.hdr";
+            break;
+        case SkyboxImage::MON_VALLEY:
+            hdrPath = "assets//models//ibl//MonValley.hdr";
+            break;
+        case SkyboxImage::UENO_SHRINE:
+            hdrPath = "assets//models//ibl//UenoShrine.hdr";
+            break;
+        case SkyboxImage::WINTER_FOREST:
+            hdrPath = "assets//models//ibl//WinterForest.hdr";
+            break;
+        case SkyboxImage::Six_Face:
+            hdrPath = "assets//models//skybox//jajsundown1";
+            break;
+        }
+
+        int iSkyboxImage = static_cast<int>(eSkyboxImage);
+        if (iSkyboxImage <= 6)
+        {
+            Cme::Texture hdr = Cme::Texture::LoadHDR(hdrPath.c_str());
+            equirectCubemapConverter.multipassDraw(hdr);
+
+            m_Texture = equirectCubemapConverter.getCubemap();
+            irradianceCalculator.multipassDraw(m_Texture);
+            prefilteredEnvMapCalculator.multipassDraw(m_Texture);
+        }
+        else
+        {
+            std::vector<std::string> vecFaces
+            {
+                "assets//models//skybox//jajsundown1//right.jpg",
+                "assets//models//skybox//jajsundown1//left.jpg",
+                "assets//models//skybox//jajsundown1//top.jpg",
+                "assets//models//skybox//jajsundown1//bottom.jpg",
+                "assets//models//skybox//jajsundown1//front.jpg",
+                "assets//models//skybox//jajsundown1//back.jpg",
+            };
+            m_Texture = Cme::Texture::loadCubemap(vecFaces);
+        }
     }
 
     bool Skybox::HasPositions() const

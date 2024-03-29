@@ -1,46 +1,25 @@
-#include "ssao.h"
-#include "common_helper.h"
+#include "ssao_kernel.h"
+#include "../common_helper.h"
 
-#include <glm/gtx/norm.hpp>
-#include <random>
-
-namespace Cme 
+namespace Cme
 {
-    SsaoShader::SsaoShader()
-        : Shader(ShaderPath("assets//shaders//builtin//screen_quad.vert"),
-                 ShaderPath("assets//shaders//builtin//ssao.frag")) {}
-
-    SsaoBlurShader::SsaoBlurShader()
-        : Shader(ShaderPath("assets/shaders/builtin/screen_quad.vert"),
-            ShaderPath("assets/shaders/builtin/ssao_blur.frag")) {}
-
-    void SsaoBlurShader::configureWith(SsaoKernel& kernel, SsaoBuffer& buffer)
+    SsaoKernel::SsaoKernel(float radius, float bias, int kernelSize, int noiseTextureSideLength)
     {
-        setInt("qrk_ssaoNoiseTextureSideLength", kernel.getNoiseTextureSideLength());
-
-        // The blur shader only needs a single texture, so we just bind it directly.
-        buffer.getSsaoTexture().BindToUnit(0);
-        setInt("qrk_ssao", 0);
+        m_fRadius = radius;
+        m_fBias = bias;
+        GenerateNoiseTexture(kernelSize, noiseTextureSideLength);
     }
 
-    SsaoKernel::SsaoKernel(float radius, float bias, int kernelSize,
-                           int noiseTextureSideLength)
-        : m_fRadius(radius), m_fBias(bias)
-    {
-        regenerate(kernelSize, noiseTextureSideLength);
-    }
-
-    void SsaoKernel::regenerate(int kernelSize, int noiseTextureSideLength) 
+    void SsaoKernel::GenerateNoiseTexture(int kernelSize, int noiseTextureSideLength)
     {
         m_vecKernel.resize(kernelSize);
         // 法向半球 获取一个拥有最大64样本值的采样核心
-        for (int i = 0; i < kernelSize; ++i) 
+        for (int i = 0; i < kernelSize; ++i)
         {
-
             // 在切线空间中以-1.0到1.0的范围变换x和y方向 并以0.0和1.0为范围变换z方向获取样本
             glm::vec3 sample(m_RandObj.next() * 2.0f - 1.0f, m_RandObj.next() * 2.0f - 1.0f, m_RandObj.next());
             // 模大于1的则删除 但理论上不会有这种情况
-            if (glm::length2(sample) >= 1.0f) 
+            if (glm::length2(sample) >= 1.0f)
             {
                 --i;
                 continue;
@@ -60,7 +39,7 @@ namespace Cme
         std::vector<glm::vec3> vecNoiseData;
         int noiseDataSize = noiseTextureSideLength * noiseTextureSideLength;
         vecNoiseData.resize(noiseDataSize);
-        for (int i = 0; i < noiseDataSize; ++i) 
+        for (int i = 0; i < noiseDataSize; ++i)
         {
             // 保持和采样核心一样的生成方式
             glm::vec3 noise(m_RandObj.next() * 2.0f - 1.0f, m_RandObj.next() * 2.0f - 1.0f, 0.0f);
@@ -77,7 +56,7 @@ namespace Cme
         m_NoiseTextureObj = Texture::createFromData(noiseTextureSideLength, noiseTextureSideLength, GL_RGB16F, vecNoiseData, params);
     }
 
-    void SsaoKernel::updateUniforms(Shader& shader) 
+    void SsaoKernel::updateUniforms(Shader& shader)
     {
         shader.setFloat("qrk_ssaoSampleRadius", m_fRadius);
         shader.setFloat("qrk_ssaoSampleBias", m_fBias);
@@ -96,22 +75,5 @@ namespace Cme
 
         return nextTextureUnit + 1;
     }
+}
 
-    SsaoBuffer::SsaoBuffer(int width, int height) : Framebuffer(width, height) 
-    {
-        // Make sure we're clearing properly.
-        setClearColor(glm::vec4(0.0f));
-        // Create and attach the SSAO buffer. Don't need a depth buffer.
-        m_SsaoBufferAttachmentObj = AttachTexture2FB(Cme::BufferType::GRAYSCALE);
-    }
-
-    unsigned int SsaoBuffer::bindTexture(unsigned int nextTextureUnit, Shader& shader) 
-    {
-        m_SsaoBufferAttachmentObj.Transform2Texture().BindToUnit(nextTextureUnit);
-        // Bind sampler uniforms.
-        shader.setInt("qrk_ssao", nextTextureUnit);
-
-        return nextTextureUnit + 1;
-    }
-
-}  // namespace Cme

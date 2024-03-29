@@ -69,7 +69,7 @@ namespace Cme
         void LoadNodeMatrixByPointerInModel(const glm::mat4* pModelMat, unsigned int size);
 
         void drawWithTransform(const glm::mat4& transform, Shader& shader,
-                                TextureRegistry* textureRegistry = nullptr) override;
+                                TextureUniformSource* TextureUniformSource = nullptr) override;
 
     private:
         void loadModel(std::string path);

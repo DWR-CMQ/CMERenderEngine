@@ -90,7 +90,7 @@ namespace Cme
             m_ScreenQuadInstance.draw(m_UpsampleShaderInstance);
         }
 
-        m_BloomBufferInstance.deselectMip();
+        //m_BloomBufferInstance.deselectMip();
         m_BloomBufferInstance.disableAdditiveBlending();
         m_BloomBufferInstance.deactivate();
     }

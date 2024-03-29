@@ -58,7 +58,7 @@ namespace Cme
     }
 
     void ScreenQuadMesh::bindTextures(Shader& shader,
-        TextureRegistry* textureRegistry)
+        TextureUniformSource* TextureUniformSource)
     {
         if (m_vecTextureMaps.empty())
         {
@@ -66,12 +66,12 @@ namespace Cme
         }
 
         // Bind textures, assuming a given uniform naming.
-        // If a TextureRegistry isn't provided, just start with texture unit 0.
+        // If a TextureUniformSource isn't provided, just start with texture unit 0.
         unsigned int textureUnit = 0;
-        if (textureRegistry != nullptr)
+        if (TextureUniformSource != nullptr)
         {
-            textureRegistry->pushUsageBlock();
-            textureUnit = textureRegistry->getNextTextureUnit();
+            TextureUniformSource->pushUsageBlock();
+            textureUnit = TextureUniformSource->getNextTextureUnit();
         }
 
         Texture& texture = m_vecTextureMaps[0].getTexture();
@@ -79,9 +79,9 @@ namespace Cme
 
         // Set the sampler to the correct texture unit.
         shader.setInt("qrk_screenTexture", textureUnit);
-        if (textureRegistry != nullptr)
+        if (TextureUniformSource != nullptr)
         {
-            textureRegistry->popUsageBlock();
+            TextureUniformSource->popUsageBlock();
         }
     }
 }

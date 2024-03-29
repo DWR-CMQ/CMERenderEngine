@@ -6,7 +6,7 @@
 #include "light.h"
 #include "shader/shader.h"
 #include "texture.h"
-#include "texture_registry.h"
+#include "texture_uniform_source.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

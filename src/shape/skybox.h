@@ -1,6 +1,11 @@
 #pragma once
 #include "../framebuffer.h"
 #include "../core/vertex_buffer_object.h"
+#include "../cme_defs.h"
+
+#include "../cubemap.h"
+#include "../ibl/irradiance_map.h"
+#include "../ibl/prefilter_map.h"
 
 namespace Cme
 {
@@ -16,6 +21,13 @@ namespace Cme
     class Skybox
     {
     public:
+        enum class SkyboxType
+        {
+            HDR = 0,
+            Normal
+        };
+
+    public:
         static const std::string SAMPLER_KEY; // Key to store skybox sampler with
 
         static const int POSITION_ATTRIBUTE_INDEX; // Vertex attribute index of vertex position (0)
@@ -25,13 +37,17 @@ namespace Cme
     public:
         // Creates an unbound skybox mesh.
         Skybox();
-        Skybox(const std::string& baseDirectory, const std::string& imageExtension, bool withPositions = true, bool withTextureCoordinates = true, bool withNormals = true);
+        Skybox(bool withPositions = true, bool withTextureCoordinates = true, bool withNormals = true);
         ~Skybox();
 
         void Render(Shader& shader);
 
-
         void InitializeData();
+
+        void LoadSkyboxImage(SkyboxImage eSkyboxImage, 
+                            Cme::EquirectCubemap& equirectCubemapConverter,
+                            Cme::IrradianceMap& irradianceCalculator,
+                            Cme::PrefilterMap& prefilteredEnvMapCalculator);
 
         bool HasPositions() const;
 
@@ -46,7 +62,7 @@ namespace Cme
     public:
         Texture m_Texture;
 
-    protected:
+    private:
         GLuint m_VAO = 0;
         VertexBufferObject m_VBO;
 
@@ -55,9 +71,10 @@ namespace Cme
         bool m_hasTextureCoordinates = false; 
         bool m_hasNormals = false; 
 
-    private:
         std::string m_sBaseDirectory;
         std::string m_sImageExtension; 
+
+        SkyboxType m_SkyboxType = SkyboxType::Normal;
     };
 }
 

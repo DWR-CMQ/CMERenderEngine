@@ -120,19 +120,13 @@ namespace Cme
         static Texture loadCubemap(std::vector<std::string> faces);
 
         // Creates a custom texture of the given size and format.
-        static Texture create(int width, int height, GLenum internalFormat);
-        static Texture create(int width, int height, GLenum internalFormat,
-                            const TextureParams& params);
+        static Texture create(int width, int height, GLenum internalFormat, const TextureParams& params);
+
         static Texture createCubemap(int size, GLenum internalFormat);
-        static Texture createCubemap(int size, GLenum internalFormat,
-                                    const TextureParams& params);
+
         // Creates a custom texture based on the given input data.
         // TODO: Change this to take an unsigned char ptr?
-        static Texture createFromData(int width, int height, GLenum internalFormat,
-                                    const std::vector<glm::vec3>& data);
-        static Texture createFromData(int width, int height, GLenum internalFormat,
-                                    const std::vector<glm::vec3>& data,
-                                    const TextureParams& params);
+        static Texture createFromData(int width, int height, GLenum internalFormat, const std::vector<glm::vec3>& data, const TextureParams& params);
 
         // TODO: Replace this with proper RAII.
         void free();
@@ -178,8 +172,7 @@ namespace Cme
         GLenum m_uiInternalFormat;
 
         // Applies the given params to the currently-active texture.
-        static void applyParams(const TextureParams& params,
-                                TextureType type = TextureType::TEXTURE_2D);
+        static void ApplyParams(const TextureParams& params, TextureType type = TextureType::TEXTURE_2D);
 
         friend class Framebuffer;
         friend class Attachment;

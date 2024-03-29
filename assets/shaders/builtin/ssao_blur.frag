@@ -16,8 +16,10 @@ void main() {
   // We compute a blur based on the original noise texture size used to generate
   // the SSAO.
   int sideOffset = qrk_ssaoNoiseTextureSideLength / 2;
-  for (int x = -sideOffset; x < sideOffset; ++x) {
-    for (int y = -sideOffset; y < sideOffset; ++y) {
+  for (int x = -sideOffset; x < sideOffset; ++x) 
+  {
+    for (int y = -sideOffset; y < sideOffset; ++y) 
+	{
       // Calculate the UV offset based on texel size.
       vec2 texOffset = vec2(float(x), float(y)) * texelSize;
       result += texture(qrk_ssao, texCoords + texOffset).r;

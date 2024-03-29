@@ -11,7 +11,7 @@
 namespace Cme 
 {
 
-    class TextureRegistryException : public QuarkException
+    class TextureUniformSourceException : public QuarkException
     {
         using QuarkException::QuarkException;
     };
@@ -34,10 +34,10 @@ namespace Cme
     // calls (such as shadow maps) as part of a TextureSource added to this
     // registry. Then for each draw call, code should push a usage block, call
     // getNextTextureUnit repeatedly to set up texture, and then pop once done.
-    class TextureRegistry : public UniformSource
+    class TextureUniformSource : public UniformSource
     {
     public:
-        virtual ~TextureRegistry() = default;
+        virtual ~TextureUniformSource() = default;
 
         void addTextureSource(std::shared_ptr<TextureSource> source)
         {

@@ -93,6 +93,9 @@ namespace Cme
         return size;
     }
 
+    /// @brief 创建纹理 添加到帧缓冲上 
+    /// @param type 
+    /// @return 附件
     Attachment Framebuffer::AttachTexture2FB(BufferType type)
     {
         TextureParams params;
@@ -147,7 +150,7 @@ namespace Cme
             glTexStorage2D(textureTarget, numMips, internalFormat, m_iWidth, m_iHeight);
         }
 
-        Texture::applyParams(params, textureType);
+        Texture::ApplyParams(params, textureType);
 
         // Attach the texture to the framebuffer.
         int colorAttachmentIndex = m_iNumColorAttachments;

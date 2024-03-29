@@ -5,7 +5,7 @@
 #include "framebuffer.h"
 #include "shader/shader.h"
 #include "texture.h"
-#include "texture_registry.h"
+#include "texture_uniform_source.h"
 
 #include <glm/glm.hpp>
 

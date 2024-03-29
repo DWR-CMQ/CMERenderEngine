@@ -5,7 +5,7 @@
 #include "shape/screenquad_mesh.h"
 #include "shader/shader.h"
 #include "shader/shader_primitives.h"
-#include "texture_registry.h"
+#include "texture_uniform_source.h"
 
 namespace Cme 
 {
@@ -96,6 +96,7 @@ namespace Cme
     private:
         ScreenQuadMesh m_ScreenQuadInstance;
         BloomBuffer m_BloomBufferInstance;
+        // 泛光的上下采样可参考 https://learnopengl.com/Guest-Articles/2022/Phys.-Based-Bloom
         BloomDownsampleShader m_DownsampleShaderInstance;
         BloomUpsampleShader m_UpsampleShaderInstance;
     };

@@ -22,6 +22,6 @@ namespace Cme
     protected:
         void loadMesh();
         void initializeVertexAttributes() override;
-        void bindTextures(Shader& shader, TextureRegistry* textureRegistry) override;
+        void bindTextures(Shader& shader, TextureUniformSource* TextureUniformSource) override;
     };
 }

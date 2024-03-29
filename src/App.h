@@ -104,6 +104,7 @@ namespace Cme
         std::shared_ptr<Cme::ShadowMap> m_spShadowMap;
         std::shared_ptr<Cme::ShadowMapShader> m_spShadowMapShader;
         std::shared_ptr<Cme::ShadowMapCamera> m_spShadowMapCamera;
+        // ShadowMap 阴影映射
 
         // Model
         std::unique_ptr<Cme::Model> m_upModel;
@@ -117,12 +118,16 @@ namespace Cme
         std::shared_ptr<Cme::IrradianceMap> m_spIrradianceMap;                     // 辐照贴图
         // IBL
 
+        // GBuffer 
+        // 延迟渲染包含两个阶段(pass) 
+        // 第一个几何处理阶段(GeometryPass)中 先渲染场景一次 获取对象的各种几何信息 并存储在叫做GBuffer的纹理中
+        // 第二个光照处理阶段(LightingPass) 在这个阶段会渲染一个屏幕大小的方形 并用G缓冲中的几何数据对每一个片段计算场景光照
         std::shared_ptr<Cme::GBuffer> m_spGBuffer;                                  // 几何渲染阶段 初始化一个帧缓冲对象 也就是GBuffer
-        std::shared_ptr<Cme::DeferredGeometryPassShader> m_spGeometryPassShader;    // GBuffer几何渲染阶段
-
-        std::shared_ptr<Cme::ScreenQuadMesh> m_spScreenQuad;
-        std::shared_ptr<Cme::ScreenShader> m_spGBufferVisShader;
-        std::shared_ptr<Cme::ScreenShader> m_spLightingPassShader;
+        std::shared_ptr<Cme::ScreenQuadMesh> m_spScreenQuad;                        // 渲染一个充满屏幕的四边形，并使用存储在G缓冲区中的几何信息计算每个片段的场景光照    
+        std::shared_ptr<Cme::DeferredGeometryPassShader> m_spGeometryPassShader;    // Defer渲染的几何处理阶段
+        std::shared_ptr<Cme::ScreenShader> m_spLightingPassShader;                  // Defer渲染的光照处理阶段-----pbr渲染(光照和纹理)都需要用到这个shader
+        std::shared_ptr<Cme::ScreenShader> m_spGBufferVisualShader;                 // GBuffer可视化所需要的Shader
+        // GBuffer
 
         // SSAO
         std::shared_ptr<Cme::SsaoShader> m_spSsaoShader;              
@@ -132,11 +137,11 @@ namespace Cme
         std::shared_ptr<Cme::SsaoBuffer> m_spSsaoBlurredBuffer;         // 环境遮蔽模糊
 
         std::shared_ptr<Cme::SsaoKernel> m_spSsaoKernel;
-        std::shared_ptr<Cme::TextureRegistry> m_spSsaoTextureRegistry;  // Render的时候更新Uniform变量
+        std::shared_ptr<Cme::TextureUniformSource> m_spSsaoTextureUniformSource;  // Render的时候更新Uniform变量
         // SSAO 
 
         // ***
-        std::shared_ptr<Cme::TextureRegistry> m_spLightingTextureRegistry;
+        std::shared_ptr<Cme::TextureUniformSource> m_spLightingTextureUniformSource;
 
         // Skybox
         std::shared_ptr<Cme::SkyboxShader> m_spSkyboxShader;
@@ -157,7 +162,7 @@ namespace Cme
         // FXAA
 
         // PostProcess
-        std::shared_ptr<Cme::TextureRegistry> m_spPostprocessTextureRegistry;
+        std::shared_ptr<Cme::TextureUniformSource> m_spPostprocessTextureUniformSource;
         std::shared_ptr<Cme::ScreenShader> m_spPostprocessShader;
         // PostProcess
 
