@@ -148,8 +148,12 @@ namespace Cme
         std::shared_ptr<Cme::Skybox> m_spSkybox;
         // Skybox
 
+        // Opengl教程上所做的所有操作都是在默认帧缓冲的渲染缓冲上进行的。默认的帧缓冲是在你创建窗口的时候生成和配置的（GLFW帮我们做了这些
+        // 这就是为什么Opengl教程8.1上明明是没有句柄为0的FBO,但却可以绑定,因为默认生成的FBO句柄是0 
+        // 在本工程中 没有采用默认的帧缓冲 而是独立生成了一个FBO 也就是m_spMainFb 基于这个思想 所有的逻辑就能说清楚
         std::shared_ptr<Cme::Framebuffer> m_spMainFb;
         Attachment m_MainColorAttachmentObj;
+        // 专门用于后处理的FBO 从GBuffer中Blit而来
         std::shared_ptr<Cme::Framebuffer> m_spFinalFb;
         Attachment m_FinalColorAttachmentObj;
 

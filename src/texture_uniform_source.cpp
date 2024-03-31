@@ -7,6 +7,8 @@ namespace Cme
         m_uiNextTextureUnit = 0;
         m_vecLastAvailableUnits.clear();
 
+        // 根据bindTexture的实现可知每一个Texture的句柄是依次递增的 +1 
+        // 先绑定纹理 在准备下一个纹理句柄
         for (auto source : m_vecTextureSources)
         {
             m_uiNextTextureUnit = source->bindTexture(m_uiNextTextureUnit, shader);

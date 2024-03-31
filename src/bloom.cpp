@@ -11,6 +11,7 @@ namespace Cme
         resampleParams.wrapMode = Cme::TextureWrapMode::CLAMP_TO_EDGE;
         resampleParams.generateMips = Cme::MipGeneration::ALWAYS;
 
+
         m_BloomMipChainTextureInstance = AttachTexture2FB_i(Cme::BufferType::COLOR_HDR_ALPHA, resampleParams);
     }
 

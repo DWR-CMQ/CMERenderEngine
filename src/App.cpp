@@ -89,6 +89,7 @@ namespace Cme
         m_spGBufferVisualShader = std::make_shared<Cme::ScreenShader>(Cme::ShaderPath("assets//model_shaders//gbuffer_visual.frag"));
         m_spLightingPassShader = std::make_shared<Cme::ScreenShader>(Cme::ShaderPath("assets//model_shaders//lighting_pass.frag"));
 
+        // 光照Shader用到GBuffer
         m_spLightingPassShader->addUniformSource(m_spCamera);
         m_spLightingPassShader->addUniformSource(m_spLightingTextureUniformSource);
         m_spLightingPassShader->addUniformSource(lightRegistry);
@@ -115,6 +116,7 @@ namespace Cme
         m_spSsaoTextureUniformSource = std::make_shared<Cme::TextureUniformSource>();
         m_spSsaoTextureUniformSource->addTextureSource(m_spGBuffer);
         m_spSsaoTextureUniformSource->addTextureSource(m_spSsaoKernel);
+        // SSAOShader用到GBuffer
         m_spSsaoShader->addUniformSource(m_spSsaoTextureUniformSource);         // 将准备更新的uniform变量添加到shader中
 
         m_spSsaoBlurShader = std::make_shared<Cme::SsaoBlurShader>();
@@ -122,12 +124,15 @@ namespace Cme
 
         m_spLightingTextureUniformSource->addTextureSource(m_spSsaoBlurredBuffer);            /// ------------------------
 
-        // post processing.
+        // post processing. 
         m_spBloomPass = std::make_shared<Cme::BloomPass>(m_pWindow->getSize());
 
+        // 把TextureUniformSource看作是纹理的集合即可 然后再加到某一个Shader中 由Shader更新纹理
         m_spPostprocessTextureUniformSource = std::make_shared<Cme::TextureUniformSource>();
-        m_spPostprocessTextureUniformSource->addTextureSource(m_spBloomPass);
+        m_spPostprocessTextureUniformSource->addTextureSource(m_spBloomPass);            // 说明BloomPass本质上是一个纹理
 
+        // 只有Shader才能更新Uniform变量 
+        // 纹理和shader本来就是相对独立的东西 只是通过glBindTexture将两者结合在一起而已 在两者实例化对象的时候都是独立的
         m_spPostprocessShader = std::make_shared<Cme::ScreenShader>(Cme::ShaderPath("assets//model_shaders//post_processing.frag"));
         m_spPostprocessShader->addUniformSource(m_spPostprocessTextureUniformSource);
 
@@ -225,17 +230,13 @@ namespace Cme
             m_OptsObj.frameDeltasOffset = m_pWindow->getFrameDeltasOffset();
             m_OptsObj.avgFPS = m_pWindow->getAvgFPS();
 
-            //renderImGuiUI(opts, ctx);
             RenderImGuiUI(m_OptsObj, *m_spCamera, *m_spShadowMap, *m_spSsaoBlurredBuffer);
 
             // Post-process options. Some option values are used later during rendering.
-            m_upModel->setModelTransform(glm::scale(glm::mat4_cast(m_OptsObj.modelRotation),
-                glm::vec3(m_OptsObj.modelScale)));
+            m_upModel->setModelTransform(glm::scale(glm::mat4_cast(m_OptsObj.modelRotation), glm::vec3(m_OptsObj.modelScale)));
 
-            m_spDirectionalLight->setDiffuse(m_OptsObj.directionalDiffuse *
-                m_OptsObj.directionalIntensity);
-            m_spDirectionalLight->setSpecular(m_OptsObj.directionalSpecular *
-                m_OptsObj.directionalIntensity);
+            m_spDirectionalLight->setDiffuse(m_OptsObj.directionalDiffuse * m_OptsObj.directionalIntensity);
+            m_spDirectionalLight->setSpecular(m_OptsObj.directionalSpecular * m_OptsObj.directionalIntensity);
             m_spDirectionalLight->setDirection(m_OptsObj.directionalDirection);
 
             m_spCameraControls->setSpeed(m_OptsObj.speed);
@@ -298,7 +299,7 @@ namespace Cme
                 m_spShadowMap->deactivate();
             }
 
-            // Step 1: geometry pass. Build the G-Buffer.
+            // Step 1: geometry pass. Build the G-Buffer. 符合Opengl教程的逻辑
             {
                 Cme::DebugGroup debugGroup("Geometry pass");
                 m_spGBuffer->activate();
@@ -345,6 +346,7 @@ namespace Cme
                         break;
                     };
                     m_spGBufferVisualShader->setInt("gBufferVis", static_cast<int>(m_OptsObj.gBufferVis));
+                    // GBuffer无纹理更新
                     m_spScreenQuad->draw(*m_spGBufferVisualShader);
                 }
 
@@ -370,8 +372,6 @@ namespace Cme
                 // SsaoShader更新Uniform变量
                 m_spSsaoShader->setFloat("qrk_time", Cme::time());
                 m_spSsaoShader->updateUniforms();
-
-                m_spScreenQuad->unsetTexture();
                 m_spScreenQuad->draw(*m_spSsaoShader, m_spSsaoTextureUniformSource.get());
 
                 m_spSsaoBuffer->deactivate();
@@ -381,6 +381,7 @@ namespace Cme
                 m_spSsaoBlurredBuffer->clear();
 
                 m_spSsaoBlurShader->configureWith(*m_spSsaoKernel, *m_spSsaoBuffer);
+                m_spScreenQuad->unsetTexture();
                 m_spScreenQuad->draw(*m_spSsaoBlurShader);
 
                 m_spSsaoBlurredBuffer->deactivate();
@@ -389,6 +390,7 @@ namespace Cme
             // Step 2: lighting pass. Draw to the main framebuffer.
             {
                 Cme::DebugGroup debugGroup("Deferred lighting pass");
+                // m_spMainFb的id为1
                 m_spMainFb->activate();
                 m_spMainFb->clear();
 
@@ -408,13 +410,13 @@ namespace Cme
                 m_spLightingPassShader->setFloat("emissionAttenuation.linear", m_OptsObj.emissionAttenuation.y);
                 m_spLightingPassShader->setFloat("emissionAttenuation.quadratic", m_OptsObj.emissionAttenuation.z);
 
-                m_spScreenQuad->unsetTexture();
+                //m_spScreenQuad->unsetTexture();
                 m_spScreenQuad->draw(*m_spLightingPassShader, m_spLightingTextureUniformSource.get());
 
                 m_spMainFb->deactivate();
             }
 
-            // Step 3: forward render anything else on top.
+            // Step 3: forward render anything else on top. 结合前向渲染
             {
                 Cme::DebugGroup debugGroup("Forward pass");
 
@@ -446,12 +448,12 @@ namespace Cme
                 // Draw skybox.
                 m_spSkyboxShader->updateUniforms();
                 m_spSkybox->Render(*m_spSkyboxShader);
-                //m_spSkybox->draw(*m_spSkyboxShader);
 
-                m_spMainFb->deactivate();
+                //m_spMainFb->deactivate();
             }
 
             // Step 4: post processing.
+            // 有一点不大理解的是为什么对于后处理需要再构建一个FBO 有什么意义吗
             if (m_OptsObj.bloom)
             {
                 Cme::DebugGroup debugGroup("Bloom pass");
@@ -460,6 +462,7 @@ namespace Cme
 
             {
                 Cme::DebugGroup debugGroup("Tonemap & gamma");
+                // m_spFinalFb的id为2
                 m_spFinalFb->activate();
                 m_spFinalFb->clear();
 
@@ -471,6 +474,8 @@ namespace Cme
                 m_spPostprocessShader->setBool("gammaCorrect", m_OptsObj.gammaCorrect);
                 m_spPostprocessShader->setFloat("gamma", static_cast<int>(m_OptsObj.gamma));
                 m_spScreenQuad->setTexture(m_MainColorAttachmentObj);
+
+                // 后处理有纹理更新
                 m_spScreenQuad->draw(*m_spPostprocessShader, m_spPostprocessTextureUniformSource.get());
 
                 m_spFinalFb->deactivate();
@@ -483,6 +488,7 @@ namespace Cme
             {
                 Cme::DebugGroup debugGroup("FXAA");
                 m_spScreenQuad->setTexture(m_FinalColorAttachmentObj);
+                // fxaa无纹理更新
                 m_spScreenQuad->draw(*m_spFxaaShader);
             }
             else
@@ -705,8 +711,7 @@ namespace Cme
             {
                 ImGui::Checkbox("Bloom", &opts.bloom);
                 ImGui::BeginDisabled(!opts.bloom);
-                CommonHelper::imguiFloatSlider("Bloom mix", &opts.bloomMix, 0.001f, 1.0f, nullptr,
-                    Scale::LOG);
+                CommonHelper::imguiFloatSlider("Bloom mix", &opts.bloomMix, 0.001f, 1.0f, nullptr, Scale::LOG);
                 ImGui::EndDisabled();
 
                 ImGui::Combo(
