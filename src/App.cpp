@@ -25,7 +25,7 @@ namespace Cme
     App::App()
     {
     }
-
+    
     App::~App()
     {
         //glfwDestroyWindow(m_pWindow);
@@ -105,31 +105,8 @@ namespace Cme
 
         m_spLightingTextureUniformSource->addTextureSource(m_spShadowMap);                    ///  -------------------------
 
-        // SSAO.
-        m_spSsaoShader = std::make_shared<Cme::SsaoShader>();
-        m_spSsaoShader->addUniformSource(m_spCamera);
-
-        m_spSsaoKernel = std::make_shared<Cme::SsaoKernel>();
-        m_spSsaoShader->addUniformSource(m_spSsaoKernel);
-        m_spSsaoBuffer = std::make_shared<Cme::SsaoBuffer>(m_pWindow->getSize());
-
-        m_spSsaoTextureUniformSource = std::make_shared<Cme::TextureUniformSource>();
-        m_spSsaoTextureUniformSource->addTextureSource(m_spGBuffer);
-        m_spSsaoTextureUniformSource->addTextureSource(m_spSsaoKernel);
-        // SSAOShader用到GBuffer
-        m_spSsaoShader->addUniformSource(m_spSsaoTextureUniformSource);         // 将准备更新的uniform变量添加到shader中
-
-        m_spSsaoBlurShader = std::make_shared<Cme::SsaoBlurShader>();
-        m_spSsaoBlurredBuffer = std::make_shared<Cme::SsaoBuffer>(m_pWindow->getSize());
-
-        m_spLightingTextureUniformSource->addTextureSource(m_spSsaoBlurredBuffer);            /// ------------------------
-
-        // post processing. 
-        m_spBloomPass = std::make_shared<Cme::BloomPass>(m_pWindow->getSize());
-
         // 把TextureUniformSource看作是纹理的集合即可 然后再加到某一个Shader中 由Shader更新纹理
         m_spPostprocessTextureUniformSource = std::make_shared<Cme::TextureUniformSource>();
-        m_spPostprocessTextureUniformSource->addTextureSource(m_spBloomPass);            // 说明BloomPass本质上是一个纹理
 
         // 只有Shader才能更新Uniform变量 
         // 纹理和shader本来就是相对独立的东西 只是通过glBindTexture将两者结合在一起而已 在两者实例化对象的时候都是独立的
@@ -230,7 +207,7 @@ namespace Cme
             m_OptsObj.frameDeltasOffset = m_pWindow->getFrameDeltasOffset();
             m_OptsObj.avgFPS = m_pWindow->getAvgFPS();
 
-            RenderImGuiUI(m_OptsObj, *m_spCamera, *m_spShadowMap, *m_spSsaoBlurredBuffer);
+            RenderImGuiUI(m_OptsObj, *m_spCamera, *m_spShadowMap);
 
             // Post-process options. Some option values are used later during rendering.
             m_upModel->setModelTransform(glm::scale(glm::mat4_cast(m_OptsObj.modelRotation), glm::vec3(m_OptsObj.modelScale)));
@@ -358,35 +335,6 @@ namespace Cme
                 return;
             }
 
-            // Step 1.2: optional SSAO pass.
-            // TODO: Extract into an "SSAO pass".
-            if (m_OptsObj.ssao)
-            {
-                Cme::DebugGroup debugGroup("SSAO pass");
-                m_spSsaoKernel->setRadius(m_OptsObj.ssaoRadius);
-                m_spSsaoKernel->setBias(m_OptsObj.ssaoBias);
-
-                m_spSsaoBuffer->activate();
-                m_spSsaoBuffer->clear();           // 清除颜色缓冲
-
-                // SsaoShader更新Uniform变量
-                m_spSsaoShader->setFloat("qrk_time", Cme::time());
-                m_spSsaoShader->updateUniforms();
-                m_spScreenQuad->draw(*m_spSsaoShader, m_spSsaoTextureUniformSource.get());
-
-                m_spSsaoBuffer->deactivate();
-
-                // Blur SSAO texture to remove noise
-                m_spSsaoBlurredBuffer->activate();
-                m_spSsaoBlurredBuffer->clear();
-
-                m_spSsaoBlurShader->configureWith(*m_spSsaoKernel, *m_spSsaoBuffer);
-                m_spScreenQuad->unsetTexture();
-                m_spScreenQuad->draw(*m_spSsaoBlurShader);
-
-                m_spSsaoBlurredBuffer->deactivate();
-            }
-
             // Step 2: lighting pass. Draw to the main framebuffer.
             {
                 Cme::DebugGroup debugGroup("Deferred lighting pass");
@@ -416,7 +364,8 @@ namespace Cme
                 m_spMainFb->deactivate();
             }
 
-            // Step 3: forward render anything else on top. 结合前向渲染
+            // 正常的前向渲染
+            // 普通的粒子系统就可以在这里面渲染
             {
                 Cme::DebugGroup debugGroup("Forward pass");
 
@@ -449,17 +398,10 @@ namespace Cme
                 m_spSkyboxShader->updateUniforms();
                 m_spSkybox->Render(*m_spSkyboxShader);
 
-                //m_spMainFb->deactivate();
+                m_spMainFb->deactivate();
             }
 
-            // Step 4: post processing.
-            // 有一点不大理解的是为什么对于后处理需要再构建一个FBO 有什么意义吗
-            if (m_OptsObj.bloom)
-            {
-                Cme::DebugGroup debugGroup("Bloom pass");
-                m_spBloomPass->multipassDraw(*m_spMainFb);
-            }
-
+            // 后处理
             {
                 Cme::DebugGroup debugGroup("Tonemap & gamma");
                 // m_spFinalFb的id为2
@@ -530,7 +472,7 @@ namespace Cme
         return helmet;
     }
 
-    void App::RenderImGuiUI(ModelRenderOptions& opts, Cme::Camera camera, Cme::ShadowMap shadowMap, Cme::SsaoBuffer ssaoBuffer)
+    void App::RenderImGuiUI(ModelRenderOptions& opts, Cme::Camera camera, Cme::ShadowMap shadowMap)
     {
         ImGui::Begin("Model Render");
 
@@ -685,18 +627,6 @@ namespace Cme
                 CommonHelper::imguiHelpMarker("The color of the fixed ambient component.");
                 ImGui::EndDisabled();
 
-                ImGui::Checkbox("SSAO", &opts.ssao);
-                ImGui::BeginDisabled(!opts.ssao);
-                CommonHelper::imguiImage(ssaoBuffer.getSsaoTexture(),
-                    glm::vec2(IMAGE_BASE_SIZE * camera.getAspectRatio(),
-                        IMAGE_BASE_SIZE));
-
-                CommonHelper::imguiFloatSlider("SSAO radius", &opts.ssaoRadius, 0.01, 5.0, "%.04f",
-                    Scale::LOG);
-                CommonHelper::imguiFloatSlider("SSAO bias", &opts.ssaoBias, 0.0001, 1.0, "%.04f",
-                    Scale::LOG);
-                ImGui::EndDisabled();
-
                 ImGui::BeginDisabled(opts.lightingModel != LightingModel::BLINN_PHONG);
                 CommonHelper::imguiFloatSlider("Shininess", &opts.shininess, 1.0f, 1000.0f, nullptr,
                     Scale::LOG);
@@ -709,11 +639,6 @@ namespace Cme
 
             if (ImGui::TreeNode("Post-processing"))
             {
-                ImGui::Checkbox("Bloom", &opts.bloom);
-                ImGui::BeginDisabled(!opts.bloom);
-                CommonHelper::imguiFloatSlider("Bloom mix", &opts.bloomMix, 0.001f, 1.0f, nullptr, Scale::LOG);
-                ImGui::EndDisabled();
-
                 ImGui::Combo(
                     "Tone mapping", reinterpret_cast<int*>(&opts.toneMapping),
                     "None\0Reinhard\0Reinhard luminance\0ACES (approx)\0AMD\0\0");
