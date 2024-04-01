@@ -94,17 +94,6 @@ namespace Cme
         m_spLightingPassShader->addUniformSource(m_spLightingTextureUniformSource);
         m_spLightingPassShader->addUniformSource(lightRegistry);
 
-        // shadow mapping.
-        constexpr int SHADOW_MAP_SIZE = 1024;
-        m_spShadowMap = std::make_shared<Cme::ShadowMap>(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
-        m_spShadowMapCamera = std::make_shared<Cme::ShadowMapCamera>(m_spDirectionalLight);
-        m_spShadowMapShader = std::make_shared<Cme::ShadowMapShader>();
-
-        m_spShadowMapShader->addUniformSource(m_spShadowMapCamera);
-        m_spLightingPassShader->addUniformSource(m_spShadowMapCamera);
-
-        m_spLightingTextureUniformSource->addTextureSource(m_spShadowMap);                    ///  -------------------------
-
         // 把TextureUniformSource看作是纹理的集合即可 然后再加到某一个Shader中 由Shader更新纹理
         m_spPostprocessTextureUniformSource = std::make_shared<Cme::TextureUniformSource>();
 
@@ -207,7 +196,7 @@ namespace Cme
             m_OptsObj.frameDeltasOffset = m_pWindow->getFrameDeltasOffset();
             m_OptsObj.avgFPS = m_pWindow->getAvgFPS();
 
-            RenderImGuiUI(m_OptsObj, *m_spCamera, *m_spShadowMap);
+            RenderImGuiUI(m_OptsObj, *m_spCamera);
 
             // Post-process options. Some option values are used later during rendering.
             m_upModel->setModelTransform(glm::scale(glm::mat4_cast(m_OptsObj.modelRotation), glm::vec3(m_OptsObj.modelScale)));
@@ -258,23 +247,6 @@ namespace Cme
             m_pWindow->setMouseButtonBehavior(m_OptsObj.captureMouse
                 ? Cme::MouseButtonBehavior::CAPTURE_MOUSE
                 : Cme::MouseButtonBehavior::NONE);
-
-            // == Main render path ==
-            // Step 0: optional shadow pass.
-            if (m_OptsObj.shadowMapping)
-            {
-                Cme::DebugGroup debugGroup("Directional shadow map");
-                m_spShadowMapCamera->setCuboidExtents(m_OptsObj.shadowCameraCuboidExtents);
-                m_spShadowMapCamera->setNearPlane(m_OptsObj.shadowCameraNear);
-                m_spShadowMapCamera->setFarPlane(m_OptsObj.shadowCameraFar);
-                m_spShadowMapCamera->setDistanceFromOrigin(m_OptsObj.shadowCameraDistance);
-
-                m_spShadowMap->activate();
-                m_spShadowMap->clear();
-                m_spShadowMapShader->updateUniforms();
-                m_upModel->draw(*m_spShadowMapShader);
-                m_spShadowMap->deactivate();
-            }
 
             // Step 1: geometry pass. Build the G-Buffer. 符合Opengl教程的逻辑
             {
@@ -472,7 +444,7 @@ namespace Cme
         return helmet;
     }
 
-    void App::RenderImGuiUI(ModelRenderOptions& opts, Cme::Camera camera, Cme::ShadowMap shadowMap)
+    void App::RenderImGuiUI(ModelRenderOptions& opts, Cme::Camera camera)
     {
         ImGui::Begin("Model Render");
 
@@ -553,57 +525,6 @@ namespace Cme
                     /*v_speed=*/0.01f, 0.0f, 10.0f);
                 ImGui::SameLine();
                 CommonHelper::imguiHelpMarker("Constant, linear, and quadratic attenuation of emission lights.");
-
-                ImGui::TreePop();
-            }
-
-            if (ImGui::TreeNode("Shadows"))
-            {
-                ImGui::Checkbox("Shadow mapping", &opts.shadowMapping);
-                ImGui::BeginDisabled(!opts.shadowMapping);
-                // Shadow map texture is a square, so extend both width/height by the
-                // aspect ratio.
-                CommonHelper::imguiImage(shadowMap.getDepthTexture(),
-                    glm::vec2(IMAGE_BASE_SIZE * camera.getAspectRatio(),
-                        IMAGE_BASE_SIZE * camera.getAspectRatio()));
-                CommonHelper::imguiFloatSlider("Cuboid extents", &opts.shadowCameraCuboidExtents, 0.1f,
-                    50.0f, nullptr, Scale::LOG);
-
-                if (CommonHelper::imguiFloatSlider("Near plane", &opts.shadowCameraNear, 0.01, 1000.0,
-                    nullptr, Scale::LOG))
-                {
-                    if (opts.shadowCameraNear > opts.shadowCameraFar)
-                    {
-                        opts.shadowCameraFar = opts.shadowCameraNear;
-                    }
-                }
-                if (CommonHelper::imguiFloatSlider("Far plane", &opts.shadowCameraFar, 0.01, 1000.0,
-                    nullptr, Scale::LOG))
-                {
-                    if (opts.shadowCameraFar < opts.shadowCameraNear)
-                    {
-                        opts.shadowCameraNear = opts.shadowCameraFar;
-                    }
-                }
-                CommonHelper::imguiFloatSlider("Distance from origin", &opts.shadowCameraDistance, 0.01, 100.0f, nullptr, Scale::LOG);
-                if (CommonHelper::imguiFloatSlider("Bias min", &opts.shadowBiasMin, 0.0001, 1.0,
-                    "%.04f", Scale::LOG))
-                {
-                    if (opts.shadowBiasMin > opts.shadowBiasMax)
-                    {
-                        opts.shadowBiasMax = opts.shadowBiasMin;
-                    }
-                }
-                if (CommonHelper::imguiFloatSlider("Bias max", &opts.shadowBiasMax, 0.0001, 1.0,
-                    "%.04f", Scale::LOG))
-                {
-                    if (opts.shadowBiasMax < opts.shadowBiasMin)
-                    {
-                        opts.shadowBiasMin = opts.shadowBiasMax;
-                    }
-                }
-
-                ImGui::EndDisabled();
 
                 ImGui::TreePop();
             }

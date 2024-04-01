@@ -87,7 +87,7 @@ namespace Cme
 		void Restart();
 		void Close();
 
-        void RenderImGuiUI(ModelRenderOptions& opts, Cme::Camera camera, Cme::ShadowMap shadowMap);
+        void RenderImGuiUI(ModelRenderOptions& opts, Cme::Camera camera);
         std::unique_ptr<Cme::Model> LoadModelOrDefault();
 
     public:
@@ -99,12 +99,6 @@ namespace Cme
         ModelRenderOptions m_OptsObj;
         std::shared_ptr<Cme::Camera> m_spCamera;
         std::shared_ptr<Cme::CameraControls> m_spCameraControls;
-
-        // ShadowMap “ı”∞”≥…‰
-        std::shared_ptr<Cme::ShadowMap> m_spShadowMap;
-        std::shared_ptr<Cme::ShadowMapShader> m_spShadowMapShader;
-        std::shared_ptr<Cme::ShadowMapCamera> m_spShadowMapCamera;
-        // ShadowMap “ı”∞”≥…‰
 
         // Model
         std::unique_ptr<Cme::Model> m_upModel;
