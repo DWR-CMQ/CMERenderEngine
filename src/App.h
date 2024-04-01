@@ -87,7 +87,7 @@ namespace Cme
 		void Restart();
 		void Close();
 
-        void RenderImGuiUI(ModelRenderOptions& opts, Cme::Camera camera, Cme::ShadowMap shadowMap, Cme::SsaoBuffer ssaoBuffer);
+        void RenderImGuiUI(ModelRenderOptions& opts, Cme::Camera camera, Cme::ShadowMap shadowMap);
         std::unique_ptr<Cme::Model> LoadModelOrDefault();
 
     public:
@@ -129,17 +129,6 @@ namespace Cme
         std::shared_ptr<Cme::ScreenShader> m_spGBufferVisualShader;                 // GBuffer可视化所需要的Shader
         // GBuffer
 
-        // SSAO
-        std::shared_ptr<Cme::SsaoShader> m_spSsaoShader;              
-        std::shared_ptr<Cme::SsaoBlurShader> m_spSsaoBlurShader;      
-        
-        std::shared_ptr<Cme::SsaoBuffer> m_spSsaoBuffer;                // 环境遮蔽
-        std::shared_ptr<Cme::SsaoBuffer> m_spSsaoBlurredBuffer;         // 环境遮蔽模糊
-
-        std::shared_ptr<Cme::SsaoKernel> m_spSsaoKernel;
-        std::shared_ptr<Cme::TextureUniformSource> m_spSsaoTextureUniformSource;  // Render的时候更新Uniform变量
-        // SSAO 
-
         // ***
         std::shared_ptr<Cme::TextureUniformSource> m_spLightingTextureUniformSource;
 
@@ -156,10 +145,6 @@ namespace Cme
         // 专门用于后处理的FBO 从GBuffer中Blit而来
         std::shared_ptr<Cme::Framebuffer> m_spFinalFb;
         Attachment m_FinalColorAttachmentObj;
-
-        // Bloom
-        std::shared_ptr<Cme::BloomPass> m_spBloomPass;
-        // Bloom
 
         // FXAA
         std::shared_ptr<Cme::FXAAShader> m_spFxaaShader;
