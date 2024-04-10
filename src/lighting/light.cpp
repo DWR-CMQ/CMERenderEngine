@@ -2,62 +2,6 @@
 
 namespace Cme
 {
-    void LightRegistry::addLight(std::shared_ptr<Light> light) 
-    {
-        // TODO: Throw an error if this exceeds the max light count supported in the
-        // shader.
-        m_vecLights.push_back(light);
-
-        switch (light->getLightType())
-        {
-        case LightType::DIRECTIONAL_LIGHT:
-            light->setLightIdx(m_uiDirectionalCount);
-            m_uiDirectionalCount++;
-            break;
-        case LightType::POINT_LIGHT:
-            light->setLightIdx(m_uiPointCount);
-            m_uiPointCount++;
-            break;
-        case LightType::SPOT_LIGHT:
-            light->setLightIdx(m_uiPointCount);
-            m_uiSpotCount++;
-            break;
-        }
-    }
-
-    void LightRegistry::updateUniforms(Shader& shader)
-    {
-        if (m_spViewSource != nullptr)
-        {
-            applyViewTransform(m_spViewSource->getViewTransform());
-        }
-        shader.setInt("qrk_directionalLightCount", m_uiDirectionalCount);
-        shader.setInt("qrk_pointLightCount", m_uiPointCount);
-        shader.setInt("qrk_spotLightCount", m_uiSpotCount);
-
-        for (auto light : m_vecLights)
-        {
-            light->updateUniforms(shader);
-        }
-    }
-
-    void LightRegistry::applyViewTransform(const glm::mat4& view)
-    {
-        // TODO: Only do this when we need to.
-        for (auto light : m_vecLights)
-        {
-            light->applyViewTransform(view);
-        }
-    }
-
-    void LightRegistry::setUseViewTransform(bool useViewTransform)
-    {
-        for (auto light : m_vecLights)
-        {
-            light->setUseViewTransform(useViewTransform);
-        }
-    }
-
     DirectionalLight::DirectionalLight(glm::vec3 direction, glm::vec3 diffuse,
                                        glm::vec3 specular)
         : direction_(glm::normalize(direction)),

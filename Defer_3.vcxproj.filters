@@ -37,7 +37,10 @@
     <Filter Include="src\texture">
       <UniqueIdentifier>{3f2ac085-771b-4dd9-b86d-9cdf55331a8f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\advanced_lighting">
+    <Filter Include="src\scene">
+      <UniqueIdentifier>{0ca4c729-4875-44a8-a696-e8f0241ebce7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\lighting">
       <UniqueIdentifier>{17e128a5-196b-4014-ab99-28acb1357e0b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -72,9 +75,6 @@
     <ClCompile Include="src\App.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\bloom.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\blur.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -106,9 +106,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="3dparty\glad.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\light.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
@@ -177,20 +174,26 @@
     <ClCompile Include="src\core\vertex_buffer_object.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\texture1.cpp">
-      <Filter>src\core</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\sampler.cpp">
       <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\model_scene.cpp">
+      <Filter>src\scene</Filter>
     </ClCompile>
     <ClCompile Include="src\core\sampler_manager.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
-    <ClCompile Include="src\advanced_lighting\ssao.cpp">
-      <Filter>src\advanced_lighting</Filter>
+    <ClCompile Include="src\lighting\ssao.cpp">
+      <Filter>src\lighting</Filter>
     </ClCompile>
-    <ClCompile Include="src\advanced_lighting\ssao_kernel.cpp">
-      <Filter>src\advanced_lighting</Filter>
+    <ClCompile Include="src\lighting\ssao_kernel.cpp">
+      <Filter>src\lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lighting\light_control.cpp">
+      <Filter>src\lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lighting\light.cpp">
+      <Filter>src\lighting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -242,9 +245,6 @@
     <ClInclude Include="src\App.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\bloom.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\blur.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -276,9 +276,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\fxaa.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\light.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\model.h">
@@ -359,20 +356,26 @@
     <ClInclude Include="src\core\vertex_buffer_object.h">
       <Filter>src\core</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\texture1.h">
-      <Filter>src\core</Filter>
-    </ClInclude>
     <ClInclude Include="src\core\sampler.h">
       <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scene\model_scene.h">
+      <Filter>src\scene</Filter>
     </ClInclude>
     <ClInclude Include="src\core\sampler_manager.h">
       <Filter>src\core</Filter>
     </ClInclude>
-    <ClInclude Include="src\advanced_lighting\ssao.h">
-      <Filter>src\advanced_lighting</Filter>
+    <ClInclude Include="src\lighting\ssao.h">
+      <Filter>src\lighting</Filter>
     </ClInclude>
-    <ClInclude Include="src\advanced_lighting\ssao_kernel.h">
-      <Filter>src\advanced_lighting</Filter>
+    <ClInclude Include="src\lighting\ssao_kernel.h">
+      <Filter>src\lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lighting\light_control.h">
+      <Filter>src\lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lighting\light.h">
+      <Filter>src\lighting</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

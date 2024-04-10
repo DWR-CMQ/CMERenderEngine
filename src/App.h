@@ -3,6 +3,8 @@
 #include <memory>
 #include <iostream>
 
+#include "scene/model_scene.h"
+
 namespace Cme
 {
     // Non-normative context for UI rendering. Used for accessing renderer info.
@@ -11,70 +13,6 @@ namespace Cme
         Cme::Camera& camera;
         Cme::ShadowMap& shadowMap;
         Cme::SsaoBuffer& ssaoBuffer;
-    };
-
-    // Options for the model render UI. The defaults here are used at startup.
-    struct ModelRenderOptions
-    {
-        // Model.
-        glm::quat modelRotation = glm::identity<glm::quat>();
-        float modelScale = 1.0f;
-
-        // Rendering.
-        LightingModel lightingModel = LightingModel::COOK_TORRANCE_GGX;
-
-        glm::vec3 directionalDiffuse = glm::vec3(0.5f);
-        glm::vec3 directionalSpecular = glm::vec3(0.5f);
-        float directionalIntensity = 10.0f;
-        glm::vec3 directionalDirection = glm::normalize(glm::vec3(-0.2f, -1.0f, -0.3f));
-
-        bool shadowMapping = false;
-        float shadowCameraCuboidExtents = 2.0f;
-        float shadowCameraNear = 0.1f;
-        float shadowCameraFar = 15.0f;
-        float shadowCameraDistance = 5.0f;
-        float shadowBiasMin = 0.0001;
-        float shadowBiasMax = 0.001;
-
-        SkyboxImage skyboxImage = SkyboxImage::WINTER_FOREST;
-
-        bool useIBL = true;
-        glm::vec3 ambientColor = glm::vec3(0.1f);
-        bool ssao = false;
-        float ssaoRadius = 0.5f;
-        float ssaoBias = 0.025f;
-        float shininess = 32.0f;
-        float emissionIntensity = 5.0f;
-        glm::vec3 emissionAttenuation = glm::vec3(0, 0, 1.0f);
-
-        bool bloom = true;
-        float bloomMix = 0.004;
-        ToneMapping toneMapping = ToneMapping::ACES_APPROX;
-        bool gammaCorrect = true;
-        float gamma = 2.2f;
-
-        bool fxaa = true;
-
-        // Camera.
-        CameraControlType cameraControlType = CameraControlType::ORBIT;
-        float speed = 0;
-        float sensitivity = 0;
-        float fov = 0;
-        float near = 0;
-        float far = 0;
-        bool captureMouse = false;
-
-        // Debug.
-        GBufferVis gBufferVis = GBufferVis::DISABLED;
-        bool wireframe = false;
-        bool drawNormals = false;
-
-        // Performance.
-        const float* frameDeltas = nullptr;
-        int numFrameDeltas = 0;
-        int frameDeltasOffset = 0;
-        float avgFPS = 0;
-        bool enableVsync = true;
     };
 
 	class App
@@ -88,7 +26,6 @@ namespace Cme
 		void Close();
 
         void RenderImGuiUI(ModelRenderOptions& opts, Cme::Camera camera);
-        std::unique_ptr<Cme::Model> LoadModelOrDefault();
 
     public:
         App();
@@ -96,22 +33,28 @@ namespace Cme
 
 	private:
 		Cme::Window* m_pWindow;
+
+        // 由App中控制编辑器
         ModelRenderOptions m_OptsObj;
+
         std::shared_ptr<Cme::Camera> m_spCamera;
         std::shared_ptr<Cme::CameraControls> m_spCameraControls;
 
-        // Model
-        std::unique_ptr<Cme::Model> m_upModel;
-        // Model
+        // Skybox 天空盒在App中 也就是默认就是有天空盒
+        std::shared_ptr<Cme::SkyboxShader> m_spSkyboxShader;
+        std::shared_ptr<Cme::Skybox> m_spSkybox;
+        // Skybox
+
+        Cme::ModelScene m_ModelSceneObj;
+
+        // IBL
+        //std::shared_ptr<Cme::EquirectCubemap> m_spEquirectCubeMap;                 // 立方体贴图
+        //std::shared_ptr<Cme::PrefilterMap> m_spPrefilterMap;                       // 预卷积贴图
+        //std::shared_ptr<Cme::IrradianceMap> m_spIrradianceMap;                     // 辐照贴图
+        // IBL
+        std::shared_ptr<Cme::BrdfMap> m_spBrdfMap;
 
         std::shared_ptr<Cme::DirectionalLight> m_spDirectionalLight;
-        
-        // IBL
-        std::shared_ptr<Cme::PrefilterMap> m_spPrefilterMap;                       // 预卷积贴图
-        std::shared_ptr<Cme::EquirectCubemap> m_spEquirectCubeMap;                 // 立方体贴图
-        std::shared_ptr<Cme::IrradianceMap> m_spIrradianceMap;                     // 辐照贴图
-        // IBL
-
         // GBuffer 
         // 延迟渲染包含两个阶段(pass) 
         // 第一个几何处理阶段(GeometryPass)中 先渲染场景一次 获取对象的各种几何信息 并存储在叫做GBuffer的纹理中
@@ -121,15 +64,9 @@ namespace Cme
         std::shared_ptr<Cme::DeferredGeometryPassShader> m_spGeometryPassShader;    // Defer渲染的几何处理阶段
         std::shared_ptr<Cme::ScreenShader> m_spLightingPassShader;                  // Defer渲染的光照处理阶段-----pbr渲染(光照和纹理)都需要用到这个shader
         std::shared_ptr<Cme::ScreenShader> m_spGBufferVisualShader;                 // GBuffer可视化所需要的Shader
-        // GBuffer
 
         // ***
         std::shared_ptr<Cme::TextureUniformSource> m_spLightingTextureUniformSource;
-
-        // Skybox
-        std::shared_ptr<Cme::SkyboxShader> m_spSkyboxShader;
-        std::shared_ptr<Cme::Skybox> m_spSkybox;
-        // Skybox
 
         // Opengl教程上所做的所有操作都是在默认帧缓冲的渲染缓冲上进行的。默认的帧缓冲是在你创建窗口的时候生成和配置的（GLFW帮我们做了这些
         // 这就是为什么Opengl教程8.1上明明是没有句柄为0的FBO,但却可以绑定,因为默认生成的FBO句柄是0 
@@ -149,9 +86,6 @@ namespace Cme
         std::shared_ptr<Cme::ScreenShader> m_spPostprocessShader;
         // PostProcess
 
-        // Debug Shader
-        std::shared_ptr<Cme::Shader> m_spNormalShader;
-        std::shared_ptr<Cme::Shader> m_spLampShader;
 	};
 }
 

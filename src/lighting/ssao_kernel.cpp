@@ -53,7 +53,7 @@ namespace Cme
         params.filtering = TextureFiltering::NEAREST;
         params.wrapMode = TextureWrapMode::REPEAT;
 
-        m_NoiseTextureObj = Texture::createFromData(noiseTextureSideLength, noiseTextureSideLength, GL_RGB16F, vecNoiseData, params);
+        //m_NoiseTextureObj = Texture::createFromData(noiseTextureSideLength, noiseTextureSideLength, GL_RGB16F, vecNoiseData, params);
     }
 
     void SsaoKernel::updateUniforms(Shader& shader)

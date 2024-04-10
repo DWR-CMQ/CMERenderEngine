@@ -8,7 +8,7 @@
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
-#include "light.h"
+#include "lighting/light.h"
 #include "screen.h"
 #include "shader/shader.h"
 
@@ -38,7 +38,7 @@ namespace Cme
     constexpr float MIN_FOV = 1.0f;
     constexpr float MAX_FOV = 135.0f;
 
-    class Camera : public UniformSource, public ViewSource 
+    class Camera : public UniformSource 
     {
     public:
         // Constructs a new Camera. Angular values should be provided in degrees.
@@ -80,7 +80,7 @@ namespace Cme
         float getFarPlane() const { return m_fFar; }
         void setFarPlane(float far) { m_fFar = far; }
 
-        glm::mat4 getViewTransform() const override;
+        glm::mat4 getViewTransform() const;
         glm::mat4 getProjectionTransform() const;
 
         void updateUniforms(Shader& shader) override;

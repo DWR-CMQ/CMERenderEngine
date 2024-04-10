@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 
+
 namespace Cme
 {
 
@@ -21,6 +22,25 @@ namespace Cme
     {
         TEXTURE_2D = 0,
         CUBEMAP,
+    };
+
+    enum class BufferType
+    {
+        COLOR = 0,
+        // HDR color attachment, allowing color values to exceed 1.0
+        COLOR_HDR,
+        // SNORM attachment, only allowing numbers in the range [-1, 1] but with
+        // greater precision.
+        COLOR_SNORM,
+        COLOR_ALPHA,
+        COLOR_HDR_ALPHA,
+        COLOR_SNORM_ALPHA,
+        COLOR_CUBEMAP_HDR,
+        COLOR_CUBEMAP_HDR_ALPHA,
+        GRAYSCALE,
+        DEPTH,
+        STENCIL,
+        DEPTH_AND_STENCIL,
     };
 
     inline const GLenum textureTypeToGlTarget(TextureType type) 
@@ -110,23 +130,22 @@ namespace Cme
     public:
         // Loads a texture from a given path.
         // TODO: Consider putting this in a TextureLoader class.
-        static Texture LoadTexture(const char* path, bool isSRGB = true);
-        static Texture LoadHDR(const char* path);
+        void LoadTexture(const char* path, bool isSRGB = true);
+        void LoadHDR(const char* path);
 
         // Loads a cubemap from a set of 6 textures for the faces. Textures must be
         // passed in order starting with GL_TEXTURE_CUBE_MAP_POSITIVE_X and
         // incrementing from there; namely, in the order right, left, top, bottom,
         // front, and back.
-        static Texture loadCubemap(std::vector<std::string> faces);
+        void loadCubemap(std::vector<std::string> faces);
 
-        // Creates a custom texture of the given size and format.
-        static Texture create(int width, int height, GLenum internalFormat, const TextureParams& params);
-
-        static Texture createCubemap(int size, GLenum internalFormat);
+        void createCubemap(int size, GLenum internalFormat);
 
         // Creates a custom texture based on the given input data.
         // TODO: Change this to take an unsigned char ptr?
-        static Texture createFromData(int width, int height, GLenum internalFormat, const std::vector<glm::vec3>& data, const TextureParams& params);
+        bool createFromData(int width, int height, GLenum internalFormat, const std::vector<glm::vec3>& data, const TextureParams& params);
+        // Creates a custom texture of the given size and format.
+        void Create(int width, int height, GLenum internalFormat, const TextureParams& params, Cme::BufferType type);
 
         // TODO: Replace this with proper RAII.
         void free();
@@ -160,6 +179,8 @@ namespace Cme
         // TODO: Remove GLenum from this API (use a custom enum).
         GLenum getInternalFormat() const { return m_uiInternalFormat; }
 
+        // Applies the given params to the currently-active texture.
+        void SetTextureParams(const TextureParams& params, TextureType type = TextureType::TEXTURE_2D);
     private:
         // TODO: Texture lifetimes aren't managed currently, so they aren't unloaded.
         unsigned int m_uiID;
@@ -170,9 +191,6 @@ namespace Cme
         int m_iNumChannels;
         int m_iNumMips;
         GLenum m_uiInternalFormat;
-
-        // Applies the given params to the currently-active texture.
-        static void ApplyParams(const TextureParams& params, TextureType type = TextureType::TEXTURE_2D);
 
         friend class Framebuffer;
         friend class Attachment;

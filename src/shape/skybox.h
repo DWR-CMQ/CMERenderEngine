@@ -40,14 +40,11 @@ namespace Cme
         Skybox(bool withPositions = true, bool withTextureCoordinates = true, bool withNormals = true);
         ~Skybox();
 
-        void Render(Shader& shader);
+        void Render(Shader& shader, std::shared_ptr<Cme::Camera> spCamera);
 
         void InitializeData();
 
-        void LoadSkyboxImage(SkyboxImage eSkyboxImage, 
-                            Cme::EquirectCubemap& equirectCubemapConverter,
-                            Cme::IrradianceMap& irradianceCalculator,
-                            Cme::PrefilterMap& prefilteredEnvMapCalculator);
+        void LoadSkyboxImage(SkyboxImage eSkyboxImage);
 
         bool HasPositions() const;
 
@@ -75,6 +72,12 @@ namespace Cme
         std::string m_sImageExtension; 
 
         SkyboxType m_SkyboxType = SkyboxType::Normal;
+
+        // 等距柱状投影图
+        std::shared_ptr<Cme::EquirectCubemap> m_spEquirectCubeMap;                 // 立方体贴图
+        std::shared_ptr<Cme::PrefilterMap> m_spPrefilterMap;                       // 预卷积贴图
+        std::shared_ptr<Cme::IrradianceMap> m_spIrradianceMap;                     // 辐照贴图
+        
     };
 }
 

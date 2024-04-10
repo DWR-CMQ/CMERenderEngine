@@ -44,9 +44,9 @@ namespace Cme
         virtual ~EquirectCubemap() = default;
 
         // Draw onto the allocated cubemap from the given texture as the source.
-        void multipassDraw(Texture source);
+        void multipassDraw(std::shared_ptr<Texture> spSource);
 
-        Texture getCubemap() { return m_CubemapInstance.Transform2Texture(); }
+        Texture GetCubemap() { return m_CubemapInstance.Transform2Texture(); }
 
         unsigned int bindTexture(unsigned int nextTextureUnit,
                                 Shader& shader) override;

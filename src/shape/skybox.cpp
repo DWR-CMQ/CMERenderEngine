@@ -1,7 +1,4 @@
 #include "skybox.h"
-#include "../core/texture1.h"
-#include "../core/textureManager.h"
-#include "../core/sampler_manager.h"
 #include <mutex>
 
 namespace Cme
@@ -65,11 +62,13 @@ namespace Cme
         //glDeleteBuffers(1, &skyboxVBO);
     }
 
-    void Skybox::Render(Shader& shader)
+    void Skybox::Render(Shader& shader, std::shared_ptr<Cme::Camera> spCamera)
     {
         shader.setInt("skybox", 0);
-
         shader.activate();
+        shader.setMat4("view", spCamera->getViewTransform());
+        shader.setMat4("projection", spCamera->getProjectionTransform());
+
         glBindVertexArray(m_VAO);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -119,10 +118,7 @@ namespace Cme
         m_bInitialized = true;
     }
 
-    void Skybox::LoadSkyboxImage(SkyboxImage eSkyboxImage,
-                                Cme::EquirectCubemap& equirectCubemapConverter,
-                                Cme::IrradianceMap& irradianceCalculator,
-                                Cme::PrefilterMap& prefilteredEnvMapCalculator)
+    void Skybox::LoadSkyboxImage(SkyboxImage eSkyboxImage)
     {
         std::string hdrPath;
         switch (eSkyboxImage)
@@ -153,15 +149,29 @@ namespace Cme
             break;
         }
 
+        // IBL
+        constexpr int CUBEMAP_SIZE = 1024;
+        // 等距柱状投影图
+        m_spEquirectCubeMap = std::make_shared<Cme::EquirectCubemap>(CUBEMAP_SIZE, CUBEMAP_SIZE, true);
+        
+        // 辐照贴图 Irradiance map averages radiance uniformly so it doesn't have a lot of high frequency details and can thus be small.
+        m_spIrradianceMap = std::make_shared<Cme::IrradianceMap>(32, 32);
+
+        // 预卷积贴图  Create prefiltered envmap for specular IBL. It doesn't have to be super large.
+        m_spPrefilterMap = std::make_shared<Cme::PrefilterMap>(CUBEMAP_SIZE, CUBEMAP_SIZE);
+
         int iSkyboxImage = static_cast<int>(eSkyboxImage);
         if (iSkyboxImage <= 6)
         {
-            Cme::Texture hdr = Cme::Texture::LoadHDR(hdrPath.c_str());
-            equirectCubemapConverter.multipassDraw(hdr);
+            //Cme::Texture hdr = Cme::Texture::LoadHDR(hdrPath.c_str());
+            auto fuck = std::make_shared<Cme::Texture>();
+            fuck->LoadHDR(hdrPath.c_str());
+            m_spEquirectCubeMap->multipassDraw(fuck);
 
-            m_Texture = equirectCubemapConverter.getCubemap();
-            irradianceCalculator.multipassDraw(m_Texture);
-            prefilteredEnvMapCalculator.multipassDraw(m_Texture);
+            // m_spIrradianceMap和m_spPrefilterMap好像没什么作用(因为没有在Rendder时用到 却照样可以渲染出天空盒)
+            m_Texture = m_spEquirectCubeMap->GetCubemap();
+            m_spIrradianceMap->multipassDraw(m_Texture);
+            m_spPrefilterMap->multipassDraw(m_Texture);
         }
         else
         {
@@ -174,7 +184,10 @@ namespace Cme
                 "assets//models//skybox//jajsundown1//front.jpg",
                 "assets//models//skybox//jajsundown1//back.jpg",
             };
-            m_Texture = Cme::Texture::loadCubemap(vecFaces);
+            //m_Texture = Cme::Texture::loadCubemap(vecFaces);
+
+            auto texturePtr = std::make_unique<Cme::Texture>();
+            texturePtr->loadCubemap(vecFaces);
         }
     }
 

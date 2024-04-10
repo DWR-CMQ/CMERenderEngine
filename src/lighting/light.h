@@ -1,13 +1,13 @@
-#ifndef QUARKGL_LIGHT_H_
-#define QUARKGL_LIGHT_H_
+#pragma once
 
-#include "exceptions.h"
-#include "shader/shader.h"
+#include "../exceptions.h"
+#include "../shader/shader.h"
 
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
 
+// 使用组合
 namespace Cme 
 {
     class LightException : public QuarkException 
@@ -37,8 +37,6 @@ namespace Cme
         SPOT_LIGHT,
     };
 
-    class LightRegistry;
-
     class Light 
     {
     public:
@@ -50,9 +48,6 @@ namespace Cme
             m_bUseViewTransform = useViewTransform;
         }
 
-        friend LightRegistry;
-
-    protected:
         void setLightIdx(unsigned int lightIdx) 
         {
             m_uiLightIdx = lightIdx;
@@ -91,43 +86,6 @@ namespace Cme
         bool m_hasLightChanged = true;
 
         bool m_hasViewBeenApplied = false;
-    };
-
-    // A source for the camera view transform.
-    class ViewSource 
-    {
-    public:
-        virtual glm::mat4 getViewTransform() const = 0;
-    };
-
-    class LightRegistry : public UniformSource
-    {
-    public:
-        virtual ~LightRegistry() = default;
-        void addLight(std::shared_ptr<Light> light);
-        // Sets the view source used to update the light uniforms. The source is
-        // called when updating uniforms.
-        void setViewSource(std::shared_ptr<ViewSource> viewSource)
-        {
-            m_spViewSource = viewSource;
-        }
-        void updateUniforms(Shader& shader);
-
-        // Applies the view transform to the registered lights. This is automatically
-        // called if a view source has been set.
-        void applyViewTransform(const glm::mat4& view);
-
-        // Sets whether the registered lights should transform their positions to view
-        // space. If false, positions remain in world space when passed to the shader.
-        void setUseViewTransform(bool useViewTransform);
-
-    private:
-        unsigned int m_uiDirectionalCount = 0;
-        unsigned int m_uiPointCount = 0;
-        unsigned int m_uiSpotCount = 0;
-
-        std::shared_ptr<ViewSource> m_spViewSource;
-        std::vector<std::shared_ptr<Light>> m_vecLights;
     };
 
     class DirectionalLight : public Light
@@ -297,6 +255,5 @@ namespace Cme
         Attenuation m_stAttenuation;
     };
 
-}  // namespace Cme
+} 
 
-#endif

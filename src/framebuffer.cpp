@@ -93,6 +93,7 @@ namespace Cme
         return size;
     }
 
+    /// 纹理怎么会在帧缓冲中创建
     /// @brief 创建纹理 添加到帧缓冲上 
     /// @param type 
     /// @return 附件
@@ -122,42 +123,16 @@ namespace Cme
             textureType = TextureType::CUBEMAP;
         }
 
-        // Generate texture based on given buffer type.
-        // TODO: This does the same thing as the Texture class - should it use that
-        // instead?
-        unsigned int texture;
-        glGenTextures(1, &texture);
-        glBindTexture(textureTarget, texture);
-
         GLenum internalFormat = bufferTypeToGlInternalFormat(type);
-
-        int numMips = 1;
-        if (params.generateMips == MipGeneration::ALWAYS) 
-        {
-            numMips = CommonHelper::calculateNumMips(m_iWidth, m_iHeight);
-            if (params.maxNumMips >= 0) 
-            {
-                numMips = std::min(numMips, params.maxNumMips);
-            }
-        }
-        if (m_iSamples && textureType != TextureType::CUBEMAP)
-        {
-            glTexStorage2DMultisample(textureTarget, m_iSamples, internalFormat, m_iWidth, m_iHeight, GL_TRUE);
-        } 
-        else 
-        {
-            // 不可变存储 2D数组纹理 多样本函数
-            glTexStorage2D(textureTarget, numMips, internalFormat, m_iWidth, m_iHeight);
-        }
-
-        Texture::ApplyParams(params, textureType);
+        auto spTexture = std::make_shared<Texture>();
+        spTexture->Create(m_iWidth, m_iHeight, internalFormat, params, type);
 
         // Attach the texture to the framebuffer.
         int colorAttachmentIndex = m_iNumColorAttachments;
 
         GLenum attachmentType = bufferTypeToGlAttachmentType(type, colorAttachmentIndex);
         GLenum textarget = textureType == TextureType::CUBEMAP ? GL_TEXTURE_CUBE_MAP_POSITIVE_X : textureTarget;
-        glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, textarget, texture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, textarget, spTexture->getId(), 0);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) 
         {
@@ -170,8 +145,7 @@ namespace Cme
         glBindTexture(textureTarget, 0);
         deactivate();
 
-        return saveAttachment(texture, numMips, AttachmentTarget::TEXTURE, type,
-                            colorAttachmentIndex, textureType);
+        return saveAttachment(spTexture->getId(), spTexture->getNumMips(), AttachmentTarget::TEXTURE, type, colorAttachmentIndex, textureType);
     }
 
     Attachment Framebuffer::attachRenderbuffer(BufferType type)
@@ -190,7 +164,6 @@ namespace Cme
         glBindRenderbuffer(GL_RENDERBUFFER, rbo);
 
         GLenum internalFormat = bufferTypeToGlInternalFormat(type);
-
         if (m_iSamples)
         {
             glRenderbufferStorageMultisample(GL_RENDERBUFFER, m_iSamples, internalFormat, m_iWidth, m_iHeight);

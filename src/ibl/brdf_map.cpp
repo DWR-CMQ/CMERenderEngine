@@ -8,6 +8,11 @@ namespace Cme
         // for greater precision.
         // TODO: Use a 2-channel SNORM texture instead.
         m_IntegrationMapInstance = m_BufferInstance.AttachTexture2FB(BufferType::COLOR_SNORM);
+        // BrdfMap本质就是一个Texture 新建好FBO
+        unsigned int uiFBO;
+        glGenFramebuffers(1, &uiFBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, uiFBO);
+
     }
 
     void BrdfMap::draw()

@@ -2,8 +2,7 @@
 
 namespace Cme
 {
-    PrefilterMap::PrefilterMap(
-        int width, int height, int maxNumMips)
+    PrefilterMap::PrefilterMap(int width, int height, int maxNumMips)
         : m_BufferInstance(width, height), m_CubemapRenderHelperInstance(&m_BufferInstance)
     {
         TextureParams textureParams;

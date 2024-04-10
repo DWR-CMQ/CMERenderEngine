@@ -5,7 +5,6 @@
 
 namespace Cme
 {
-
 	struct ImageSize
 	{
 		int width;

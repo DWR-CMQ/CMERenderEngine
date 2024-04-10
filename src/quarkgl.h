@@ -3,7 +3,6 @@
 #include "core.h"
 
 #include "fxaa.h"
-#include "bloom.h"
 #include "blur.h"
 #include "camera.h"
 #include "cubemap.h"
@@ -16,7 +15,8 @@
 #include "ibl/irradiance_map.h"
 #include "ibl/prefilter_map.h"
 
-#include "light.h"
+#include "lighting/light.h"
+#include "lighting/light_control.h"
 
 #include "shape/mesh.h"
 #include "shape/screenquad_mesh.h"
@@ -31,8 +31,8 @@
 #include "shader/shader_loader.h"
 #include "shader/shader_primitives.h"
 #include "shadows.h"
-#include "advanced_lighting/ssao.h"
-#include "advanced_lighting/ssao_kernel.h"
+#include "lighting/ssao.h"
+#include "lighting/ssao_kernel.h"
 #include "texture.h"
 #include "texture_map.h"
 #include "texture_uniform_source.h"

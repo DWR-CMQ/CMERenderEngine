@@ -2,8 +2,7 @@
 
 namespace Cme 
 {
-    void CubemapRenderHelper::multipassDraw(Shader& shader,
-                                            TextureUniformSource* TextureUniformSource) 
+    void CubemapRenderHelper::multipassDraw(Shader& shader, TextureUniformSource* TextureUniformSource) 
     {
         // Set projection to a 90-degree, 1:1 aspect ratio in order to render a single
         // face of the cube.
@@ -39,8 +38,7 @@ namespace Cme
         m_pBuffer->deactivate();
     }
 
-    EquirectCubemap::EquirectCubemap(int width, int height,
-                                                       bool generateMips)
+    EquirectCubemap::EquirectCubemap(int width, int height, bool generateMips)
         : m_BufferInstance(width, height),
         m_CubemapRenderHelperInstance(&m_BufferInstance),
         m_bGenerateMips(generateMips)
@@ -55,10 +53,10 @@ namespace Cme
         m_CubemapInstance = m_BufferInstance.AttachTexture2FB_i(BufferType::COLOR_CUBEMAP_HDR, params);
     }
 
-    void EquirectCubemap::multipassDraw(Texture source)
+    void EquirectCubemap::multipassDraw(std::shared_ptr<Texture> spSource)
     {
         // Set up the source.
-        source.BindToUnit(0, TextureBindType::TEXTURE_2D);
+        spSource->BindToUnit(0, TextureBindType::TEXTURE_2D);
         m_EquirectCubemapShaderInstance.setInt("qrk_equirectMap", 0);
 
         m_CubemapRenderHelperInstance.multipassDraw(m_EquirectCubemapShaderInstance);

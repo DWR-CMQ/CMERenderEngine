@@ -237,8 +237,10 @@ namespace Cme
                 // TODO: Allow for a way to override this if necessary.
                 bool isSRGB = type == TextureMapType::DIFFUSE || type == TextureMapType::EMISSION;
 
-                Texture texture = Texture::LoadTexture(fullPath.c_str(), isSRGB);
-                TextureMap textureMap(texture, type);
+                Texture textureObj;
+                textureObj.LoadTexture(fullPath.c_str(), isSRGB);
+
+                TextureMap textureMap(textureObj, type);
                 m_unmapLoadedTextureMaps.insert(std::make_pair(fullPath, textureMap));
                 textureMaps.push_back(textureMap);
             }

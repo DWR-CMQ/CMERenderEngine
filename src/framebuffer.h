@@ -23,25 +23,6 @@ namespace Cme
         RENDERBUFFER,
     };
 
-    enum class BufferType 
-    {
-        COLOR = 0,
-        // HDR color attachment, allowing color values to exceed 1.0
-        COLOR_HDR,
-        // SNORM attachment, only allowing numbers in the range [-1, 1] but with
-        // greater precision.
-        COLOR_SNORM,
-        COLOR_ALPHA,
-        COLOR_HDR_ALPHA,
-        COLOR_SNORM_ALPHA,
-        COLOR_CUBEMAP_HDR,
-        COLOR_CUBEMAP_HDR_ALPHA,
-        GRAYSCALE,
-        DEPTH,
-        STENCIL,
-        DEPTH_AND_STENCIL,
-    };
-
     class Attachment 
     {
     public:

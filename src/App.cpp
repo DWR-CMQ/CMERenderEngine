@@ -28,7 +28,7 @@ namespace Cme
     
     App::~App()
     {
-        //glfwDestroyWindow(m_pWindow);
+        // glfwDestroyWindow(m_pWindow);
     }
 
 	void App::Init(bool bFullScreen)
@@ -52,26 +52,15 @@ namespace Cme
         m_pWindow->bindCameraControls(m_spCameraControls);
 
         // Create light registry and add lights.
-        auto lightRegistry = std::make_shared<Cme::LightRegistry>();
-        lightRegistry->setViewSource(m_spCamera);
-
+        // 因为有多种光源 所以用多个类表示
+        auto lightControl = std::make_shared<Cme::LightControl>(m_spCamera->getViewTransform());
         m_spDirectionalLight = std::make_shared<Cme::DirectionalLight>();
-        lightRegistry->addLight(m_spDirectionalLight);
+        lightControl->AddLight(m_spDirectionalLight);
 
-        auto pointLight = std::make_shared<Cme::PointLight>(glm::vec3(1.2f, 1.0f, 2.0f));
-        pointLight->setSpecular(glm::vec3(0.5f, 0.5f, 0.5f));
-        // lightRegistry->addLight(pointLight);
-
-        // Create a mesh for the light.
-        Cme::SphereMesh lightSphere;
-        lightSphere.setModelTransform(glm::scale(glm::translate(glm::mat4(1.0f), pointLight->getPosition()), glm::vec3(0.2f)));
-
-        // Set up the main framebuffer that will store intermediate states.
         m_spMainFb = std::make_shared<Cme::Framebuffer>(m_pWindow->getSize());
         m_MainColorAttachmentObj = m_spMainFb->AttachTexture2FB(Cme::BufferType::COLOR_HDR_ALPHA);
         m_spMainFb->attachRenderbuffer(Cme::BufferType::DEPTH_AND_STENCIL);
 
-        // 
         m_spFinalFb = std::make_shared<Cme::Framebuffer>(m_pWindow->getSize());
         m_FinalColorAttachmentObj = m_spFinalFb->AttachTexture2FB(Cme::BufferType::COLOR_ALPHA);
 
@@ -90,9 +79,8 @@ namespace Cme
         m_spLightingPassShader = std::make_shared<Cme::ScreenShader>(Cme::ShaderPath("assets//model_shaders//lighting_pass.frag"));
 
         // 光照Shader用到GBuffer
-        m_spLightingPassShader->addUniformSource(m_spCamera);
         m_spLightingPassShader->addUniformSource(m_spLightingTextureUniformSource);
-        m_spLightingPassShader->addUniformSource(lightRegistry);
+        m_spLightingPassShader->addUniformSource(lightControl);
 
         // 把TextureUniformSource看作是纹理的集合即可 然后再加到某一个Shader中 由Shader更新纹理
         m_spPostprocessTextureUniformSource = std::make_shared<Cme::TextureUniformSource>();
@@ -107,64 +95,23 @@ namespace Cme
 
         // IBL
         constexpr int CUBEMAP_SIZE = 1024;
-        // 等距柱状投影图
-        m_spEquirectCubeMap = std::make_shared<Cme::EquirectCubemap>(CUBEMAP_SIZE, CUBEMAP_SIZE, true);
-
-        // 辐照贴图 Irradiance map averages radiance uniformly so it doesn't have a lot of high frequency details and can thus be small.
-        m_spIrradianceMap = std::make_shared<Cme::IrradianceMap>(32, 32);
-        auto irradianceMap = m_spIrradianceMap->getIrradianceMap();
-        m_spLightingTextureUniformSource->addTextureSource(m_spIrradianceMap);
-
-        // 预卷积贴图  Create prefiltered envmap for specular IBL. It doesn't have to be super large.
-        m_spPrefilterMap = std::make_shared<Cme::PrefilterMap>(CUBEMAP_SIZE, CUBEMAP_SIZE);
-        auto prefilteredEnvMap = m_spPrefilterMap->getPrefilteredEnvMap();
-        m_spLightingPassShader->addUniformSource(m_spPrefilterMap);
-
-        m_spLightingTextureUniformSource->addTextureSource(m_spPrefilterMap);              /// --------------------------------
 
         // BRDF
-        auto brdfLUT = std::make_shared<Cme::BrdfMap>(CUBEMAP_SIZE, CUBEMAP_SIZE);
+        m_spBrdfMap = std::make_shared<Cme::BrdfMap>(CUBEMAP_SIZE, CUBEMAP_SIZE);
         {
             // Only needs to be calculated once up front.
             Cme::DebugGroup debugGroup("BRDF LUT calculation");
-            brdfLUT->draw();
+            m_spBrdfMap->draw();
         }
-        auto brdfIntegrationMap = brdfLUT->getBrdfIntegrationMap();
-
-        m_spLightingTextureUniformSource->addTextureSource(brdfLUT);                          /// ----------------------------------
+        // brdf就非常标准的按照opengl教程里来的 在loop循环中没有执行bind纹理就无法生效
+        m_spLightingTextureUniformSource->addTextureSource(m_spBrdfMap);                          /// ----------------------------------
 
         // 天空盒
         m_spSkybox = std::make_shared<Cme::Skybox>(true, false, false);
-        m_spSkybox->LoadSkyboxImage(m_OptsObj.skyboxImage, *m_spEquirectCubeMap, *m_spIrradianceMap, *m_spPrefilterMap);
-
+        m_spSkybox->LoadSkyboxImage(m_OptsObj.skyboxImage);
         m_spSkyboxShader = std::make_shared<Cme::SkyboxShader>();
-        m_spSkyboxShader->addUniformSource(m_spCamera);
 
-        const char* lampShaderSource = R"SHADER(
-        #version 460 core
-        out vec4 fragColor;
-
-        void main() { fragColor = vec4(1.0); }
-        )SHADER";
-
-            const char* normalShaderSource = R"SHADER(
-        #version 460 core
-        out vec4 fragColor;
-
-        void main() { fragColor = vec4(1.0, 1.0, 0.0, 1.0); }
-        )SHADER";
-
-        // Prepare some debug shaders.
-        m_spNormalShader = std::make_shared<Cme::Shader>(Cme::ShaderPath("assets//model_shaders//model.vert"),
-                                                        Cme::ShaderInline(normalShaderSource),
-                                                        Cme::ShaderPath("assets//model_shaders//model_normals.geom"));
-        m_spNormalShader->addUniformSource(m_spCamera);
-
-        m_spLampShader = std::make_shared<Cme::Shader>(Cme::ShaderPath("assets//model_shaders//model.vert"), Cme::ShaderInline(lampShaderSource));
-        m_spLampShader->addUniformSource(m_spCamera);
-
-        // Load primary model.
-        m_upModel = LoadModelOrDefault();
+        m_ModelSceneObj.Init(m_spCamera, m_pWindow->getSize());
 
         m_pWindow->enableFaceCull();
 	}
@@ -184,7 +131,7 @@ namespace Cme
 
             ModelRenderOptions prevOpts = m_OptsObj;
 
-            // Initialize with certain current options.
+            // 初始化编辑器
             m_OptsObj.speed = m_spCameraControls->getSpeed();
             m_OptsObj.sensitivity = m_spCameraControls->getSensitivity();
             m_OptsObj.fov = m_spCamera->getFov();
@@ -196,11 +143,10 @@ namespace Cme
             m_OptsObj.frameDeltasOffset = m_pWindow->getFrameDeltasOffset();
             m_OptsObj.avgFPS = m_pWindow->getAvgFPS();
 
+            // 渲染编辑器
             RenderImGuiUI(m_OptsObj, *m_spCamera);
 
-            // Post-process options. Some option values are used later during rendering.
-            m_upModel->setModelTransform(glm::scale(glm::mat4_cast(m_OptsObj.modelRotation), glm::vec3(m_OptsObj.modelScale)));
-
+            // 渲染光照 方向和光照强度来自编辑器
             m_spDirectionalLight->setDiffuse(m_OptsObj.directionalDiffuse * m_OptsObj.directionalIntensity);
             m_spDirectionalLight->setSpecular(m_OptsObj.directionalSpecular * m_OptsObj.directionalIntensity);
             m_spDirectionalLight->setDirection(m_OptsObj.directionalDirection);
@@ -211,6 +157,11 @@ namespace Cme
             m_spCamera->setNearPlane(m_OptsObj.near);
             m_spCamera->setFarPlane(m_OptsObj.far);
 
+            m_pWindow->setMouseButtonBehavior(m_OptsObj.captureMouse
+                ? Cme::MouseButtonBehavior::CAPTURE_MOUSE
+                : Cme::MouseButtonBehavior::NONE);
+
+            // 摄像机控制模式
             if (m_OptsObj.cameraControlType != prevOpts.cameraControlType)
             {
                 std::shared_ptr<Cme::CameraControls> newControls;
@@ -228,6 +179,7 @@ namespace Cme
                 m_spCameraControls = newControls;
                 m_pWindow->bindCameraControls(m_spCameraControls);
             }
+
             if (m_OptsObj.enableVsync != prevOpts.enableVsync)
             {
                 if (m_OptsObj.enableVsync)
@@ -239,16 +191,15 @@ namespace Cme
                     m_pWindow->disableVsync();
                 }
             }
+
+            // 更新天空盒
             if (m_OptsObj.skyboxImage != prevOpts.skyboxImage)
             {
-                m_spSkybox->LoadSkyboxImage(m_OptsObj.skyboxImage, *m_spEquirectCubeMap, *m_spIrradianceMap, *m_spPrefilterMap);
+                //m_spSkybox->LoadSkyboxImage(m_OptsObj.skyboxImage, *m_spIrradianceMap, *m_spPrefilterMap);
+                m_spSkybox->LoadSkyboxImage(m_OptsObj.skyboxImage);
             }
 
-            m_pWindow->setMouseButtonBehavior(m_OptsObj.captureMouse
-                ? Cme::MouseButtonBehavior::CAPTURE_MOUSE
-                : Cme::MouseButtonBehavior::NONE);
-
-            // Step 1: geometry pass. Build the G-Buffer. 符合Opengl教程的逻辑
+            // G-Buffer步骤1 Geometry Pass. 符合Opengl教程的逻辑
             {
                 Cme::DebugGroup debugGroup("Geometry pass");
                 m_spGBuffer->activate();
@@ -256,12 +207,15 @@ namespace Cme
 
                 m_spGeometryPassShader->updateUniforms();
 
-                // Draw model.
+                // 线框模式 
+                // 线框模式的设置，只能在编写完shaderprogram后才能设定，否则报错
+                // 设置线框模式一定要在渲染之前 否则不生效 而且需要再次设置Fill模式 否则模型就渲染不出来
                 if (m_OptsObj.wireframe)
                 {
                     m_pWindow->enableWireframe();
                 }
-                m_upModel->draw(*m_spGeometryPassShader);
+                // 渲染模型 
+                m_ModelSceneObj.Render(m_OptsObj, m_spGeometryPassShader);
                 if (m_OptsObj.wireframe)
                 {
                     m_pWindow->disableWireframe();
@@ -270,6 +224,7 @@ namespace Cme
                 m_spGBuffer->deactivate();
             }
 
+            // 存在于GBuffer中的各个纹理
             if (m_OptsObj.gBufferVis != GBufferVis::DISABLED)
             {
                 {
@@ -307,7 +262,7 @@ namespace Cme
                 return;
             }
 
-            // Step 2: lighting pass. Draw to the main framebuffer.
+            // G-Buffer步骤2 Lighting Pass. Draw to the main framebuffer.
             {
                 Cme::DebugGroup debugGroup("Deferred lighting pass");
                 // m_spMainFb的id为1
@@ -316,6 +271,7 @@ namespace Cme
 
                 // TODO: Set up environment mapping with the skybox.
                 m_spLightingPassShader->updateUniforms();
+
                 m_spLightingPassShader->setBool("shadowMapping", m_OptsObj.shadowMapping);
                 m_spLightingPassShader->setFloat("shadowBiasMin", m_OptsObj.shadowBiasMin);
                 m_spLightingPassShader->setFloat("shadowBiasMax", m_OptsObj.shadowBiasMax);
@@ -329,6 +285,12 @@ namespace Cme
                 m_spLightingPassShader->setFloat("emissionAttenuation.constant", m_OptsObj.emissionAttenuation.x);
                 m_spLightingPassShader->setFloat("emissionAttenuation.linear", m_OptsObj.emissionAttenuation.y);
                 m_spLightingPassShader->setFloat("emissionAttenuation.quadratic", m_OptsObj.emissionAttenuation.z);
+
+                m_spLightingPassShader->setMat4("view", m_spCamera->getViewTransform());
+                m_spLightingPassShader->setMat4("projection", m_spCamera->getProjectionTransform());
+
+                //m_spBrdfMap->bindTexture();
+                
 
                 //m_spScreenQuad->unsetTexture();
                 m_spScreenQuad->draw(*m_spLightingPassShader, m_spLightingTextureUniformSource.get());
@@ -349,26 +311,14 @@ namespace Cme
                 if (m_OptsObj.drawNormals)
                 {
                     // Draw the normals.
-                    m_spNormalShader->updateUniforms();
-                    m_upModel->draw(*m_spNormalShader);
+                    m_ModelSceneObj.Render(m_OptsObj, nullptr, true);
                 }
 
-                // Draw light source.
-                m_spLampShader->updateUniforms();
-                if (m_OptsObj.wireframe)
-                {
-                    m_pWindow->enableWireframe();
-                }
-                // TODO: Make point lights more part of the UI.
-                // lightSphere.draw(lampShader);
-                if (m_OptsObj.wireframe)
-                {
-                    m_pWindow->disableWireframe();
-                }
+                //// Draw light source.
+                //m_spLampShader->updateUniforms();
 
-                // Draw skybox.
-                m_spSkyboxShader->updateUniforms();
-                m_spSkybox->Render(*m_spSkyboxShader);
+                // 绘制天空盒 天空盒在正向渲染里
+                m_spSkybox->Render(*m_spSkyboxShader, m_spCamera);
 
                 m_spMainFb->deactivate();
             }
@@ -397,26 +347,25 @@ namespace Cme
 
             m_pWindow->setViewport();
 
-            // Finally draw to the screen via the FXAA shader.
-            if (m_OptsObj.fxaa)
-            {
-                Cme::DebugGroup debugGroup("FXAA");
-                m_spScreenQuad->setTexture(m_FinalColorAttachmentObj);
-                // fxaa无纹理更新
-                m_spScreenQuad->draw(*m_spFxaaShader);
-            }
-            else
-            {
-                m_spFinalFb->blitToDefault(GL_COLOR_BUFFER_BIT);
-            }
-
-            // == End render path ==
+            //// Finally draw to the screen via the FXAA shader.
+            //if (m_OptsObj.fxaa)
+            //{
+            //    Cme::DebugGroup debugGroup("FXAA");
+            //    m_spScreenQuad->setTexture(m_FinalColorAttachmentObj);
+            //    // fxaa无纹理更新
+            //    m_spScreenQuad->draw(*m_spFxaaShader);
+            //}
+            //else
+            //{
+            m_spFinalFb->blitToDefault(GL_COLOR_BUFFER_BIT);
+            //}
 
             // Finally, draw ImGui data.
             {
                 Cme::DebugGroup debugGroup("Imgui pass");
                 ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
             }
+
         });
 
         // Cleanup.
@@ -436,13 +385,6 @@ namespace Cme
 	{
 
 	}
-
-    std::unique_ptr<Cme::Model> App::LoadModelOrDefault()
-    {
-        // Default to the gltf DamagedHelmet.
-        auto helmet = std::make_unique<Cme::Model>("assets//models//DamagedHelmet/DamagedHelmet.gltf");
-        return helmet;
-    }
 
     void App::RenderImGuiUI(ModelRenderOptions& opts, Cme::Camera camera)
     {

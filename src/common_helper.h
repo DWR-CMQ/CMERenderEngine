@@ -13,6 +13,7 @@
 #include <filesystem>
 #include <regex>
 #include <string>
+#include <iostream>
 
 #include "../imguizmo_quat/imGuIZMOquat.h"
 #include "../imgui/imgui.h"
