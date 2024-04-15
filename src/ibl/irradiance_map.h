@@ -26,9 +26,9 @@ namespace Cme
         }
 
         // Draw onto the allocated cubemap from the given cubemap as the source.
-        void multipassDraw(Texture source);
+        void multipassDraw(std::shared_ptr<Texture> spSource);
 
-        Texture getIrradianceMap() { return m_CubemapInstance.Transform2Texture(); }
+        std::shared_ptr<Texture> getIrradianceMap() { return m_CubemapInstance.Transform2Texture(); }
 
         unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader) override;
 

@@ -34,7 +34,7 @@ namespace Cme
     public:
         ModelMesh(const std::vector<ModelVertex>& vertices,
                 const std::vector<unsigned int>& indices,
-                const std::vector<TextureMap>& textureMaps,
+                const std::vector<std::shared_ptr<TextureMap>>& vecTextureMaps,
                 unsigned int instanceCount = 0);
 
         virtual ~ModelMesh() = default;
@@ -75,7 +75,7 @@ namespace Cme
         void loadModel(std::string path);
         void ProcessNode(RenderableNode& target, aiNode* node, const aiScene* scene);
         std::unique_ptr<ModelMesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
-        std::vector<TextureMap> LoadMaterialTextureMaps(aiMaterial* material,
+        std::vector<std::shared_ptr<TextureMap>> LoadMaterialTextureMaps(aiMaterial* material,
                                                         TextureMapType type);
 
         unsigned int m_uiInstanceCount;

@@ -20,28 +20,34 @@ namespace Cme
     ScreenQuadMesh::ScreenQuadMesh(Texture texture)
     {
         loadMesh();
-        setTexture(texture);
+        setTexture(std::make_shared<Texture>(texture));
     }
 
     void ScreenQuadMesh::loadMesh()
     {
         constexpr unsigned int quadVertexSizeBytes = 4 * sizeof(float);
-        LoadMeshData(screenQuadVertices,
-            sizeof(screenQuadVertices) / quadVertexSizeBytes,
-            quadVertexSizeBytes, /*indices=*/{}, /*textureMaps=*/{});
+        LoadMeshData(screenQuadVertices, sizeof(screenQuadVertices) / quadVertexSizeBytes, quadVertexSizeBytes, {}, {});
     }
 
-    void ScreenQuadMesh::setTexture(Attachment attachment)
-    {
-        setTexture(attachment.Transform2Texture());
-    }
+    //void ScreenQuadMesh::setTexture(Attachment attachment)
+    //{
+    //    setTexture(attachment.Transform2Texture());
+    //}
 
-    void ScreenQuadMesh::setTexture(Texture texture)
+    void ScreenQuadMesh::setTexture(std::shared_ptr<Texture> spTexture)
     {
         // TODO: This copies the texture info, meaning it won't see updates.
         m_vecTextureMaps.clear();
-        m_vecTextureMaps.emplace_back(texture, TextureMapType::DIFFUSE);
+        auto temp = std::make_shared<TextureMap>(*(spTexture.get()), TextureMapType::DIFFUSE);
+        m_vecTextureMaps.emplace_back(temp);
     }
+
+    //void ScreenQuadMesh::setTexture(Texture texture)
+    //{
+    //    // TODO: This copies the texture info, meaning it won't see updates.
+    //    m_vecTextureMaps.clear();
+    //    m_vecTextureMaps.emplace_back(texture, TextureMapType::DIFFUSE);
+    //}
 
     void ScreenQuadMesh::unsetTexture()
     {
@@ -74,7 +80,7 @@ namespace Cme
             textureUnit = TextureUniformSource->getNextTextureUnit();
         }
 
-        Texture& texture = m_vecTextureMaps[0].getTexture();
+        Texture& texture = m_vecTextureMaps[0]->getTexture();
         texture.BindToUnit(textureUnit, TextureBindType::TEXTURE_2D);
 
         // Set the sampler to the correct texture unit.

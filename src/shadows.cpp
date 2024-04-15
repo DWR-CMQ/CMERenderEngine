@@ -48,7 +48,7 @@ namespace Cme
     unsigned int ShadowMap::bindTexture(unsigned int nextTextureUnit,
                                         Shader& shader) 
     {
-        m_DepthAttachmentObj.Transform2Texture().BindToUnit(nextTextureUnit);
+        m_DepthAttachmentObj.Transform2Texture()->BindToUnit(nextTextureUnit);
         // TODO: Make this more generic.
         shader.setInt("shadowMap", nextTextureUnit);
         return nextTextureUnit + 1;

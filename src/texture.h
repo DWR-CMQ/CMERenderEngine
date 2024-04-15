@@ -181,6 +181,8 @@ namespace Cme
 
         // Applies the given params to the currently-active texture.
         void SetTextureParams(const TextureParams& params, TextureType type = TextureType::TEXTURE_2D);
+        void SetTextureType(TextureType type) { m_eType = type; }
+
     private:
         // TODO: Texture lifetimes aren't managed currently, so they aren't unloaded.
         unsigned int m_uiID;

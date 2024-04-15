@@ -57,27 +57,26 @@ namespace Cme
 
     CubeMesh::CubeMesh(std::string texturePath)
     {
-        std::vector<TextureMap> textureMaps;
+        std::vector<std::shared_ptr<TextureMap>> vecTextureMaps;
         if (!texturePath.empty())
         {
             Texture textureObj;
             textureObj.LoadTexture(texturePath.c_str());
-            TextureMap textureMap(textureObj, TextureMapType::DIFFUSE);
-            textureMaps.push_back(textureMap);
+            auto spTextureMap = std::make_shared<TextureMap>(textureObj, TextureMapType::DIFFUSE);
+            vecTextureMaps.push_back(spTextureMap);
         }
-        loadMeshAndTextures(textureMaps);
+        loadMeshAndTextures(vecTextureMaps);
     }
 
-    CubeMesh::CubeMesh(const std::vector<TextureMap>& textureMaps)
+    CubeMesh::CubeMesh(const std::vector<std::shared_ptr<TextureMap>>& vecTextureMaps)
     {
-        loadMeshAndTextures(textureMaps);
+        loadMeshAndTextures(vecTextureMaps);
     }
 
-    void CubeMesh::loadMeshAndTextures(const std::vector<TextureMap>& textureMaps)
+    void CubeMesh::loadMeshAndTextures(const std::vector<std::shared_ptr<TextureMap>>& vecTextureMaps)
     {
         constexpr unsigned int cubeVertexSizeBytes = 11 * sizeof(float);
-        LoadMeshData(cubeVertices, sizeof(cubeVertices) / cubeVertexSizeBytes,
-            cubeVertexSizeBytes, /*indices=*/{}, textureMaps);
+        LoadMeshData(cubeVertices, sizeof(cubeVertices) / cubeVertexSizeBytes, cubeVertexSizeBytes, {}, vecTextureMaps);
     }
 
     void CubeMesh::initializeVertexAttributes()

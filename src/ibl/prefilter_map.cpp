@@ -14,10 +14,10 @@ namespace Cme
         m_CubemapInstance = m_BufferInstance.AttachTexture2FB_i(BufferType::COLOR_CUBEMAP_HDR, textureParams);
     }
 
-    void PrefilterMap::multipassDraw(Texture source)
+    void PrefilterMap::multipassDraw(std::shared_ptr<Texture> spSource)
     {
         // Set up the source.
-        source.BindToUnit(0, TextureBindType::CUBEMAP);
+        spSource->BindToUnit(0, TextureBindType::CUBEMAP);
         m_ShaderInstance.setInt("qrk_environmentMap", 0);
 
         for (int mip = 0; mip < m_CubemapInstance.m_iNumMips; ++mip)
@@ -37,7 +37,7 @@ namespace Cme
 
     unsigned int PrefilterMap::bindTexture(unsigned int nextTextureUnit, Shader& shader)
     {
-        m_CubemapInstance.Transform2Texture().BindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);
+        m_CubemapInstance.Transform2Texture()->BindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);
         // Bind sampler uniforms.
         shader.setInt("qrk_ggxPrefilteredEnvMap", nextTextureUnit);
 

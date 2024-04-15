@@ -32,14 +32,15 @@ namespace Cme
         }
     }
 
-    void Mesh::LoadMeshData(const void* vertexData, unsigned int numVertices,
-                        unsigned int vertexSizeBytes,
-                        const std::vector<unsigned int>& indices,
-                        const std::vector<TextureMap>& textureMaps,
-                        unsigned int instanceCount)
+    void Mesh::LoadMeshData(const void* vertexData, 
+                            unsigned int numVertices,
+                            unsigned int vertexSizeBytes,
+                            const std::vector<unsigned int>& indices,
+                            const std::vector<std::shared_ptr<TextureMap>>& vecTextureMaps,
+                            unsigned int instanceCount)
     {
         m_vecIndices = indices;
-        m_vecTextureMaps = textureMaps;
+        m_vecTextureMaps = vecTextureMaps;
         m_uiNumVertices = numVertices;
         m_uiVertexSizeBytes = vertexSizeBytes;
         m_uiInstanceCount = instanceCount;
@@ -121,12 +122,12 @@ namespace Cme
             textureUnit = TextureUniformSource->getNextTextureUnit();
         }
 
-        // 加载模型才会执行for循环
-        for (TextureMap& textureMap : m_vecTextureMaps)
+        // 加载模型才会执行for循环 
+        for(auto& item : m_vecTextureMaps)
         {
             std::string samplerName;
-            TextureMapType type = textureMap.getType();
-            Texture& texture = textureMap.getTexture();
+            TextureMapType type = item->getType();
+            Texture& texture = item->getTexture();
             if (type == TextureMapType::CUBEMAP) 
             {
                 texture.BindToUnit(textureUnit, TextureBindType::CUBEMAP);
@@ -156,21 +157,21 @@ namespace Cme
                     ss << "roughnessMaps[" << roughnessIdx << "]";
                     shader.setBool(materialName + ".roughnessIsPacked[" +
                                         std::to_string(roughnessIdx) + "]",
-                                    textureMap.isPacked());
+                                        item->isPacked());
                     roughnessIdx++;
                     break;
                 case TextureMapType::METALLIC:
                     ss << "metallicMaps[" << metallicIdx << "]";
                     shader.setBool(materialName + ".metallicIsPacked[" +
                                         std::to_string(metallicIdx) + "]",
-                                    textureMap.isPacked());
+                        item->isPacked());
                     metallicIdx++;
                     break;
                 case TextureMapType::AO:
                     ss << "aoMaps[" << aoIdx << "]";
                     shader.setBool(
                         materialName + ".aoIsPacked[" + std::to_string(aoIdx) + "]",
-                        textureMap.isPacked());
+                        item->isPacked());
                     aoIdx++;
                     break;
                 case TextureMapType::EMISSION:

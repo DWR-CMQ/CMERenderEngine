@@ -169,9 +169,9 @@ namespace Cme
             m_spEquirectCubeMap->multipassDraw(fuck);
 
             // m_spIrradianceMap和m_spPrefilterMap好像没什么作用(因为没有在Rendder时用到 却照样可以渲染出天空盒)
-            m_Texture = m_spEquirectCubeMap->GetCubemap();
-            m_spIrradianceMap->multipassDraw(m_Texture);
-            m_spPrefilterMap->multipassDraw(m_Texture);
+            m_spTexture = m_spEquirectCubeMap->GetCubemap();
+            m_spIrradianceMap->multipassDraw(m_spTexture);
+            m_spPrefilterMap->multipassDraw(m_spTexture);
         }
         else
         {

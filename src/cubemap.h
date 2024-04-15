@@ -46,16 +46,16 @@ namespace Cme
         // Draw onto the allocated cubemap from the given texture as the source.
         void multipassDraw(std::shared_ptr<Texture> spSource);
 
-        Texture GetCubemap() { return m_CubemapInstance.Transform2Texture(); }
+        //std::shared_ptr<Texture> GetCubemap() { return m_CubemapInstance.Transform2Texture(); }
+        std::shared_ptr<Texture> GetCubemap() { return m_spFB->GetTexture(); }
 
         unsigned int bindTexture(unsigned int nextTextureUnit,
                                 Shader& shader) override;
 
     private:
-        Framebuffer m_BufferInstance;
-        Attachment m_CubemapInstance;
+        std::shared_ptr<Framebuffer> m_spFB;
         EquirectCubemapShader m_EquirectCubemapShaderInstance;
-        CubemapRenderHelper m_CubemapRenderHelperInstance;
+        std::shared_ptr<CubemapRenderHelper> m_spCubemapRenderHelper;
         bool m_bGenerateMips;
     };
 

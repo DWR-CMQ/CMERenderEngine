@@ -48,10 +48,6 @@ namespace Cme
         Cme::ModelScene m_ModelSceneObj;
 
         // IBL
-        //std::shared_ptr<Cme::EquirectCubemap> m_spEquirectCubeMap;                 // 立方体贴图
-        //std::shared_ptr<Cme::PrefilterMap> m_spPrefilterMap;                       // 预卷积贴图
-        //std::shared_ptr<Cme::IrradianceMap> m_spIrradianceMap;                     // 辐照贴图
-        // IBL
         std::shared_ptr<Cme::BrdfMap> m_spBrdfMap;
 
         std::shared_ptr<Cme::DirectionalLight> m_spDirectionalLight;
@@ -72,10 +68,8 @@ namespace Cme
         // 这就是为什么Opengl教程8.1上明明是没有句柄为0的FBO,但却可以绑定,因为默认生成的FBO句柄是0 
         // 在本工程中 没有采用默认的帧缓冲 而是独立生成了一个FBO 也就是m_spMainFb 基于这个思想 所有的逻辑就能说清楚
         std::shared_ptr<Cme::Framebuffer> m_spMainFb;
-        Attachment m_MainColorAttachmentObj;
         // 专门用于后处理的FBO 从GBuffer中Blit而来
         std::shared_ptr<Cme::Framebuffer> m_spFinalFb;
-        Attachment m_FinalColorAttachmentObj;
 
         // FXAA
         std::shared_ptr<Cme::FXAAShader> m_spFxaaShader;
@@ -86,6 +80,7 @@ namespace Cme
         std::shared_ptr<Cme::ScreenShader> m_spPostprocessShader;
         // PostProcess
 
+        std::shared_ptr<Cme::LightControl> m_spLightControl;
 	};
 }
 

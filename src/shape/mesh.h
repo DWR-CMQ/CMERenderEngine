@@ -82,16 +82,17 @@ namespace Cme
                                 TextureUniformSource* TextureUniformSource = nullptr) override;
 
         std::vector<unsigned int> getIndices() { return m_vecIndices; }
-        std::vector<TextureMap> getTextureMaps() { return m_vecTextureMaps; }
+        std::vector<std::shared_ptr<TextureMap>> getTextureMaps() { return m_vecTextureMaps; }
 
     protected:
         // Loads mesh data into the mesh. Calls initializeVertexAttributes and
         // initializeVertexArrayInstanceData under the hood. Must be called
         // immediately after construction.
-        virtual void LoadMeshData(const void* vertexData, unsigned int numVertices,
+        virtual void LoadMeshData(const void* vertexData, 
+                                unsigned int numVertices,
                                 unsigned int vertexSizeBytes,
                                 const std::vector<unsigned int>& indices,
-                                const std::vector<TextureMap>& textureMaps,
+                                const std::vector<std::shared_ptr<TextureMap>>& vecTextureMaps,
                                 unsigned int instanceCount = 0);
         // Initializes vertex attributes.
         virtual void initializeVertexAttributes() = 0;
@@ -105,7 +106,7 @@ namespace Cme
 
         VertexArray m_VertexArrayObj;
         std::vector<unsigned int> m_vecIndices;
-        std::vector<TextureMap> m_vecTextureMaps;
+        std::vector<std::shared_ptr<TextureMap>> m_vecTextureMaps;
 
         // The number of vertices in the mesh.
         unsigned int m_uiNumVertices;

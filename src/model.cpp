@@ -28,11 +28,11 @@ namespace Cme
 
     ModelMesh::ModelMesh(const std::vector<ModelVertex>& vertices,
                          const std::vector<unsigned int>& indices,
-                         const std::vector<TextureMap>& textureMaps,
+                         const std::vector<std::shared_ptr<TextureMap>>& vecTextureMaps,
                          unsigned int instanceCount)
     {
         m_vecVertices = vertices;
-        LoadMeshData(&m_vecVertices[0], m_vecVertices.size(), sizeof(ModelVertex), indices, textureMaps, instanceCount);
+        LoadMeshData(&m_vecVertices[0], m_vecVertices.size(), sizeof(ModelVertex), indices, vecTextureMaps, instanceCount);
     }
 
     void ModelMesh::initializeVertexAttributes() 
@@ -133,7 +133,7 @@ namespace Cme
     {
         std::vector<ModelVertex> vecModelVertices;
         std::vector<unsigned int> vecIndices;
-        std::vector<TextureMap> vecTextureMaps;
+        std::vector<std::shared_ptr<TextureMap>> vecTextureMaps;
 
         for (unsigned int i = 0; i < mesh->mNumVertices; i++) 
         {
@@ -200,11 +200,11 @@ namespace Cme
         return std::make_unique<ModelMesh>(vecModelVertices, vecIndices, vecTextureMaps, m_uiInstanceCount);
     }
 
-    std::vector<TextureMap> Model::LoadMaterialTextureMaps(aiMaterial* material,
+    std::vector<std::shared_ptr<TextureMap>> Model::LoadMaterialTextureMaps(aiMaterial* material,
                                                            TextureMapType type)
     {
         std::vector<aiTextureType> aiTypes = textureMapTypeToAiTextureTypes(type);
-        std::vector<TextureMap> textureMaps;
+        std::vector<std::shared_ptr<TextureMap>> vecTextureMaps;
 
         for (aiTextureType aiType : aiTypes) 
         {
@@ -229,7 +229,8 @@ namespace Cme
                         textureMap.setPacked(true);
                         item->second.setPacked(true);
                     }
-                    textureMaps.push_back(textureMap);
+
+                    vecTextureMaps.push_back(std::make_shared<TextureMap>(textureMap));
                     continue;
                 }
 
@@ -242,10 +243,11 @@ namespace Cme
 
                 TextureMap textureMap(textureObj, type);
                 m_unmapLoadedTextureMaps.insert(std::make_pair(fullPath, textureMap));
-                textureMaps.push_back(textureMap);
+
+                vecTextureMaps.push_back(std::make_shared<TextureMap>(textureMap));
             }
         }
-        return textureMaps;
+        return vecTextureMaps;
     }
 
 }  // namespace Cme

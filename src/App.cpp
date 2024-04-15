@@ -53,16 +53,17 @@ namespace Cme
 
         // Create light registry and add lights.
         // 因为有多种光源 所以用多个类表示
-        auto lightControl = std::make_shared<Cme::LightControl>(m_spCamera->getViewTransform());
+        m_spLightControl = std::make_shared<Cme::LightControl>(m_spCamera->getViewTransform());
         m_spDirectionalLight = std::make_shared<Cme::DirectionalLight>();
-        lightControl->AddLight(m_spDirectionalLight);
+        m_spLightControl->AddLight(m_spDirectionalLight);
 
-        m_spMainFb = std::make_shared<Cme::Framebuffer>(m_pWindow->getSize());
-        m_MainColorAttachmentObj = m_spMainFb->AttachTexture2FB(Cme::BufferType::COLOR_HDR_ALPHA);
+        TextureParams params;
+        params.filtering = TextureFiltering::BILINEAR;
+        params.wrapMode = TextureWrapMode::CLAMP_TO_EDGE;
+        m_spMainFb = std::make_shared<Cme::Framebuffer>(m_pWindow->getSize(), Cme::BufferType::COLOR_HDR_ALPHA, params);
         m_spMainFb->attachRenderbuffer(Cme::BufferType::DEPTH_AND_STENCIL);
 
-        m_spFinalFb = std::make_shared<Cme::Framebuffer>(m_pWindow->getSize());
-        m_FinalColorAttachmentObj = m_spFinalFb->AttachTexture2FB(Cme::BufferType::COLOR_ALPHA);
+        m_spFinalFb = std::make_shared<Cme::Framebuffer>(m_pWindow->getSize(), Cme::BufferType::COLOR_ALPHA, params);
 
         // Build the G-Buffer and prepare deferred shading.
         m_spGeometryPassShader = std::make_shared<Cme::DeferredGeometryPassShader>();
@@ -80,7 +81,6 @@ namespace Cme
 
         // 光照Shader用到GBuffer
         m_spLightingPassShader->addUniformSource(m_spLightingTextureUniformSource);
-        m_spLightingPassShader->addUniformSource(lightControl);
 
         // 把TextureUniformSource看作是纹理的集合即可 然后再加到某一个Shader中 由Shader更新纹理
         m_spPostprocessTextureUniformSource = std::make_shared<Cme::TextureUniformSource>();
@@ -195,7 +195,6 @@ namespace Cme
             // 更新天空盒
             if (m_OptsObj.skyboxImage != prevOpts.skyboxImage)
             {
-                //m_spSkybox->LoadSkyboxImage(m_OptsObj.skyboxImage, *m_spIrradianceMap, *m_spPrefilterMap);
                 m_spSkybox->LoadSkyboxImage(m_OptsObj.skyboxImage);
             }
 
@@ -272,6 +271,9 @@ namespace Cme
                 // TODO: Set up environment mapping with the skybox.
                 m_spLightingPassShader->updateUniforms();
 
+                // 暂时这样写 用于更新m_spLightingPassShader里面的一些变量 看着不顺眼 但是是为了把texture_uniform_source给干掉
+                m_spLightControl->updateUniforms(*m_spLightingPassShader);  
+
                 m_spLightingPassShader->setBool("shadowMapping", m_OptsObj.shadowMapping);
                 m_spLightingPassShader->setFloat("shadowBiasMin", m_OptsObj.shadowBiasMin);
                 m_spLightingPassShader->setFloat("shadowBiasMax", m_OptsObj.shadowBiasMax);
@@ -290,7 +292,6 @@ namespace Cme
                 m_spLightingPassShader->setMat4("projection", m_spCamera->getProjectionTransform());
 
                 //m_spBrdfMap->bindTexture();
-                
 
                 //m_spScreenQuad->unsetTexture();
                 m_spScreenQuad->draw(*m_spLightingPassShader, m_spLightingTextureUniformSource.get());
@@ -337,7 +338,8 @@ namespace Cme
                 m_spPostprocessShader->setInt("toneMapping", static_cast<int>(m_OptsObj.toneMapping));
                 m_spPostprocessShader->setBool("gammaCorrect", m_OptsObj.gammaCorrect);
                 m_spPostprocessShader->setFloat("gamma", static_cast<int>(m_OptsObj.gamma));
-                m_spScreenQuad->setTexture(m_MainColorAttachmentObj);
+                //m_spScreenQuad->setTexture(m_MainColorAttachmentObj);
+                m_spScreenQuad->setTexture(m_spMainFb->GetTexture());
 
                 // 后处理有纹理更新
                 m_spScreenQuad->draw(*m_spPostprocessShader, m_spPostprocessTextureUniformSource.get());

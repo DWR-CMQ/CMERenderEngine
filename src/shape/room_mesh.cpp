@@ -58,26 +58,26 @@ namespace Cme
 
     RoomMesh::RoomMesh(std::string texturePath)
     {
-        std::vector<TextureMap> textureMaps;
+        std::vector<std::shared_ptr<TextureMap>> vecTextureMaps;
         if (!texturePath.empty())
         {
             Texture textureObj;
             textureObj.LoadTexture(texturePath.c_str());
-            TextureMap textureMap(textureObj, TextureMapType::DIFFUSE);
-            textureMaps.push_back(textureMap);
+            auto spTextureMap = std::make_shared<TextureMap>(textureObj, TextureMapType::DIFFUSE);
+            vecTextureMaps.push_back(spTextureMap);
         }
-        loadMeshAndTextures(textureMaps);
+        loadMeshAndTextures(vecTextureMaps);
     }
 
-    RoomMesh::RoomMesh(const std::vector<TextureMap>& textureMaps)
+    RoomMesh::RoomMesh(const std::vector<std::shared_ptr<TextureMap>>& vecTextureMaps)
     {
-        loadMeshAndTextures(textureMaps);
+        loadMeshAndTextures(vecTextureMaps);
     }
 
-    void RoomMesh::loadMeshAndTextures(const std::vector<TextureMap>& textureMaps)
+    void RoomMesh::loadMeshAndTextures(const std::vector<std::shared_ptr<TextureMap>>& vecTextureMaps)
     {
         constexpr unsigned int roomVertexSizeBytes = 11 * sizeof(float);
-        LoadMeshData(roomVertices, sizeof(roomVertices) / roomVertexSizeBytes, roomVertexSizeBytes, {}, textureMaps);
+        LoadMeshData(roomVertices, sizeof(roomVertices) / roomVertexSizeBytes, roomVertexSizeBytes, {}, vecTextureMaps);
     }
 
     void RoomMesh::initializeVertexAttributes()

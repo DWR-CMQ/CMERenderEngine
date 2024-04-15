@@ -33,7 +33,7 @@ namespace Cme
         explicit SsaoBuffer(ImageSize size) : SsaoBuffer(size.width, size.height) {}
         virtual ~SsaoBuffer() = default;
 
-        Texture getSsaoTexture()
+        std::shared_ptr<Texture> getSsaoTexture()
         { 
             return m_SsaoBufferAttachmentObj.Transform2Texture(); 
         }

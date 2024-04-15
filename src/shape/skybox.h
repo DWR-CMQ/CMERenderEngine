@@ -57,7 +57,8 @@ namespace Cme
         void SetVertexAttributesPointers(int numVertices);
 
     public:
-        Texture m_Texture;
+        std::shared_ptr<Texture> m_spTexture;
+
 
     private:
         GLuint m_VAO = 0;

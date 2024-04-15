@@ -28,13 +28,13 @@ namespace Cme
         setInt("qrk_ssaoNoiseTextureSideLength", kernel.getNoiseTextureSideLength());
 
         // The blur shader only needs a single texture, so we just bind it directly.
-        buffer.getSsaoTexture().BindToUnit(0);
+        buffer.getSsaoTexture()->BindToUnit(0);
         setInt("qrk_ssao", 0);
     }
 
     unsigned int SsaoBuffer::bindTexture(unsigned int nextTextureUnit, Shader& shader) 
     {
-        m_SsaoBufferAttachmentObj.Transform2Texture().BindToUnit(nextTextureUnit);
+        m_SsaoBufferAttachmentObj.Transform2Texture()->BindToUnit(nextTextureUnit);
         // Bind sampler uniforms.
         shader.setInt("qrk_ssao", nextTextureUnit);
 

@@ -357,7 +357,7 @@ namespace Cme
         }
 
         GLenum target = textureTypeToGlTarget(m_eType);
-        glBindTexture(target, m_uiID);
+        glBindTexture(target, m_uiID);         // 纹理类型target和纹理不符合时 控制台是会报错的
         glGenerateMipmap(target);
 
         if (maxNumMips >= 0) 

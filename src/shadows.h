@@ -70,7 +70,7 @@ namespace Cme
         explicit ShadowMap(ImageSize size) : ShadowMap(size.width, size.height) {}
         virtual ~ShadowMap() = default;
 
-        Texture getDepthTexture() { return m_DepthAttachmentObj.Transform2Texture(); }
+        std::shared_ptr<Texture> getDepthTexture() { return m_DepthAttachmentObj.Transform2Texture(); }
         unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader) override;
 
     private:

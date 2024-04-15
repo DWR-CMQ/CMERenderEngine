@@ -21,7 +21,7 @@ namespace Cme
         // of the BRDF and does not require any source data.
         void draw();
 
-        Texture getBrdfIntegrationMap() { return m_IntegrationMapInstance.Transform2Texture(); }
+        std::shared_ptr<Texture> getBrdfIntegrationMap() { return m_IntegrationMapInstance.Transform2Texture(); }
 
         unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader) override;
 

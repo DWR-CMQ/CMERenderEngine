@@ -12,12 +12,13 @@ namespace Cme
         SphereMesh(std::string texturePath = "",
             int numMeridians = DEFAULT_NUM_MERIDIANS,
             int numParallels = DEFAULT_NUM_PARALLELS);
-        SphereMesh(const std::vector<TextureMap>& textureMaps,
+
+        SphereMesh(const std::vector<std::shared_ptr<TextureMap>>& vecTextureMaps,
             int numMeridians = DEFAULT_NUM_MERIDIANS,
             int numParallels = DEFAULT_NUM_PARALLELS);
 
     protected:
-        void loadMeshAndTextures(const std::vector<TextureMap>& textureMaps);
+        void loadMeshAndTextures(const std::vector<std::shared_ptr<TextureMap>>& vecTextureMaps);
         void initializeVertexAttributes() override;
 
         int m_iNumMeridians;

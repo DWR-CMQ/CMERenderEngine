@@ -37,13 +37,12 @@ namespace Cme
         int m_iColorAttachmentIndex;
         TextureType m_eTextureType;
 
-        Texture Transform2Texture();
+        std::shared_ptr<Texture> Transform2Texture();
 
         // TODO: Replace with Texture?
     };
 
-    inline const GLenum bufferTypeToGlAttachmentType(BufferType type,
-                                                     int attachmentIndex) 
+    inline const GLenum bufferTypeToGlAttachmentType(BufferType type, int attachmentIndex) 
     {
         switch (type) 
         {
@@ -158,6 +157,8 @@ namespace Cme
     {
     public:
         Framebuffer(int width, int height, int samples = 0);
+        Framebuffer(ImageSize size, BufferType type, TextureParams params, int samples = 0);
+
         explicit Framebuffer(ImageSize size, int samples = 0)
             : Framebuffer(size.width, size.height, samples) {}
         virtual ~Framebuffer();
@@ -205,13 +206,15 @@ namespace Cme
             glBlendEquation(GL_FUNC_ADD);
         }
         void disableAdditiveBlending() { glDisable(GL_BLEND); }
+        std::shared_ptr<Texture> GetTexture(int iIndex = 0);
 
     private:
         unsigned int fbo_ = 0;
         int m_iWidth;
         int m_iHeight;
         int m_iSamples;
-        std::vector<Attachment> m_vecAttachments;
+        std::vector<Attachment> m_vecAttachments;         // 附件 将该变量控制在帧缓冲中 而且应该用字典
+        std::vector<Texture> m_vecTextures;               // 纹理
 
         bool m_hasColorAttachment = false;
         int m_iNumColorAttachments = 0;

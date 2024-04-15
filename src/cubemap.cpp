@@ -39,10 +39,8 @@ namespace Cme
     }
 
     EquirectCubemap::EquirectCubemap(int width, int height, bool generateMips)
-        : m_BufferInstance(width, height),
-        m_CubemapRenderHelperInstance(&m_BufferInstance),
-        m_bGenerateMips(generateMips)
     {
+        m_bGenerateMips = generateMips;
         // Optionally allocate memory for mips if requested.
 
         TextureParams params;
@@ -50,7 +48,11 @@ namespace Cme
         params.wrapMode = TextureWrapMode::CLAMP_TO_EDGE;
         params.generateMips = generateMips ? MipGeneration::ALWAYS : MipGeneration::NEVER;
 
-        m_CubemapInstance = m_BufferInstance.AttachTexture2FB_i(BufferType::COLOR_CUBEMAP_HDR, params);
+        ImageSize size;
+        size.width = width;
+        size.height = height;
+        m_spFB = std::make_shared<Framebuffer>(size, BufferType::COLOR_CUBEMAP_HDR, params);
+        m_spCubemapRenderHelper = std::make_shared<CubemapRenderHelper>(m_spFB.get());
     }
 
     void EquirectCubemap::multipassDraw(std::shared_ptr<Texture> spSource)
@@ -59,19 +61,19 @@ namespace Cme
         spSource->BindToUnit(0, TextureBindType::TEXTURE_2D);
         m_EquirectCubemapShaderInstance.setInt("qrk_equirectMap", 0);
 
-        m_CubemapRenderHelperInstance.multipassDraw(m_EquirectCubemapShaderInstance);
+        m_spCubemapRenderHelper->multipassDraw(m_EquirectCubemapShaderInstance);
 
         if (m_bGenerateMips)
         {
             // Generate mips after having rendered to the cubemap.
-            m_CubemapInstance.Transform2Texture().generateMips();
+            m_spFB->GetTexture()->generateMips();
         }
     }
 
     unsigned int EquirectCubemap::bindTexture(unsigned int nextTextureUnit,
                                                        Shader& shader) 
     {
-        m_CubemapInstance.Transform2Texture().BindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);
+        m_spFB->GetTexture()->BindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);
         // Bind sampler uniforms.
         shader.setInt("qrk_cubemap", nextTextureUnit);
 

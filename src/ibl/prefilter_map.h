@@ -22,9 +22,9 @@ namespace Cme
         // Draw onto the allocated prefiltering cubemap from the given cubemap as the
         // source. The cubemap should ideally have mip levels in order to avoid
         // hotspot artifacts.
-        void multipassDraw(Texture source);
+        void multipassDraw(std::shared_ptr<Texture> spSource);
 
-        Texture getPrefilteredEnvMap() { return m_CubemapInstance.Transform2Texture(); }
+        std::shared_ptr<Texture> getPrefilteredEnvMap() { return m_CubemapInstance.Transform2Texture(); }
 
         void updateUniforms(Shader & shader) override;
         unsigned int bindTexture(unsigned int nextTextureUnit, Shader & shader) override;

@@ -4,26 +4,78 @@
 
 namespace Cme 
 {
+    // 由于帧缓冲和延迟渲染同时存在 所以必要要用一个结构可以同时纹理和渲染缓冲对象存储起来
     // 将附件转换为Texture 本质是将ID(句柄)传递给Texture
-    Texture Attachment::Transform2Texture() 
+    std::shared_ptr<Texture> Attachment::Transform2Texture()
     {
+        // 该判断专门针对于渲染缓冲对象附件 也就是说渲染缓冲哦对象不能转换为Texture
+        // 那么换句话说 如果渲染缓冲对象附件不保存到m_vecAttachments中就OK 
+        // 但也不对 循环的时候 渲染缓冲对象是需要的 还是要push到m_vecAttachments中
+        // 所以综上所述 m_vecAttachments还是需要保存的
         if (m_eTarget != AttachmentTarget::TEXTURE)
         {
             throw FramebufferException("ERROR::FRAMEBUFFER::INVALID_ATTACHMENT_TARGET");
         }
-        Texture texture;
-        texture.m_uiID = m_uiID;
-        texture.m_eType = m_eTextureType;
-        texture.m_iWidth = m_iWidth;
-        texture.m_iHeight = m_iHeight;
-        texture.m_iNumMips = m_iNumMips;
-        return texture;
+        //Texture texture;
+        auto spTexture = std::make_shared<Texture>();
+        spTexture->m_uiID = m_uiID;
+        spTexture->m_eType = m_eTextureType;
+        spTexture->m_iWidth = m_iWidth;
+        spTexture->m_iHeight = m_iHeight;
+        spTexture->m_iNumMips = m_iNumMips;
+        return spTexture;
     }
 
     Framebuffer::Framebuffer(int width, int height, int samples)
         : m_iWidth(width), m_iHeight(height), m_iSamples(samples)
     {
         glGenFramebuffers(1, &fbo_);
+    }
+
+    Framebuffer::Framebuffer(ImageSize size, BufferType type, TextureParams params, int samples)
+    {
+        m_iWidth = size.width;
+        m_iHeight = size.height;
+        m_iSamples = samples;
+
+        glGenFramebuffers(1, &fbo_);
+
+        checkFlags(type);
+        activate();
+
+        TextureType textureType = TextureType::TEXTURE_2D;
+        GLenum textureTarget = m_iSamples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+        // Special case cubemaps.
+        if (type == BufferType::COLOR_CUBEMAP_HDR || type == BufferType::COLOR_CUBEMAP_HDR_ALPHA)
+        {
+            textureTarget = GL_TEXTURE_CUBE_MAP;
+            textureType = TextureType::CUBEMAP;
+        }
+
+        GLenum internalFormat = bufferTypeToGlInternalFormat(type);
+        auto spTexture = std::make_shared<Texture>();
+        spTexture->Create(m_iWidth, m_iHeight, internalFormat, params, type);
+        spTexture->SetTextureType(textureType);
+
+        // Attach the texture to the framebuffer.
+        int colorAttachmentIndex = m_iNumColorAttachments;
+
+        GLenum attachmentType = bufferTypeToGlAttachmentType(type, colorAttachmentIndex);
+        GLenum textarget = textureType == TextureType::CUBEMAP ? GL_TEXTURE_CUBE_MAP_POSITIVE_X : textureTarget;
+        glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, textarget, spTexture->getId(), 0);
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        {
+            throw FramebufferException("ERROR::FRAMEBUFFER::TEXTURE::INCOMPLETE");
+        }
+
+        updateFlags(type);
+        updateBufferSources();
+
+        glBindTexture(textureTarget, 0);
+        deactivate();
+       
+        saveAttachment(spTexture->getId(), spTexture->getNumMips(), AttachmentTarget::TEXTURE, type, colorAttachmentIndex, textureType);
     }
 
     Framebuffer::~Framebuffer() 
@@ -189,8 +241,7 @@ namespace Cme
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
         deactivate();
 
-        return saveAttachment(rbo, /*numMips=*/1, AttachmentTarget::RENDERBUFFER,
-                            type, colorAttachmentIndex, TextureType::TEXTURE_2D);
+        return saveAttachment(rbo, 1, AttachmentTarget::RENDERBUFFER, type, colorAttachmentIndex, TextureType::TEXTURE_2D);
     }
 
     Attachment Framebuffer::getTexture(BufferType type)
@@ -223,7 +274,8 @@ namespace Cme
     }
 
     Attachment Framebuffer::saveAttachment(unsigned int id, int numMips,
-                                           AttachmentTarget target, BufferType type,
+                                           AttachmentTarget target, 
+                                           BufferType type,
                                            int colorAttachmentIndex,
                                            TextureType textureType)
     {
@@ -372,6 +424,16 @@ namespace Cme
             clearBits |= GL_STENCIL_BUFFER_BIT;
         }
         glClear(clearBits);
+    }
+
+    std::shared_ptr<Texture> Framebuffer::GetTexture(int iIndex)
+    {
+        if (!m_vecAttachments.empty())
+        {
+            return m_vecAttachments[iIndex].Transform2Texture();
+        }
+        std::cout << "Framebuffer::GetTexture m_vecTextures is empty!" << std::endl;
+        return nullptr;
     }
 
 }  // namespace Cme

@@ -41,6 +41,7 @@ namespace Cme
         shader.setInt("qrk_pointLightCount", m_uiPointCount);
         shader.setInt("qrk_spotLightCount", m_uiSpotCount);
 
+        // 由于可以设置不同的光源 所以目前光源的更新暂时放到light_control中
         for (auto light : m_vecLights)
         {
             light->updateUniforms(shader);

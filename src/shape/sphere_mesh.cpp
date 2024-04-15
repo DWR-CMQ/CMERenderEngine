@@ -5,25 +5,25 @@ namespace Cme
     SphereMesh::SphereMesh(std::string texturePath, int numMeridians, int numParallels)
         : m_iNumMeridians(numMeridians), m_iNumParallels(numParallels)
     {
-        std::vector<TextureMap> textureMaps;
+        std::vector<std::shared_ptr<TextureMap>> vecTextureMaps;
         if (!texturePath.empty())
         {
             Texture textureObj;
             textureObj.LoadTexture(texturePath.c_str());
-            TextureMap textureMap(textureObj, TextureMapType::DIFFUSE);
-            textureMaps.push_back(textureMap);
+            auto spTextureMap = std::make_shared<TextureMap>(textureObj, TextureMapType::DIFFUSE);
+            vecTextureMaps.push_back(spTextureMap);
         }
-        loadMeshAndTextures(textureMaps);
+        loadMeshAndTextures(vecTextureMaps);
     }
 
-    SphereMesh::SphereMesh(const std::vector<TextureMap>& textureMaps,
+    SphereMesh::SphereMesh(const std::vector<std::shared_ptr<TextureMap>>& vecTextureMaps,
         int numMeridians, int numParallels)
         : m_iNumMeridians(numMeridians), m_iNumParallels(numParallels)
     {
-        loadMeshAndTextures(textureMaps);
+        loadMeshAndTextures(vecTextureMaps);
     }
 
-    void SphereMesh::loadMeshAndTextures(const std::vector<TextureMap>& textureMaps)
+    void SphereMesh::loadMeshAndTextures(const std::vector<std::shared_ptr<TextureMap>>& vecTextureMaps)
     {
         // Generate the sphere vertex components. This uses the common "UV" approach.
 
@@ -115,7 +115,7 @@ namespace Cme
         constexpr unsigned int sphereVertexSizeBytes = 11 * sizeof(float);
         LoadMeshData(vertexData.data(),
             (sizeof(float) * vertexData.size()) / sphereVertexSizeBytes,
-            sphereVertexSizeBytes, indices, textureMaps);
+            sphereVertexSizeBytes, indices, vecTextureMaps);
     }
 
     void SphereMesh::initializeVertexAttributes()
