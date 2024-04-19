@@ -81,11 +81,9 @@ namespace Cme
         });
     }
 
-    void Model::drawWithTransform(const glm::mat4& transform, Shader& shader,
-                                  TextureUniformSource* TextureUniformSource) 
+    void Model::drawWithTransform(const glm::mat4& transform, Shader& shader) 
     {
-        m_RootNodeObj.drawWithTransform(transform * getModelTransform(), shader,
-                                    TextureUniformSource);
+        m_RootNodeObj.drawWithTransform(transform * getModelTransform(), shader);
     }
 
     void Model::loadModel(std::string path) 

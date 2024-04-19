@@ -24,6 +24,7 @@
     <ProjectGuid>{8b286faf-4e51-4a61-80f1-0e27a830751b}</ProjectGuid>
     <RootNamespace>Defer3</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>CME</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -156,6 +157,8 @@
     <ClCompile Include="src\common_helper.cpp" />
     <ClCompile Include="src\core\sampler.cpp" />
     <ClCompile Include="src\core\sampler_manager.cpp" />
+    <ClCompile Include="src\core\texture.cpp" />
+    <ClCompile Include="src\core\texture_manager.cpp" />
     <ClCompile Include="src\core\vertex_buffer_object.cpp" />
     <ClCompile Include="src\fxaa.cpp" />
     <ClCompile Include="src\blur.cpp" />
@@ -189,8 +192,6 @@
     <ClCompile Include="src\shape\screenquad_mesh.cpp" />
     <ClCompile Include="src\shape\skybox.cpp" />
     <ClCompile Include="src\shape\sphere_mesh.cpp" />
-    <ClCompile Include="src\texture.cpp" />
-    <ClCompile Include="src\texture_uniform_source.cpp" />
     <ClCompile Include="src\vertex_array.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
@@ -213,6 +214,8 @@
     <ClInclude Include="src\cme_defs.h" />
     <ClInclude Include="src\core\sampler.h" />
     <ClInclude Include="src\core\sampler_manager.h" />
+    <ClInclude Include="src\core\texture.h" />
+    <ClInclude Include="src\core\texture_manager.h" />
     <ClInclude Include="src\core\vertex_buffer_object.h" />
     <ClInclude Include="src\fxaa.h" />
     <ClInclude Include="src\blur.h" />
@@ -249,9 +252,7 @@
     <ClInclude Include="src\shape\skybox.h" />
     <ClInclude Include="src\shape\sphere_mesh.h" />
     <ClInclude Include="src\stb_image.h" />
-    <ClInclude Include="src\texture.h" />
     <ClInclude Include="src\texture_map.h" />
-    <ClInclude Include="src\texture_uniform_source.h" />
     <ClInclude Include="src\common_helper.h" />
     <ClInclude Include="src\vertex_array.h" />
     <ClInclude Include="src\window.h" />

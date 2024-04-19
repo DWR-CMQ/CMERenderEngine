@@ -2,10 +2,10 @@
 #include "texture.h"
 
 //#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "../stb_image.h"
 
 #include <glm/gtc/type_ptr.hpp>
-#include "common_helper.h"
+#include "../common_helper.h"
 
 namespace Cme 
 {

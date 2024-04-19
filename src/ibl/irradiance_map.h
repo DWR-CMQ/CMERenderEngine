@@ -8,7 +8,7 @@ namespace Cme
     // Calculates the prefiltered env map based on the GGX microfacet model. The map
     // contains multiple mip level, which each mip level representing a different
     // material roughness (mip0 -> roughness 0).
-    class IrradianceMap : public TextureSource
+    class IrradianceMap
     {
     public:
         IrradianceMap(int width = 32, int height = 32);
@@ -30,7 +30,7 @@ namespace Cme
 
         std::shared_ptr<Texture> getIrradianceMap() { return m_CubemapInstance.Transform2Texture(); }
 
-        unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader) override;
+        unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader);
 
     private:
         Framebuffer m_BufferInstance;

@@ -4,7 +4,6 @@
 #include "framebuffer.h"
 #include "shader/shader.h"
 #include "shader/shader_primitives.h"
-#include "texture_uniform_source.h"
 
 namespace Cme 
 {

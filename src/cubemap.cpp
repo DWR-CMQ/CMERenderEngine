@@ -2,7 +2,7 @@
 
 namespace Cme 
 {
-    void CubemapRenderHelper::multipassDraw(Shader& shader, TextureUniformSource* TextureUniformSource) 
+    void CubemapRenderHelper::multipassDraw(Shader& shader) 
     {
         // Set projection to a 90-degree, 1:1 aspect ratio in order to render a single
         // face of the cube.
@@ -32,7 +32,7 @@ namespace Cme
             m_pBuffer->clear();
 
             shader.setMat4("view", faceViews[cubemapFace]);
-            m_RoomInstance.draw(shader, TextureUniformSource);
+            m_RoomInstance.draw(shader);
         }
 
         m_pBuffer->deactivate();

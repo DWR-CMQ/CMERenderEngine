@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include "../exceptions.h"
 #include "shader_defs.h"
-#include "../texture.h"
+#include "../core/texture.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>

@@ -1,8 +1,7 @@
 #pragma once
 #include "../framebuffer.h"
 #include "../shader/shader.h"
-#include "../texture.h"
-#include "../texture_uniform_source.h"
+#include "../core/texture.h"
 #include "../random.h"
 
 namespace Cme
@@ -10,7 +9,7 @@ namespace Cme
     // SsaoKernel本质是纹理
     // A sample kernel for use in screen space ambient occlusion. Uses a hemisphere
     // sampling method and a noise texture.
-    class SsaoKernel : public UniformSource, public TextureSource
+    class SsaoKernel : public UniformSource
     {
     public:
         SsaoKernel(float radius = 0.5, float bias = 0.025, int kernelSize = 64, int noiseTextureSideLength = 4);
@@ -25,7 +24,7 @@ namespace Cme
         void updateUniforms(Shader& shader) override;
 
         // Binds the noise texture.
-        unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader) override;
+        unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader);
 
     private:
         // TODO: Expose this after texture lifecycle is handled (currently

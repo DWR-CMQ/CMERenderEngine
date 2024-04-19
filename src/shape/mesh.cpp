@@ -2,21 +2,19 @@
 
 namespace Cme
 {
-    void RenderableNode::drawWithTransform(const glm::mat4& transform,
-                                        Shader& shader,
-                                        TextureUniformSource* TextureUniformSource) 
+    void RenderableNode::drawWithTransform(const glm::mat4& transform, Shader& shader) 
     {
         // Combined incoming transform with the node's.
         const glm::mat4 mat = transform * getModelTransform();
         for (auto& renderable : m_vecRenderables)
         {
-            renderable->drawWithTransform(mat, shader, TextureUniformSource);
+            renderable->drawWithTransform(mat, shader);
         }
 
         // Render children.
         for (auto& childNode : m_vecChildNodes)
         {
-            childNode->drawWithTransform(mat, shader, TextureUniformSource);
+            childNode->drawWithTransform(mat, shader);
         }
     }
 
@@ -68,13 +66,12 @@ namespace Cme
         m_VertexArrayObj.loadInstanceVertexData(&models[0], size * sizeof(glm::mat4));
     }
 
-    void Mesh::drawWithTransform(const glm::mat4& transform, Shader& shader,
-                                TextureUniformSource* TextureUniformSource)
+    void Mesh::drawWithTransform(const glm::mat4& transform, Shader& shader)
     {
         // First we set the model transform, combining with the incoming transform.
         shader.setMat4("model", transform * getModelTransform());
 
-        bindTextures(shader, TextureUniformSource);
+        bindTextures(shader);
 
         // Draw using the VAO.
         shader.activate();
@@ -103,7 +100,7 @@ namespace Cme
         }
     }
 
-    void Mesh::bindTextures(Shader& shader, TextureUniformSource* TextureUniformSource)
+    void Mesh::bindTextures(Shader& shader)
     {
         // Bind textures. Assumes uniform naming is "material.textureMapType[idx]".
         unsigned int diffuseIdx = 0;
@@ -116,12 +113,6 @@ namespace Cme
 
         // If a TextureUniformSource isn't provided, just start with texture unit 0.
         unsigned int textureUnit = 0;
-        if (TextureUniformSource != nullptr) 
-        {
-            TextureUniformSource->pushUsageBlock();
-            textureUnit = TextureUniformSource->getNextTextureUnit();
-        }
-
         // 加载模型才会执行for循环 
         for(auto& item : m_vecTextureMaps)
         {
@@ -192,20 +183,9 @@ namespace Cme
             }
             // Set the sampler to the correct texture unit.
             shader.setInt(samplerName, textureUnit);
+            textureUnit++;
+        }
 
-            if (TextureUniformSource != nullptr)
-            {
-                textureUnit = TextureUniformSource->getNextTextureUnit();
-            } 
-            else 
-            {
-                textureUnit++;
-            }
-        }
-        if (TextureUniformSource != nullptr) 
-        {
-            TextureUniformSource->popUsageBlock();
-        }
         shader.setInt("material.diffuseCount", diffuseIdx);
         shader.setInt("material.specularCount", specularIdx);
         shader.setInt("material.roughnessCount", roughnessIdx);

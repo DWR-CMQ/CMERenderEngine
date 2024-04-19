@@ -5,8 +5,7 @@
 #include "framebuffer.h"
 #include "lighting/light.h"
 #include "shader/shader.h"
-#include "texture.h"
-#include "texture_uniform_source.h"
+#include "core/texture.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -63,7 +62,7 @@ namespace Cme
         glm::vec3 m_vec3WorldUp;
     };
 
-    class ShadowMap : public Framebuffer, public TextureSource 
+    class ShadowMap : public Framebuffer 
     {
     public:
         explicit ShadowMap(int width = 1024, int height = 1024);
@@ -71,7 +70,7 @@ namespace Cme
         virtual ~ShadowMap() = default;
 
         std::shared_ptr<Texture> getDepthTexture() { return m_DepthAttachmentObj.Transform2Texture(); }
-        unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader) override;
+        unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader);
 
     private:
         Attachment m_DepthAttachmentObj;

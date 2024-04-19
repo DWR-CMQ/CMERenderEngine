@@ -34,9 +34,6 @@
     <Filter Include="src\core">
       <UniqueIdentifier>{87655358-c59a-440b-a261-33012c580f4b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\texture">
-      <UniqueIdentifier>{3f2ac085-771b-4dd9-b86d-9cdf55331a8f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\scene">
       <UniqueIdentifier>{0ca4c729-4875-44a8-a696-e8f0241ebce7}</UniqueIdentifier>
     </Filter>
@@ -120,12 +117,6 @@
     <ClCompile Include="src\shadows.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\texture.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\texture_uniform_source.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\vertex_array.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -194,6 +185,12 @@
     </ClCompile>
     <ClCompile Include="src\lighting\light.cpp">
       <Filter>src\lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\texture_manager.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\texture.cpp">
+      <Filter>src\core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -296,13 +293,7 @@
     <ClInclude Include="src\stb_image.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\texture.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\texture_map.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\texture_uniform_source.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\vertex_array.h">
@@ -376,6 +367,12 @@
     </ClInclude>
     <ClInclude Include="src\lighting\light.h">
       <Filter>src\lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\texture_manager.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\texture.h">
+      <Filter>src\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

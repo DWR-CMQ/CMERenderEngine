@@ -19,10 +19,10 @@ namespace Cme
         //void setTexture(Texture texture);
         // Unsets the texture.
         void unsetTexture();
+        void bindTextures(Shader& shader) override;
 
     protected:
         void loadMesh();
         void initializeVertexAttributes() override;
-        void bindTextures(Shader& shader, TextureUniformSource* TextureUniformSource) override;
     };
 }

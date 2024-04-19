@@ -4,8 +4,7 @@
 #include "../framebuffer.h"
 #include "../random.h"
 #include "../shader/shader.h"
-#include "../texture.h"
-#include "../texture_uniform_source.h"
+#include "../core/texture.h"
 #include "ssao_kernel.h"
 
 #include <glm/glm.hpp>
@@ -26,7 +25,7 @@ namespace Cme
     };
 
     // SsaoBuffer的本质是FBO
-    class SsaoBuffer : public Framebuffer, public TextureSource 
+    class SsaoBuffer : public Framebuffer 
     {
     public:
         SsaoBuffer(int width, int height);
@@ -38,7 +37,7 @@ namespace Cme
             return m_SsaoBufferAttachmentObj.Transform2Texture(); 
         }
 
-        unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader) override;
+        unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader);
 
     private:
         Attachment m_SsaoBufferAttachmentObj;

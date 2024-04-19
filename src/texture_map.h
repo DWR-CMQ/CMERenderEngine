@@ -3,7 +3,7 @@
 
 #include <assimp/scene.h>
 #include "exceptions.h"
-#include "texture.h"
+#include "core/texture.h"
 
 #include <string>
 #include <vector>

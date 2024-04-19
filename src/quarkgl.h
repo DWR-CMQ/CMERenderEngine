@@ -33,11 +33,10 @@
 #include "shadows.h"
 #include "lighting/ssao.h"
 #include "lighting/ssao_kernel.h"
-#include "texture.h"
+#include "core/texture.h"
 #include "texture_map.h"
-#include "texture_uniform_source.h"
 #include "common_helper.h"
 #include "vertex_array.h"
 #include "window.h"
 #include "cme_defs.h"
-
+#include "core/texture_manager.h"

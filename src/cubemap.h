@@ -5,7 +5,6 @@
 #include "shape/room_mesh.h"
 #include "shader/shader.h"
 #include "shader/shader_primitives.h"
-#include "texture_uniform_source.h"
 
 namespace Cme
 {
@@ -26,7 +25,7 @@ namespace Cme
         // Draws with the given shader to each face of the cubemap. This results in 6
         // different draw calls. Shader should be prepared (i.e. necessary textures
         // should either be bound or be in the registry, uniforms should be set, etc).
-        void multipassDraw(Shader& shader, TextureUniformSource* TextureUniformSource = nullptr);
+        void multipassDraw(Shader& shader);
 
     private:
         Framebuffer* m_pBuffer;
@@ -35,7 +34,7 @@ namespace Cme
     };
 
     // Converts an equirect texture to a cubemap.
-    class EquirectCubemap : public TextureSource 
+    class EquirectCubemap 
     {
     public:
         EquirectCubemap(int width, int height, bool generateMips = false);
@@ -49,8 +48,7 @@ namespace Cme
         //std::shared_ptr<Texture> GetCubemap() { return m_CubemapInstance.Transform2Texture(); }
         std::shared_ptr<Texture> GetCubemap() { return m_spFB->GetTexture(); }
 
-        unsigned int bindTexture(unsigned int nextTextureUnit,
-                                Shader& shader) override;
+        unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader);
 
     private:
         std::shared_ptr<Framebuffer> m_spFB;

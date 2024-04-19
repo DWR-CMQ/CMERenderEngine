@@ -5,7 +5,6 @@
 
 #include "../shader/shader.h"
 #include "../texture_map.h"
-#include "../texture_uniform_source.h"
 #include "../vertex_array.h"
 
 #include <functional>
@@ -26,14 +25,12 @@ namespace Cme
 
         // TODO: Add translation, rotation, scale methods.
 
-        virtual void draw(Shader& shader, TextureUniformSource* TextureUniformSource = nullptr)
+        virtual void draw(Shader& shader)
         {
             glm::mat4 transform(1.0f);
-            return drawWithTransform(transform, shader, TextureUniformSource);
+            return drawWithTransform(transform, shader);
         }
-        virtual void drawWithTransform(
-            const glm::mat4& transform, Shader& shader,
-            TextureUniformSource* TextureUniformSource = nullptr) = 0;
+        virtual void drawWithTransform(const glm::mat4& transform, Shader& shader) = 0;
 
     protected:
         // The model transform matrix.
@@ -47,8 +44,7 @@ namespace Cme
     {
     public:
         virtual ~RenderableNode() = default;
-        void drawWithTransform(const glm::mat4& transform, Shader& shader,
-                                TextureUniformSource* TextureUniformSource = nullptr) override;
+        void drawWithTransform(const glm::mat4& transform, Shader& shader) override;
 
         void addRenderable(std::unique_ptr<Renderable> renderable) 
         {
@@ -78,8 +74,7 @@ namespace Cme
 
         void LoadNodeMatrixByVectorInMesh(const std::vector<glm::mat4>& models);
         void LoadNodeMatrixByPointerInMesh(const glm::mat4* models, unsigned int size);
-        void drawWithTransform(const glm::mat4& transform, Shader& shader,
-                                TextureUniformSource* TextureUniformSource = nullptr) override;
+        void drawWithTransform(const glm::mat4& transform, Shader& shader) override;
 
         std::vector<unsigned int> getIndices() { return m_vecIndices; }
         std::vector<std::shared_ptr<TextureMap>> getTextureMaps() { return m_vecTextureMaps; }
@@ -99,7 +94,7 @@ namespace Cme
         // Allocates and initializes vertex array instance data.
         virtual void initializeVertexArrayInstanceData();
         // Binds texture maps to texture units and sets shader sampler uniforms.
-        virtual void bindTextures(Shader& shader, TextureUniformSource* TextureUniformSource);
+        virtual void bindTextures(Shader& shader);
         // Emits glDraw* calls based on the mesh instancing/indexing. Requires shaders
         // and VAOs to be active prior to calling.
         virtual void glDraw();

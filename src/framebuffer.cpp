@@ -436,4 +436,26 @@ namespace Cme
         return nullptr;
     }
 
+    std::vector<std::shared_ptr<Texture>> Framebuffer::GetAllTexture() const
+    {
+        if (m_vecAttachments.empty())
+        {
+            return std::vector<std::shared_ptr<Texture>>();
+        }
+        else
+        {
+            std::vector<std::shared_ptr<Texture>> vecResult;
+            for (auto item : m_vecAttachments)
+            {
+                // 渲染缓冲附件转换不了纹理
+                if (item.m_eTarget != AttachmentTarget::TEXTURE)
+                {
+                    continue;
+                }
+                vecResult.push_back(item.Transform2Texture());
+            }
+            return vecResult;
+        }
+    }
+
 }  // namespace Cme

@@ -7,7 +7,7 @@ namespace Cme
 {
     // Calculates an integration map for the GGX BRDF, parameterized over roughness
     // and NdotV.
-    class BrdfMap : public TextureSource
+    class BrdfMap
     {
     public:
         BrdfMap(int width, int height);
@@ -23,7 +23,7 @@ namespace Cme
 
         std::shared_ptr<Texture> getBrdfIntegrationMap() { return m_IntegrationMapInstance.Transform2Texture(); }
 
-        unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader) override;
+        unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader);
 
     private:
         Framebuffer m_BufferInstance;

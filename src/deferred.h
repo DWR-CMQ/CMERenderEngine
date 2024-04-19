@@ -4,8 +4,7 @@
 #include "exceptions.h"
 #include "framebuffer.h"
 #include "shader/shader.h"
-#include "texture.h"
-#include "texture_uniform_source.h"
+#include "core/texture.h"
 
 #include <glm/glm.hpp>
 
@@ -22,7 +21,7 @@ namespace Cme
         DeferredGeometryPassShader();
     };
 
-    class GBuffer : public Framebuffer, public TextureSource 
+    class GBuffer : public Framebuffer 
     {
     public:
         GBuffer(int width, int height);
@@ -34,7 +33,7 @@ namespace Cme
         std::shared_ptr<Texture> getAlbedoMetallicTexture() { return GetTexture(3); }
         std::shared_ptr<Texture> getEmissionTexture() { return GetTexture(4); }
 
-        unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader) override;
+        unsigned int bindTexture(unsigned int nextTextureUnit, Shader& shader);
     };
 
 }  // namespace Cme

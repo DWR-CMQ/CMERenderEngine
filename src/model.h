@@ -68,8 +68,7 @@ namespace Cme
         void LoadNodeMatrixByVectorInModel(const std::vector<glm::mat4>& vecModelMat);
         void LoadNodeMatrixByPointerInModel(const glm::mat4* pModelMat, unsigned int size);
 
-        void drawWithTransform(const glm::mat4& transform, Shader& shader,
-                                TextureUniformSource* TextureUniformSource = nullptr) override;
+        void drawWithTransform(const glm::mat4& transform, Shader& shader) override;
 
     private:
         void loadModel(std::string path);

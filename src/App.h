@@ -61,9 +61,6 @@ namespace Cme
         std::shared_ptr<Cme::ScreenShader> m_spLightingPassShader;                  // Defer渲染的光照处理阶段-----pbr渲染(光照和纹理)都需要用到这个shader
         std::shared_ptr<Cme::ScreenShader> m_spGBufferVisualShader;                 // GBuffer可视化所需要的Shader
 
-        // ***
-        std::shared_ptr<Cme::TextureUniformSource> m_spLightingTextureUniformSource;
-
         // Opengl教程上所做的所有操作都是在默认帧缓冲的渲染缓冲上进行的。默认的帧缓冲是在你创建窗口的时候生成和配置的（GLFW帮我们做了这些
         // 这就是为什么Opengl教程8.1上明明是没有句柄为0的FBO,但却可以绑定,因为默认生成的FBO句柄是0 
         // 在本工程中 没有采用默认的帧缓冲 而是独立生成了一个FBO 也就是m_spMainFb 基于这个思想 所有的逻辑就能说清楚
@@ -76,7 +73,6 @@ namespace Cme
         // FXAA
 
         // PostProcess
-        std::shared_ptr<Cme::TextureUniformSource> m_spPostprocessTextureUniformSource;
         std::shared_ptr<Cme::ScreenShader> m_spPostprocessShader;
         // PostProcess
 

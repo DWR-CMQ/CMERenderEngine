@@ -1,8 +1,8 @@
 #ifndef QUARKGL_TEXTURE_H_
 #define QUARKGL_TEXTURE_H_
 
-#include "exceptions.h"
-#include "screen.h"
+#include "../exceptions.h"
+#include "../screen.h"
 
 #include <glm/glm.hpp>
 #include <string>

@@ -10,6 +10,10 @@
 #include "../imgui/imgui_impl_glfw.h"
 #include "../imgui/imgui_impl_opengl3.h"
 
+/// @brief 从原理上来看 原本的texture_uniform_source作用就是管理多个Texture(实现纹理绑定和纹理索引) 当texture_uniform_source里面只有一个纹理时 这个文件就已经
+/// 没有作用了 因为默认的纹理索引就是0 所以提前做好纹理绑定 就不用这个文件了
+/// 把TextureUniformSource看作是纹理的集合即可 然后再加到某一个Shader中 由Shader更新纹理
+/// 下一步需要把TextureUniformSource全部清除 只用texturemanager做统一管理
 namespace Cme
 {
 	//App* App::Instance()
@@ -31,8 +35,8 @@ namespace Cme
         // glfwDestroyWindow(m_pWindow);
     }
 
-	void App::Init(bool bFullScreen)
-	{
+    void App::Init(bool bFullScreen)
+    {
         m_pWindow = new Cme::Window(1920, 1080, "Model Render", false, 0);
         m_pWindow->setClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
         m_pWindow->setEscBehavior(Cme::EscBehavior::UNCAPTURE_MOUSE_OR_CLOSE);
@@ -43,6 +47,9 @@ namespace Cme
         ImGuiIO& io = ImGui::GetIO();
         ImGui_ImplGlfw_InitForOpenGL(m_pWindow->getGlfwRef(), true);
         ImGui_ImplOpenGL3_Init("#version 460 core");
+
+        // 各个Manager
+        auto& tm = TextureManager::GetInstance();
 
         // Setup the camera.
         m_spCamera = std::make_shared<Cme::Camera>(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -71,24 +78,16 @@ namespace Cme
 
         // GBuffer
         m_spGBuffer = std::make_shared<Cme::GBuffer>(m_pWindow->getSize());
-        m_spLightingTextureUniformSource = std::make_shared<Cme::TextureUniformSource>();
-        m_spLightingTextureUniformSource->addTextureSource(m_spGBuffer);
+        tm.AddTexture("gbuffer", m_spGBuffer->GetAllTexture());
 
         // Screen
         m_spScreenQuad = std::make_shared<Cme::ScreenQuadMesh>();
         m_spGBufferVisualShader = std::make_shared<Cme::ScreenShader>(Cme::ShaderPath("assets//model_shaders//gbuffer_visual.frag"));
         m_spLightingPassShader = std::make_shared<Cme::ScreenShader>(Cme::ShaderPath("assets//model_shaders//lighting_pass.frag"));
 
-        // 光照Shader用到GBuffer
-        m_spLightingPassShader->addUniformSource(m_spLightingTextureUniformSource);
-
-        // 把TextureUniformSource看作是纹理的集合即可 然后再加到某一个Shader中 由Shader更新纹理
-        m_spPostprocessTextureUniformSource = std::make_shared<Cme::TextureUniformSource>();
-
         // 只有Shader才能更新Uniform变量 
         // 纹理和shader本来就是相对独立的东西 只是通过glBindTexture将两者结合在一起而已 在两者实例化对象的时候都是独立的
         m_spPostprocessShader = std::make_shared<Cme::ScreenShader>(Cme::ShaderPath("assets//model_shaders//post_processing.frag"));
-        m_spPostprocessShader->addUniformSource(m_spPostprocessTextureUniformSource);
 
         // FXAA
         m_spFxaaShader = std::make_shared<Cme::FXAAShader>();
@@ -104,7 +103,7 @@ namespace Cme
             m_spBrdfMap->draw();
         }
         // brdf就非常标准的按照opengl教程里来的 在loop循环中没有执行bind纹理就无法生效
-        m_spLightingTextureUniformSource->addTextureSource(m_spBrdfMap);                          /// ----------------------------------
+        tm.AddTexture("brdf", std::vector<std::shared_ptr<Texture>>{m_spBrdfMap->getBrdfIntegrationMap()});
 
         // 天空盒
         m_spSkybox = std::make_shared<Cme::Skybox>(true, false, false);
@@ -145,6 +144,8 @@ namespace Cme
 
             // 渲染编辑器
             RenderImGuiUI(m_OptsObj, *m_spCamera);
+
+            auto& tm = TextureManager::GetInstance();
 
             // 渲染光照 方向和光照强度来自编辑器
             m_spDirectionalLight->setDiffuse(m_OptsObj.directionalDiffuse * m_OptsObj.directionalIntensity);
@@ -269,10 +270,11 @@ namespace Cme
                 m_spMainFb->clear();
 
                 // TODO: Set up environment mapping with the skybox.
-                m_spLightingPassShader->updateUniforms();
-
                 // 暂时这样写 用于更新m_spLightingPassShader里面的一些变量 看着不顺眼 但是是为了把texture_uniform_source给干掉
-                m_spLightControl->updateUniforms(*m_spLightingPassShader);  
+                // 如果使用m_spGBuffer->bindTexture 那么m_spScreenQuad->draw也要变化 是时候需要弄一个manager出来 专门管理TextureUniformSource
+                m_spGBuffer->bindTexture(tm.GetTextureUnit("gbuffer"), *m_spLightingPassShader);              // 光照Shader用到GBuffer
+                m_spBrdfMap->bindTexture(tm.GetTextureUnit("brdf"), *m_spLightingPassShader);                 // 光照Shader用到brdf
+                m_spLightControl->updateUniforms(*m_spLightingPassShader);                                    // 光照Shader控制
 
                 m_spLightingPassShader->setBool("shadowMapping", m_OptsObj.shadowMapping);
                 m_spLightingPassShader->setFloat("shadowBiasMin", m_OptsObj.shadowBiasMin);
@@ -291,10 +293,8 @@ namespace Cme
                 m_spLightingPassShader->setMat4("view", m_spCamera->getViewTransform());
                 m_spLightingPassShader->setMat4("projection", m_spCamera->getProjectionTransform());
 
-                //m_spBrdfMap->bindTexture();
-
-                //m_spScreenQuad->unsetTexture();
-                m_spScreenQuad->draw(*m_spLightingPassShader, m_spLightingTextureUniformSource.get());
+                m_spScreenQuad->unsetTexture();
+                m_spScreenQuad->draw(*m_spLightingPassShader);
 
                 m_spMainFb->deactivate();
             }
@@ -338,12 +338,10 @@ namespace Cme
                 m_spPostprocessShader->setInt("toneMapping", static_cast<int>(m_OptsObj.toneMapping));
                 m_spPostprocessShader->setBool("gammaCorrect", m_OptsObj.gammaCorrect);
                 m_spPostprocessShader->setFloat("gamma", static_cast<int>(m_OptsObj.gamma));
-                //m_spScreenQuad->setTexture(m_MainColorAttachmentObj);
                 m_spScreenQuad->setTexture(m_spMainFb->GetTexture());
 
-                // 后处理有纹理更新
-                m_spScreenQuad->draw(*m_spPostprocessShader, m_spPostprocessTextureUniformSource.get());
-
+                // 后处理有纹理更新 
+                m_spScreenQuad->draw(*m_spPostprocessShader);
                 m_spFinalFb->deactivate();
             }
 

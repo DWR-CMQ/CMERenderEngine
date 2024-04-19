@@ -29,11 +29,9 @@ namespace Cme
         LoadMeshData(screenQuadVertices, sizeof(screenQuadVertices) / quadVertexSizeBytes, quadVertexSizeBytes, {}, {});
     }
 
-    //void ScreenQuadMesh::setTexture(Attachment attachment)
-    //{
-    //    setTexture(attachment.Transform2Texture());
-    //}
-
+    // 重新给Mesh设置Texture之前 是需要把之前的纹理清除掉吗?
+    // 如果是 则可以直接绑定
+    // 而且从代码逻辑来看 m_vecTextureMaps的size = 1恒成立
     void ScreenQuadMesh::setTexture(std::shared_ptr<Texture> spTexture)
     {
         // TODO: This copies the texture info, meaning it won't see updates.
@@ -41,13 +39,6 @@ namespace Cme
         auto temp = std::make_shared<TextureMap>(*(spTexture.get()), TextureMapType::DIFFUSE);
         m_vecTextureMaps.emplace_back(temp);
     }
-
-    //void ScreenQuadMesh::setTexture(Texture texture)
-    //{
-    //    // TODO: This copies the texture info, meaning it won't see updates.
-    //    m_vecTextureMaps.clear();
-    //    m_vecTextureMaps.emplace_back(texture, TextureMapType::DIFFUSE);
-    //}
 
     void ScreenQuadMesh::unsetTexture()
     {
@@ -63,8 +54,10 @@ namespace Cme
         m_VertexArrayObj.SetVertexAttribs();
     }
 
-    void ScreenQuadMesh::bindTextures(Shader& shader,
-        TextureUniformSource* TextureUniformSource)
+    /// @brief 其实这段代码本质就是利用Shader来更新纹理 如果之前已经有代码用Shader更新了纹理 此步骤根本就不用执行
+    /// @param shader 
+    /// @param TextureUniformSource 
+    void ScreenQuadMesh::bindTextures(Shader& shader)
     {
         if (m_vecTextureMaps.empty())
         {
@@ -74,20 +67,11 @@ namespace Cme
         // Bind textures, assuming a given uniform naming.
         // If a TextureUniformSource isn't provided, just start with texture unit 0.
         unsigned int textureUnit = 0;
-        if (TextureUniformSource != nullptr)
-        {
-            TextureUniformSource->pushUsageBlock();
-            textureUnit = TextureUniformSource->getNextTextureUnit();
-        }
 
         Texture& texture = m_vecTextureMaps[0]->getTexture();
         texture.BindToUnit(textureUnit, TextureBindType::TEXTURE_2D);
 
         // Set the sampler to the correct texture unit.
         shader.setInt("qrk_screenTexture", textureUnit);
-        if (TextureUniformSource != nullptr)
-        {
-            TextureUniformSource->popUsageBlock();
-        }
     }
 }

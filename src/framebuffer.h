@@ -2,7 +2,7 @@
 #define QUARKGL_FRAMEBUFFER_H_
 
 #include "shader/shader.h"
-#include "texture.h"
+#include "core/texture.h"
 #include "window.h"
 
 #include <glm/glm.hpp>
@@ -207,6 +207,7 @@ namespace Cme
         }
         void disableAdditiveBlending() { glDisable(GL_BLEND); }
         std::shared_ptr<Texture> GetTexture(int iIndex = 0);
+        std::vector<std::shared_ptr<Texture>> GetAllTexture() const;
 
     private:
         unsigned int fbo_ = 0;
