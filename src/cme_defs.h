@@ -1,6 +1,14 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <glm/fwd.hpp>
+
+#include <random>
+#define M_PI 3.14159265358979323846
+
+#ifndef WATER_FOUNTAIN_MAX_PARTICLES
+#define WATER_FOUNTAIN_MAX_PARTICLES 100000
+#endif
+
 namespace Cme
 {
     enum class CameraControlType
@@ -77,7 +85,7 @@ namespace Cme
         float shadowBiasMin = 0.0001;
         float shadowBiasMax = 0.001;
 
-        SkyboxImage skyboxImage = SkyboxImage::WINTER_FOREST;
+        SkyboxImage skyboxImage = SkyboxImage::Six_Face;
 
         bool useIBL = true;
         glm::vec3 ambientColor = glm::vec3(0.1f);
@@ -97,7 +105,7 @@ namespace Cme
         bool fxaa = true;
 
         // Camera.
-        CameraControlType cameraControlType = CameraControlType::ORBIT;
+        CameraControlType cameraControlType = CameraControlType::FLY;
         float speed = 0;
         float sensitivity = 0;
         float fov = 0;

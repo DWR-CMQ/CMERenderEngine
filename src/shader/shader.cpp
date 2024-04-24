@@ -1,33 +1,117 @@
 #include "../core.h"
 #include "shader.h"
-#include "shader_compiler.h"
 #include "shader_loader.h"
+#include <fstream>
+#include <iostream>
+#include <sstream>
 
 namespace Cme
 {
-    Shader::Shader(const ShaderSource& vertexSource,
-                   const ShaderSource& fragmentSource) 
+    Shader::Shader(const ShaderSource& vertexSource, const ShaderSource& fragmentSource) 
     {
-        ShaderCompiler compiler;
-        compiler.loadAndCompileShader(vertexSource, ShaderType::VERTEX);
-        compiler.loadAndCompileShader(fragmentSource, ShaderType::FRAGMENT);
-        m_uiShaderProgram = compiler.linkShaderProgram();
+        ShaderLoader vshaderLoader(&vertexSource, ShaderType::VERTEX);
+        ShaderLoader fshaderLoader(&fragmentSource, ShaderType::FRAGMENT);
+        std::string vertexCode = vshaderLoader.load();
+        std::string fragmentCode = fshaderLoader.load();
+        const char* vCode = vertexCode.c_str();
+        const char* fCode = fragmentCode.c_str();
+
+        unsigned int vertex, fragment;
+        // vertex shader
+        vertex = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vertex, 1, &vCode, nullptr);
+        glCompileShader(vertex);
+        CheckCompileErrors(vertex, "VERTEX");
+
+        // fragment Shader
+        fragment = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fragment, 1, &fCode, nullptr);
+        glCompileShader(fragment);
+        CheckCompileErrors(fragment, "FRAGMENT");
+
+        m_uiShaderProgramID = glCreateProgram();
+        glAttachShader(m_uiShaderProgramID, vertex);
+        glAttachShader(m_uiShaderProgramID, fragment);
+        glLinkProgram(m_uiShaderProgramID);
+        CheckCompileErrors(m_uiShaderProgramID, "PROGRAM");
+        // delete the shaders as they're linked into our program now and no longer necessary
+        glDeleteShader(vertex);
+        glDeleteShader(fragment);
     }
 
     Shader::Shader(const ShaderSource& vertexSource,
                    const ShaderSource& fragmentSource,
                    const ShaderSource& geometrySource)
     {
-        ShaderCompiler compiler;
-        compiler.loadAndCompileShader(vertexSource, ShaderType::VERTEX);
-        compiler.loadAndCompileShader(fragmentSource, ShaderType::FRAGMENT);
-        compiler.loadAndCompileShader(geometrySource, ShaderType::GEOMETRY);
-        m_uiShaderProgram = compiler.linkShaderProgram();
+        ShaderLoader vshaderLoader(&vertexSource, ShaderType::VERTEX);
+        ShaderLoader fshaderLoader(&fragmentSource, ShaderType::FRAGMENT);
+        ShaderLoader gshaderLoader(&geometrySource, ShaderType::GEOMETRY);
+        std::string vertexCode = vshaderLoader.load();
+        std::string fragmentCode = fshaderLoader.load();
+        std::string geometryCode = gshaderLoader.load();
+        const char* vCode = vertexCode.c_str();
+        const char* fCode = fragmentCode.c_str();
+        const char* gCode = geometryCode.c_str();
+
+        unsigned int vertex, fragment, geometry;
+        // vertex shader
+        vertex = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vertex, 1, &vCode, nullptr);
+        glCompileShader(vertex);
+        CheckCompileErrors(vertex, "VERTEX");
+
+        // fragment Shader
+        fragment = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fragment, 1, &fCode, nullptr);
+        glCompileShader(fragment);
+        CheckCompileErrors(fragment, "FRAGMENT");
+
+        // geometry Shader
+        geometry = glCreateShader(GL_GEOMETRY_SHADER);
+        glShaderSource(geometry, 1, &gCode, nullptr);
+        glCompileShader(geometry);
+        CheckCompileErrors(geometry, "GEOMETRY");
+
+        m_uiShaderProgramID = glCreateProgram();
+        glAttachShader(m_uiShaderProgramID, vertex);
+        glAttachShader(m_uiShaderProgramID, fragment);
+        glAttachShader(m_uiShaderProgramID, geometry);
+
+        glLinkProgram(m_uiShaderProgramID);
+        CheckCompileErrors(m_uiShaderProgramID, "PROGRAM");
+        // delete the shaders as they're linked into our program now and no longer necessary
+        glDeleteShader(vertex);
+        glDeleteShader(fragment);
+        glDeleteShader(geometry);
+    }
+
+    /// 计算着色器
+    Shader::Shader(const ShaderSource& computerSource)
+    {
+        ShaderLoader cshaderLoader(&computerSource, ShaderType::COMPUTE);
+        std::string computetCode = cshaderLoader.load();
+        const char* cCode = computetCode.c_str();
+
+        unsigned int compute;
+
+        // geometry Shader
+        compute = glCreateShader(GL_COMPUTE_SHADER);
+        glShaderSource(compute, 1, &cCode, nullptr);
+        glCompileShader(compute);
+        CheckCompileErrors(compute, "COMPUTE");
+
+        m_uiShaderProgramID = glCreateProgram();
+        glAttachShader(m_uiShaderProgramID, compute);
+
+        glLinkProgram(m_uiShaderProgramID);
+        CheckCompileErrors(m_uiShaderProgramID, "PROGRAM");
+        // delete the shaders as they're linked into our program now and no longer necessary
+        glDeleteShader(compute);
     }
 
     int Shader::safeGetUniformLocation(const char* name) 
     {
-        int uniform = glGetUniformLocation(m_uiShaderProgram, name);
+        int uniform = glGetUniformLocation(m_uiShaderProgramID, name);
         if (uniform == -1) 
         {
         // TODO: Log a message; either uniform is invalid, or it got optimized away
@@ -39,7 +123,7 @@ namespace Cme
 
     void Shader::activate() 
     { 
-        glUseProgram(m_uiShaderProgram);
+        glUseProgram(m_uiShaderProgramID);
     }
     void Shader::deactivate() { glUseProgram(0); }
 
@@ -54,6 +138,7 @@ namespace Cme
         // Update core uniforms.
         // setFloat("qrk_time", Cme::time());
 
+        // 更新相机
         for (auto item : m_vecUniformSources)
         {
             item->updateUniforms(*this);
@@ -104,21 +189,48 @@ namespace Cme
                             /*transpose=*/GL_FALSE, glm::value_ptr(matrix));
     }
 
-    ComputeShader::ComputeShader(const ShaderSource& computeSource) 
+    void Shader::bind(GLuint id, int val) const
     {
-        ShaderCompiler compiler;
-        compiler.loadAndCompileShader(computeSource, ShaderType::COMPUTE);
-        m_uiShaderProgram = compiler.linkShaderProgram();
+        glUniformBlockBinding(m_uiShaderProgramID, id, val);
     }
 
-    void ComputeShader::dispatchToTexture(Texture& texture) 
+    void Shader::bind(std::string const& name, int val) const
     {
-        activate();
-        texture.BindToUnit(0, TextureBindType::IMAGE_TEXTURE);
-        glDispatchCompute(texture.getWidth(), texture.getHeight(), 1);
+        glUniformBlockBinding(m_uiShaderProgramID, glGetUniformBlockIndex(m_uiShaderProgramID, name.c_str()), val);
+    }
 
-        // Guard until writing is complete.
-        glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+    void Shader::bind(const char* name, int val) const
+    {
+        glUniformBlockBinding(m_uiShaderProgramID, glGetUniformBlockIndex(m_uiShaderProgramID, name), val);
+    }
+
+    void Shader::output(std::string const& out)
+    {
+        glBindFragDataLocation(m_uiShaderProgramID, 0, "color");
+    }
+
+    void Shader::CheckCompileErrors(unsigned int shader, std::string type)
+    {
+        int success;
+        char infoLog[1024];
+        if (type != "PROGRAM")
+        {
+            glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+            if (!success)
+            {
+                glGetShaderInfoLog(shader, 1024, NULL, infoLog);
+                std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+            }
+        }
+        else
+        {
+            glGetProgramiv(shader, GL_LINK_STATUS, &success);
+            if (!success)
+            {
+                glGetProgramInfoLog(shader, 1024, NULL, infoLog);
+                std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+            }
+        }
     }
 
 }  // namespace Cme

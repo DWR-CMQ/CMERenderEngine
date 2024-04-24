@@ -124,9 +124,13 @@ namespace Cme
         // TODO: Consider extracting blending logic.
         void enableAlphaBlending()
         {
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glBlendEquation(GL_FUNC_ADD);
+            //glEnable(GL_BLEND);
+            //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            //glBlendEquation(GL_FUNC_ADD);
+
+            glEnable(GL_DEPTH_TEST);
+            glDisable(GL_BLEND);
+            glDepthFunc(GL_LESS);
         }
         void disableAlphaBlending() { glDisable(GL_BLEND); }
 

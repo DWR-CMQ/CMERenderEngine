@@ -26,7 +26,6 @@
 #include "random.h"
 #include "screen.h"
 #include "shader/shader.h"
-#include "shader/shader_compiler.h"
 #include "shader/shader_defs.h"
 #include "shader/shader_loader.h"
 #include "shader/shader_primitives.h"
@@ -40,3 +39,5 @@
 #include "window.h"
 #include "cme_defs.h"
 #include "core/texture_manager.h"
+
+#include "particle/water_fountain_particle_system.h"

@@ -64,6 +64,11 @@ namespace Cme
 
     void Skybox::Render(Shader& shader, std::shared_ptr<Cme::Camera> spCamera)
     {
+        //glEnable(GL_DEPTH_TEST);
+        //// 开启混合模式 这个尤为重要 不然天空盒或者粒子就不会显示
+        //glEnable(GL_BLEND);
+        //glDepthFunc(GL_LEQUAL);
+
         shader.setInt("skybox", 0);
         shader.activate();
         shader.setMat4("view", spCamera->getViewTransform());
@@ -75,6 +80,7 @@ namespace Cme
         glBindVertexArray(0);
 
         shader.deactivate();
+        //glDepthFunc(GL_LESS);
     }
 
     void Skybox::InitializeData()

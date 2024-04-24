@@ -33,6 +33,7 @@ namespace Cme
     App::~App()
     {
         // glfwDestroyWindow(m_pWindow);
+        delete m_pWaterFountainPS;
     }
 
     void App::Init(bool bFullScreen)
@@ -73,8 +74,7 @@ namespace Cme
         m_spFinalFb = std::make_shared<Cme::Framebuffer>(m_pWindow->getSize(), Cme::BufferType::COLOR_ALPHA, params);
 
         // Build the G-Buffer and prepare deferred shading.
-        m_spGeometryPassShader = std::make_shared<Cme::DeferredGeometryPassShader>();
-        m_spGeometryPassShader->addUniformSource(m_spCamera);                // 说明m_spGeometryPassShader需要相机的数据
+        m_spGeometryPassShader = std::make_shared<Cme::DeferredGeometryPassShader>();           
 
         // GBuffer
         m_spGBuffer = std::make_shared<Cme::GBuffer>(m_pWindow->getSize());
@@ -110,7 +110,14 @@ namespace Cme
         m_spSkybox->LoadSkyboxImage(m_OptsObj.skyboxImage);
         m_spSkyboxShader = std::make_shared<Cme::SkyboxShader>();
 
+        // 模型
         m_ModelSceneObj.Init(m_spCamera, m_pWindow->getSize());
+
+        // 粒子
+        m_pWaterFountainPS = new WaterFountainParticleSystem;
+        m_pWaterFountainPS->max_particles = WATER_FOUNTAIN_MAX_PARTICLES;
+        m_pWaterFountainPS->birth_rate = m_pWaterFountainPS->max_particles * 1000;
+        m_pWaterFountainPS->InitPS(nullptr, 0);
 
         m_pWindow->enableFaceCull();
 	}
@@ -127,6 +134,8 @@ namespace Cme
 
             m_pWindow->setMouseInputPaused(io.WantCaptureMouse);
             m_pWindow->setKeyInputPaused(io.WantCaptureKeyboard);
+
+            m_pWaterFountainPS->Upload();
 
             ModelRenderOptions prevOpts = m_OptsObj;
 
@@ -181,6 +190,9 @@ namespace Cme
                 m_pWindow->bindCameraControls(m_spCameraControls);
             }
 
+            // 粒子更新
+            m_pWaterFountainPS->Update(deltaTime);
+
             if (m_OptsObj.enableVsync != prevOpts.enableVsync)
             {
                 if (m_OptsObj.enableVsync)
@@ -199,13 +211,19 @@ namespace Cme
                 m_spSkybox->LoadSkyboxImage(m_OptsObj.skyboxImage);
             }
 
+            // 渲染粒子
+            m_pWaterFountainPS->SetCamera(m_spCamera);
+            m_pWaterFountainPS->Render();
+
             // G-Buffer步骤1 Geometry Pass. 符合Opengl教程的逻辑
             {
                 Cme::DebugGroup debugGroup("Geometry pass");
                 m_spGBuffer->activate();
                 m_spGBuffer->clear();
 
-                m_spGeometryPassShader->updateUniforms();
+                // m_spGeometryPassShader需要相机的数据
+                m_spGeometryPassShader->setMat4("view", m_spCamera->getViewTransform());
+                m_spGeometryPassShader->setMat4("projection", m_spCamera->getProjectionTransform());
 
                 // 线框模式 
                 // 线框模式的设置，只能在编写完shaderprogram后才能设定，否则报错
@@ -215,6 +233,7 @@ namespace Cme
                     m_pWindow->enableWireframe();
                 }
                 // 渲染模型 
+
                 m_ModelSceneObj.Render(m_OptsObj, m_spGeometryPassShader);
                 if (m_OptsObj.wireframe)
                 {
@@ -317,10 +336,8 @@ namespace Cme
 
                 //// Draw light source.
                 //m_spLampShader->updateUniforms();
-
                 // 绘制天空盒 天空盒在正向渲染里
                 m_spSkybox->Render(*m_spSkyboxShader, m_spCamera);
-
                 m_spMainFb->deactivate();
             }
 
@@ -332,7 +349,6 @@ namespace Cme
                 m_spFinalFb->clear();
 
                 // Draw to the final FB using the post process shader.
-                m_spPostprocessShader->updateUniforms();
                 m_spPostprocessShader->setBool("bloom", m_OptsObj.bloom);
                 m_spPostprocessShader->setFloat("bloomMix", m_OptsObj.bloomMix);
                 m_spPostprocessShader->setInt("toneMapping", static_cast<int>(m_OptsObj.toneMapping));
@@ -342,6 +358,7 @@ namespace Cme
 
                 // 后处理有纹理更新 
                 m_spScreenQuad->draw(*m_spPostprocessShader);
+
                 m_spFinalFb->deactivate();
             }
 
@@ -358,6 +375,7 @@ namespace Cme
             //else
             //{
             m_spFinalFb->blitToDefault(GL_COLOR_BUFFER_BIT);
+
             //}
 
             // Finally, draw ImGui data.

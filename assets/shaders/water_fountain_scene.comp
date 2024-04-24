@@ -1,0 +1,146 @@
+#version 430 core
+layout (local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+struct particle
+{
+    vec4 position;
+    vec4 velocity;
+    vec4 delta_position;
+};
+
+layout(std140, binding = 0) buffer Particle_t
+{
+    particle particles [];
+};
+
+uniform float dt;
+uniform int n_particles;
+
+const float PI = 3.1415926535897932384626433832795;
+const float PI_8 = PI / 8;
+
+uniform float field_height = -1.f;
+uniform vec4 field_bound = vec4(-8.f, 8.f, -8.f, 8.f);
+uniform vec3 field_norm = vec3(0.f, 1.f, 0.f);
+uniform float vertical_gravity = 10.f;
+uniform float horizontal_resistance = .05f;
+uniform vec3 acceleration = vec3(0.f, 0.f, 0.f);
+
+uint gid = gl_GlobalInvocationID.x;
+
+// glsl业界求随机数的函数
+// 据说这个方法的作者不详，但是这个算法应用广泛，有待慢慢考证
+float rnd(vec2 co)
+{
+    return fract(sin(mod(dot(co.xy,vec2(12.9898,78.233)), 3.14)) * 43758.5453);
+}
+
+// spawn 产卵 引发
+void spawn(vec2 sd)
+{
+    float theta = PI * rnd(sd) * 2.f; 
+    ++sd.x;
+    float phi = PI_8 * (rnd(sd) * 2.f - 1.f);    
+    ++sd.x;
+    float r0 = pow(.02f + rnd(sd)*.1f, 1.f/3.f); 
+    ++sd.x;
+
+    particles[gid].position.x = r0 * sin(phi) * cos(theta);
+    particles[gid].position.y = r0 * cos(phi);
+    particles[gid].position.z = r0 * sin(phi) * sin(theta);
+    particles[gid].position.w = 1.f; // alpha, life fraction
+
+    particles[gid].velocity.xyz = 5.f * normalize(vec3(particles[gid].position.x, particles[gid].position.y*.2f, particles[gid].position.z));
+
+    // 粒子寿命固定(随机 但不会相差很大)
+    particles[gid].velocity.w = 3.f + (2*rnd(sd) - 1.f); // life
+    
+    particles[gid].delta_position.xyz = vec3(10.f);
+}
+
+void update(vec2 sd)
+{
+    bool above_field = false;
+    if (particles[gid].position.y >= field_height)
+    {
+        above_field = true;
+    }
+
+    // 正常更新:
+    // 粒子的速度 = 加速度 * dt   
+    particles[gid].velocity.xyz += acceleration * dt;
+    // 粒子的速度y轴方向减少 这样粒子的运动方向始终是向下的
+    particles[gid].velocity.y -= vertical_gravity * dt;
+    // 粒子的位移 = 速度 * dt 
+    particles[gid].delta_position.xyz = particles[gid].velocity.xyz * dt;
+    // 粒子的位置 = 上次的粒子位置 + 位移
+    particles[gid].position.xyz += particles[gid].delta_position.xyz;
+
+    // 达到平面后
+    if (above_field == true && particles[gid].position.y < field_height && 
+        particles[gid].position.x > field_bound[0] && particles[gid].position.x < field_bound[1] &&
+        particles[gid].position.z > field_bound[2] && particles[gid].position.z < field_bound[3])
+    {
+        particles[gid].delta_position.y += field_height - particles[gid].position.y;
+        particles[gid].position.y = field_height;
+        particles[gid].velocity.xyz = reflect(particles[gid].velocity.xyz, field_norm);
+        // y轴方向速度缩短 意味着在经过reflect后的反弹速度降低
+        // 如果将0.25改为0.5,就会发现和把这一行删除的效果几乎一样
+        // rnd(fract)的范围是0-1 那就是说rnd(sd) + 1的值域是1-2
+        // 那就是说.25f * (rnd(sd) + 1)的值域是0.25-0.5
+        particles[gid].velocity.y *= .25f * (rnd(sd) + 1);
+
+        if (particles[gid].position.x * particles[gid].position.x + 
+            particles[gid].position.z * particles[gid].position.z > 8.0f)
+        {
+            if (particles[gid].velocity.x > 0.f)
+            {
+                particles[gid].velocity.x -= horizontal_resistance * dt;
+            }
+            else if (particles[gid].velocity.x < 0.f)
+            {
+                particles[gid].velocity.x += horizontal_resistance * dt;
+            }
+            if (particles[gid].velocity.z > 0.f)
+            {
+                particles[gid].velocity.z -= horizontal_resistance * dt;
+            } 
+            else if (particles[gid].velocity.z < 0.f)
+            {
+                particles[gid].velocity.z += horizontal_resistance * dt;
+            }   
+        }
+    }
+}
+
+// 康样子一帧会执行main很多遍
+void main()
+{
+    if (gid >= n_particles) 
+    {
+        return;
+    }
+
+    if (dt < 0.f)
+    {
+        spawn(vec2(gid, gid));
+    }
+    else
+    {
+        vec2 sd = particles[gid].position.xy + particles[gid].velocity.y;
+        // 针对于当前的所有粒子 
+        particles[gid].velocity.w -= dt;
+        // velocity.w 粒子寿命
+        if (particles[gid].velocity.w > 0.f)
+        {
+            update(sd);
+        }
+        else
+        {
+            spawn(sd);
+        }            
+    }
+};
+
+
+

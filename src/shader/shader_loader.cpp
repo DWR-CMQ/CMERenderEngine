@@ -162,8 +162,6 @@ namespace Cme
     std::string ShaderLoader::preprocessShader(std::string const& shaderPath,
                                                std::string const& shaderCode)
     {
-        //std::string resolvedPath = resolvePath(shaderPath);
-
         std::string resolvedPath = shaderPath;
         m_dequeIncludeChain.push_back(resolvedPath);
 

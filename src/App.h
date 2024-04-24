@@ -65,7 +65,8 @@ namespace Cme
         // 这就是为什么Opengl教程8.1上明明是没有句柄为0的FBO,但却可以绑定,因为默认生成的FBO句柄是0 
         // 在本工程中 没有采用默认的帧缓冲 而是独立生成了一个FBO 也就是m_spMainFb 基于这个思想 所有的逻辑就能说清楚
         std::shared_ptr<Cme::Framebuffer> m_spMainFb;
-        // 专门用于后处理的FBO 从GBuffer中Blit而来
+        // 专门用于后处理的FBO 从GBuffer中Blit而来 m_spFinalFb似乎没有专门的渲染缓冲对象 但不知道
+        // m_spFinalFb通过Blit能否把渲染缓冲对象分离出去
         std::shared_ptr<Cme::Framebuffer> m_spFinalFb;
 
         // FXAA
@@ -76,7 +77,11 @@ namespace Cme
         std::shared_ptr<Cme::ScreenShader> m_spPostprocessShader;
         // PostProcess
 
+        // 光照控制
         std::shared_ptr<Cme::LightControl> m_spLightControl;
+
+        // 粒子系统
+        WaterFountainParticleSystem* m_pWaterFountainPS;
 	};
 }
 

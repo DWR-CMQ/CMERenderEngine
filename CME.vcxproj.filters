@@ -1,47 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="imgui">
-      <UniqueIdentifier>{c96d46ed-8823-478b-8ce8-18ca8471dfbd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="imguizmo_quat">
-      <UniqueIdentifier>{aed09fc6-747d-4a4a-99d3-c21d470b3da3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src">
-      <UniqueIdentifier>{5ff94b51-df9e-40ef-944d-46cc54ea5b2d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\shape">
-      <UniqueIdentifier>{1166503d-7c9c-41df-970a-6351852c9cae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\shader">
-      <UniqueIdentifier>{0cc3aa23-73ff-4e4e-bc57-f93235a57316}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\ibl">
-      <UniqueIdentifier>{f5f27d43-3cf7-4158-8320-1dc2dce0df98}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\core">
-      <UniqueIdentifier>{87655358-c59a-440b-a261-33012c580f4b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\scene">
-      <UniqueIdentifier>{0ca4c729-4875-44a8-a696-e8f0241ebce7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\lighting">
-      <UniqueIdentifier>{17e128a5-196b-4014-ab99-28acb1357e0b}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
@@ -65,9 +24,6 @@
     </ClCompile>
     <ClCompile Include="imguizmo_quat\imGuIZMOquat.cpp">
       <Filter>imguizmo_quat</Filter>
-    </ClCompile>
-    <ClCompile Include="src\shape\mesh.cpp">
-      <Filter>src\shape</Filter>
     </ClCompile>
     <ClCompile Include="src\App.cpp">
       <Filter>src</Filter>
@@ -108,13 +64,7 @@
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\model.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\random.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\shadows.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\vertex_array.cpp">
@@ -123,28 +73,46 @@
     <ClCompile Include="src\window.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\shape\plane_mesh.cpp">
-      <Filter>src\shape</Filter>
+    <ClCompile Include="src\core\sampler.cpp">
+      <Filter>src\core</Filter>
     </ClCompile>
-    <ClCompile Include="src\shape\skybox.cpp">
-      <Filter>src\shape</Filter>
+    <ClCompile Include="src\core\sampler_manager.cpp">
+      <Filter>src\core</Filter>
     </ClCompile>
-    <ClCompile Include="src\shape\sphere_mesh.cpp">
-      <Filter>src\shape</Filter>
+    <ClCompile Include="src\core\texture.cpp">
+      <Filter>src\core</Filter>
     </ClCompile>
-    <ClCompile Include="src\shape\cube_mesh.cpp">
-      <Filter>src\shape</Filter>
+    <ClCompile Include="src\core\texture_manager.cpp">
+      <Filter>src\core</Filter>
     </ClCompile>
-    <ClCompile Include="src\shape\room_mesh.cpp">
-      <Filter>src\shape</Filter>
+    <ClCompile Include="src\core\vertex_buffer_object.cpp">
+      <Filter>src\core</Filter>
     </ClCompile>
-    <ClCompile Include="src\shape\screenquad_mesh.cpp">
-      <Filter>src\shape</Filter>
+    <ClCompile Include="src\lighting\light.cpp">
+      <Filter>src\lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lighting\light_control.cpp">
+      <Filter>src\lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lighting\ssao.cpp">
+      <Filter>src\lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lighting\ssao_kernel.cpp">
+      <Filter>src\lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ibl\brdf_map.cpp">
+      <Filter>src\ibl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ibl\irradiance_map.cpp">
+      <Filter>src\ibl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ibl\prefilter_map.cpp">
+      <Filter>src\ibl</Filter>
     </ClCompile>
     <ClCompile Include="src\shader\shader.cpp">
       <Filter>src\shader</Filter>
     </ClCompile>
-    <ClCompile Include="src\shader\shader_compiler.cpp">
+    <ClCompile Include="src\shader\shader_helper.cpp">
       <Filter>src\shader</Filter>
     </ClCompile>
     <ClCompile Include="src\shader\shader_loader.cpp">
@@ -153,44 +121,38 @@
     <ClCompile Include="src\shader\shader_primitives.cpp">
       <Filter>src\shader</Filter>
     </ClCompile>
-    <ClCompile Include="src\ibl\prefilter_map.cpp">
-      <Filter>src\ibl</Filter>
+    <ClCompile Include="src\shape\cube_mesh.cpp">
+      <Filter>src\shape</Filter>
     </ClCompile>
-    <ClCompile Include="src\ibl\irradiance_map.cpp">
-      <Filter>src\ibl</Filter>
+    <ClCompile Include="src\shape\mesh.cpp">
+      <Filter>src\shape</Filter>
     </ClCompile>
-    <ClCompile Include="src\ibl\brdf_map.cpp">
-      <Filter>src\ibl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\vertex_buffer_object.cpp">
-      <Filter>src\core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\sampler.cpp">
-      <Filter>src\core</Filter>
+    <ClCompile Include="src\model.cpp">
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\scene\model_scene.cpp">
       <Filter>src\scene</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\sampler_manager.cpp">
-      <Filter>src\core</Filter>
+    <ClCompile Include="src\shape\plane_mesh.cpp">
+      <Filter>src\shape</Filter>
     </ClCompile>
-    <ClCompile Include="src\lighting\ssao.cpp">
-      <Filter>src\lighting</Filter>
+    <ClCompile Include="src\shape\room_mesh.cpp">
+      <Filter>src\shape</Filter>
     </ClCompile>
-    <ClCompile Include="src\lighting\ssao_kernel.cpp">
-      <Filter>src\lighting</Filter>
+    <ClCompile Include="src\shape\screenquad_mesh.cpp">
+      <Filter>src\shape</Filter>
     </ClCompile>
-    <ClCompile Include="src\lighting\light_control.cpp">
-      <Filter>src\lighting</Filter>
+    <ClCompile Include="src\shape\skybox.cpp">
+      <Filter>src\shape</Filter>
     </ClCompile>
-    <ClCompile Include="src\lighting\light.cpp">
-      <Filter>src\lighting</Filter>
+    <ClCompile Include="src\shape\sphere_mesh.cpp">
+      <Filter>src\shape</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\texture_manager.cpp">
-      <Filter>src\core</Filter>
+    <ClCompile Include="src\particle\water_fountain_particle_system.cpp">
+      <Filter>src\particle</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\texture.cpp">
-      <Filter>src\core</Filter>
+    <ClCompile Include="src\shadows.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -221,23 +183,20 @@
     <ClInclude Include="imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="imguizmo_quat\imGuIZMOquat.h">
-      <Filter>imguizmo_quat</Filter>
-    </ClInclude>
-    <ClInclude Include="imguizmo_quat\vgConfig.h">
-      <Filter>imguizmo_quat</Filter>
-    </ClInclude>
-    <ClInclude Include="imguizmo_quat\vGizmo.h">
+    <ClInclude Include="imguizmo_quat\vgMath.h">
       <Filter>imguizmo_quat</Filter>
     </ClInclude>
     <ClInclude Include="imguizmo_quat\vGizmoMath.h">
       <Filter>imguizmo_quat</Filter>
     </ClInclude>
-    <ClInclude Include="imguizmo_quat\vgMath.h">
+    <ClInclude Include="imguizmo_quat\vGizmo.h">
       <Filter>imguizmo_quat</Filter>
     </ClInclude>
-    <ClInclude Include="src\shape\mesh.h">
-      <Filter>src\shape</Filter>
+    <ClInclude Include="imguizmo_quat\vgConfig.h">
+      <Filter>imguizmo_quat</Filter>
+    </ClInclude>
+    <ClInclude Include="imguizmo_quat\imGuIZMOquat.h">
+      <Filter>imguizmo_quat</Filter>
     </ClInclude>
     <ClInclude Include="src\App.h">
       <Filter>src</Filter>
@@ -275,9 +234,6 @@
     <ClInclude Include="src\fxaa.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\model.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\quarkgl.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -302,31 +258,49 @@
     <ClInclude Include="src\window.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\shape\plane_mesh.h">
-      <Filter>src\shape</Filter>
+    <ClInclude Include="src\core\sampler.h">
+      <Filter>src\core</Filter>
     </ClInclude>
-    <ClInclude Include="src\shape\skybox.h">
-      <Filter>src\shape</Filter>
+    <ClInclude Include="src\core\sampler_manager.h">
+      <Filter>src\core</Filter>
     </ClInclude>
-    <ClInclude Include="src\shape\sphere_mesh.h">
-      <Filter>src\shape</Filter>
+    <ClInclude Include="src\core\texture.h">
+      <Filter>src\core</Filter>
     </ClInclude>
-    <ClInclude Include="src\shape\cube_mesh.h">
-      <Filter>src\shape</Filter>
+    <ClInclude Include="src\core\texture_manager.h">
+      <Filter>src\core</Filter>
     </ClInclude>
-    <ClInclude Include="src\shape\room_mesh.h">
-      <Filter>src\shape</Filter>
+    <ClInclude Include="src\core\vertex_buffer_object.h">
+      <Filter>src\core</Filter>
     </ClInclude>
-    <ClInclude Include="src\shape\screenquad_mesh.h">
-      <Filter>src\shape</Filter>
+    <ClInclude Include="src\lighting\light.h">
+      <Filter>src\lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lighting\light_control.h">
+      <Filter>src\lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lighting\ssao.h">
+      <Filter>src\lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lighting\ssao_kernel.h">
+      <Filter>src\lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ibl\brdf_map.h">
+      <Filter>src\ibl</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ibl\irradiance_map.h">
+      <Filter>src\ibl</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ibl\prefilter_map.h">
+      <Filter>src\ibl</Filter>
     </ClInclude>
     <ClInclude Include="src\shader\shader.h">
       <Filter>src\shader</Filter>
     </ClInclude>
-    <ClInclude Include="src\shader\shader_compiler.h">
+    <ClInclude Include="src\shader\shader_defs.h">
       <Filter>src\shader</Filter>
     </ClInclude>
-    <ClInclude Include="src\shader\shader_defs.h">
+    <ClInclude Include="src\shader\shader_helper.h">
       <Filter>src\shader</Filter>
     </ClInclude>
     <ClInclude Include="src\shader\shader_loader.h">
@@ -335,44 +309,70 @@
     <ClInclude Include="src\shader\shader_primitives.h">
       <Filter>src\shader</Filter>
     </ClInclude>
-    <ClInclude Include="src\ibl\prefilter_map.h">
-      <Filter>src\ibl</Filter>
+    <ClInclude Include="src\shape\cube_mesh.h">
+      <Filter>src\shape</Filter>
     </ClInclude>
-    <ClInclude Include="src\ibl\irradiance_map.h">
-      <Filter>src\ibl</Filter>
+    <ClInclude Include="src\shape\mesh.h">
+      <Filter>src\shape</Filter>
     </ClInclude>
-    <ClInclude Include="src\ibl\brdf_map.h">
-      <Filter>src\ibl</Filter>
+    <ClInclude Include="src\model.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\vertex_buffer_object.h">
-      <Filter>src\core</Filter>
+    <ClInclude Include="src\shape\plane_mesh.h">
+      <Filter>src\shape</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\sampler.h">
-      <Filter>src\core</Filter>
+    <ClInclude Include="src\shape\room_mesh.h">
+      <Filter>src\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shape\screenquad_mesh.h">
+      <Filter>src\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shape\skybox.h">
+      <Filter>src\shape</Filter>
     </ClInclude>
     <ClInclude Include="src\scene\model_scene.h">
       <Filter>src\scene</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\sampler_manager.h">
-      <Filter>src\core</Filter>
+    <ClInclude Include="src\shape\sphere_mesh.h">
+      <Filter>src\shape</Filter>
     </ClInclude>
-    <ClInclude Include="src\lighting\ssao.h">
-      <Filter>src\lighting</Filter>
+    <ClInclude Include="src\particle\water_fountain_particle_system.h">
+      <Filter>src\particle</Filter>
     </ClInclude>
-    <ClInclude Include="src\lighting\ssao_kernel.h">
-      <Filter>src\lighting</Filter>
+    <ClInclude Include="src\particle\base_particle.h">
+      <Filter>src\particle</Filter>
     </ClInclude>
-    <ClInclude Include="src\lighting\light_control.h">
-      <Filter>src\lighting</Filter>
-    </ClInclude>
-    <ClInclude Include="src\lighting\light.h">
-      <Filter>src\lighting</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\texture_manager.h">
-      <Filter>src\core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\texture.h">
-      <Filter>src\core</Filter>
-    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{7a1c77ef-9046-4920-b682-1665094888da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imguizmo_quat">
+      <UniqueIdentifier>{e975a2fd-dde5-4fd1-a53b-a042b48b100f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{c873d988-0a34-45d7-b3a4-1ddad6598a1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core">
+      <UniqueIdentifier>{10e875a4-fc9b-41ef-8ba9-d7ddb8c7b836}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ibl">
+      <UniqueIdentifier>{373bd8c3-671d-417f-9b9e-3fbfd16d3a2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\lighting">
+      <UniqueIdentifier>{be43d956-0853-47de-962a-6fb017a5e168}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\scene">
+      <UniqueIdentifier>{c7cf93ae-96de-4f94-afb9-156d136f7db1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\shader">
+      <UniqueIdentifier>{9f72c11e-39e1-4438-b6f7-959eb00eb89a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\shape">
+      <UniqueIdentifier>{a4b0cc65-87e2-495f-a3f3-001ff551f5cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\particle">
+      <UniqueIdentifier>{084c70ce-78d3-4cf7-bd95-bf10007ce4b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

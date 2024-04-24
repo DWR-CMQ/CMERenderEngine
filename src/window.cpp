@@ -417,6 +417,7 @@ namespace Cme
 
             updateFrameStats(m_fDeltaTime);
 
+            // enableAlphaBlending();
             // Clear the appropriate buffers.
             glClearColor(m_vecClearColor.r, m_vecClearColor.g, m_vecClearColor.b, m_vecClearColor.a);
             auto clearBits = GL_COLOR_BUFFER_BIT;

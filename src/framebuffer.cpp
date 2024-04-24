@@ -86,6 +86,7 @@ namespace Cme
 
     void Framebuffer::activate(int mipLevel, int cubemapFace) 
     {
+        // 绑定当前帧缓冲
         glBindFramebuffer(GL_FRAMEBUFFER, fbo_);
 
         // Activate the specified mip level (usually 0).
@@ -254,21 +255,26 @@ namespace Cme
         return getAttachment(AttachmentTarget::RENDERBUFFER, type);
     }
 
+    // m_spGBuffer->blit(*m_spMainFb, GL_DEPTH_BUFFER_BIT) 
+    // 拷贝GBuffer的深度缓冲内容到m_spMainFb的深度缓冲中
     void Framebuffer::blit(Framebuffer& target, GLenum bits)
     {
         // TODO: This doesn't handle non-mip0 blits.
         glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_);
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, target.fbo_);
-        glBlitFramebuffer(0, 0, m_iWidth, m_iHeight, 0, 0, m_iWidth, m_iHeight, bits,
-                        GL_NEAREST);
+        glBlitFramebuffer(0, 0, m_iWidth, m_iHeight, 0, 0, m_iWidth, m_iHeight, bits, GL_NEAREST);
         deactivate();
     }
 
     // defer shader专用 
+    // 拷贝当前帧缓冲的深度缓冲到默认帧缓冲的深度缓冲中
     void Framebuffer::blitToDefault(GLenum bits)
     {
+        // 对帧缓冲区进行读操作
         glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_);
+        // 对帧缓冲区进行写操作（渲染）（这种情况就无法读取帧缓冲区中的颜色、深度等信息，经测试仍能通过glReadPixels读取颜色和深度信息
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        // glBlitFramebuffer这个函数允许我们复制一个用户定义的帧缓冲区域到另一个用户定义的帧缓冲区域
         glBlitFramebuffer(0, 0, m_iWidth, m_iHeight, 0, 0, m_iWidth, m_iHeight, bits, GL_NEAREST);
         deactivate();
     }

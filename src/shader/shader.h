@@ -35,11 +35,11 @@ namespace Cme
     {
     public:
         Shader(const ShaderSource& vertexSource, const ShaderSource& fragmentSource);
-        Shader(const ShaderSource& vertexSource, const ShaderSource& fragmentSource,
-                const ShaderSource& geometrySource);
+        Shader(const ShaderSource& vertexSource, const ShaderSource& fragmentSource, const ShaderSource& geometrySource);
+        Shader(const ShaderSource& computerSource);
         virtual ~Shader() = default;
 
-        unsigned int getProgramId() const { return m_uiShaderProgram; }
+        unsigned int getProgramId() const { return m_uiShaderProgramID; }
 
         virtual void activate();
         virtual void deactivate();
@@ -85,24 +85,21 @@ namespace Cme
             setMat4(name.c_str(), matrix);
         }
 
+        void bind(GLuint id, int val) const;
+        void bind(std::string const& name, int val) const;
+        void bind(const char* name, int val) const;
+
+        void output(std::string const& out);
+
     protected:
         Shader() = default;
         int safeGetUniformLocation(const char* name);
 
-        unsigned int m_uiShaderProgram;
+        unsigned int m_uiShaderProgramID;
         std::vector<std::shared_ptr<UniformSource>> m_vecUniformSources;
-    };
 
-    class ComputeShader : public Shader 
-    {
-    public:
-        explicit ComputeShader(const ShaderSource& computeSource);
-        virtual ~ComputeShader() = default;
-
-        // Dispatches a compute shader execution and writes to the given image
-        // texture. Assumes that the texture has already been bound to the correct
-        // texture unit.
-        void dispatchToTexture(Texture& texture);
+    private:
+        void CheckCompileErrors(unsigned int shader, std::string type);
     };
 
 }  // namespace Cme

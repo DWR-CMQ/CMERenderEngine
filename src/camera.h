@@ -42,7 +42,7 @@ namespace Cme
     {
     public:
         // Constructs a new Camera. Angular values should be provided in degrees.
-        Camera(glm::vec3 position = glm::vec3(0.0f),
+        Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, -1.0f),
                 glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f),
                 float yaw = DEFAULT_YAW, float pitch = DEFAULT_PITCH,
                 float fov = DEFAULT_FOV, float aspectRatio = DEFAULT_ASPECT_RATIO,

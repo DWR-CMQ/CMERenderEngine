@@ -124,6 +124,8 @@ namespace Cme
         // Returns the calculated size for a mip level.
         static ImageSize calculateMipLevel(int mip0Width, int mip0Height, int level);
 
+        static void PrintMat4(const glm::mat4& mat);
+
     };
 }  
 
