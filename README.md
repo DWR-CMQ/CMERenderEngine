@@ -26,5 +26,5 @@ Enviroment
 </div>
 
 ### How to Run
-1: Copy assimp-vc142-mtd.dll in CMERenderEngine\3dparty\dll to C:\Windows\System32
+1: Copy 'assimp-vc142-mtd.dll' in 'CMERenderEngine\3dparty\dll' to 'C:\Windows\System32'   
 2: Run the Project In VS2019
