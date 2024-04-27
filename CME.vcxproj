@@ -163,7 +163,6 @@
     <ClCompile Include="src\fxaa.cpp" />
     <ClCompile Include="src\blur.cpp" />
     <ClCompile Include="src\camera.cpp" />
-    <ClCompile Include="src\core.cpp" />
     <ClCompile Include="src\cubemap.cpp" />
     <ClCompile Include="src\debug.cpp" />
     <ClCompile Include="src\deferred.cpp" />
@@ -221,7 +220,6 @@
     <ClInclude Include="src\fxaa.h" />
     <ClInclude Include="src\blur.h" />
     <ClInclude Include="src\camera.h" />
-    <ClInclude Include="src\core.h" />
     <ClInclude Include="src\cubemap.h" />
     <ClInclude Include="src\debug.h" />
     <ClInclude Include="src\deferred.h" />
@@ -237,7 +235,6 @@
     <ClInclude Include="src\model.h" />
     <ClInclude Include="src\particle\base_particle.h" />
     <ClInclude Include="src\particle\water_fountain_particle_system.h" />
-    <ClInclude Include="src\quarkgl.h" />
     <ClInclude Include="src\random.h" />
     <ClInclude Include="src\scene\model_scene.h" />
     <ClInclude Include="src\screen.h" />

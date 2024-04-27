@@ -37,9 +37,6 @@
     <ClCompile Include="src\common_helper.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\core.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\cubemap.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -213,9 +210,6 @@
     <ClInclude Include="src\common_helper.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\core.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\cubemap.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -232,9 +226,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\fxaa.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\quarkgl.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\random.h">

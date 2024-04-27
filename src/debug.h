@@ -1,10 +1,8 @@
-#ifndef QUARKGL_DEBUG_H_
-#define QUARKGL_DEBUG_H_
+#pragma once
 
-// clang-format off
-// Must precede glfw/glad, to include OpenGL functions.
-#include "core.h"
-// clang-format on
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 namespace Cme 
 {
@@ -17,4 +15,3 @@ namespace Cme
 	};
 }  // namespace Cme
 
-#endif

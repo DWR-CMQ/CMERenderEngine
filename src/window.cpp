@@ -3,10 +3,23 @@
 
 namespace Cme
 {
-    Window::Window(int width, int height, const char* title, bool fullscreen,
-                   int samples)
+    bool Window::m_bGlfwErrorLoggingEnabled = true;
+    bool Window::m_bGlErrorLoggingEnabled = true;
+
+    Window::Window(int width, int height, const char* title, bool fullscreen, int samples)
     {
-        Cme::init();
+        if (!m_bInitialized)
+        {
+            glfwSetErrorCallback(reinterpret_cast<GLFWerrorfun>(&glfwErrorCallback));
+
+            glfwInit();
+            // TODO: Do we need this? Move into Cme::Window?
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+            m_bInitialized = true;
+        }
 
         if (samples > 0)
         {
@@ -24,7 +37,11 @@ namespace Cme
 
         if (m_pWindow == nullptr)
         {
-            Cme::terminate();
+            if (m_bInitialized)
+            {
+                glfwTerminate();
+                m_bInitialized = false;
+            }
             throw WindowException("ERROR::WINDOW::CREATE_FAILED");
         }
 
@@ -35,7 +52,18 @@ namespace Cme
             throw WindowException("ERROR::WINDOW::GLAD_INITIALIZATION_FAILED");
         }
 
-        Cme::initGlErrorLogging();
+        // 发生错误时是否禁止打印log
+        if (m_bGlErrorLoggingEnabled)
+        {
+            m_bGlErrorLoggingEnabled = true;
+            glEnable(GL_DEBUG_OUTPUT);
+            glDebugMessageCallback(DebugCallback, 0);
+        }
+        else
+        {
+            m_bGlErrorLoggingEnabled = false;
+            glDisable(GL_DEBUG_OUTPUT);
+        }
 
         // Allow us to refer to the object while accessing C APIs.
         glfwSetWindowUserPointer(m_pWindow, this);
@@ -62,7 +90,9 @@ namespace Cme
         {
             glfwDestroyWindow(m_pWindow);
         }
-        Cme::terminate();
+
+        glfwTerminate();
+        m_bInitialized = false;
     }
 
     void Window::activate() { glfwMakeContextCurrent(m_pWindow); }
@@ -402,7 +432,7 @@ namespace Cme
         // TODO: Add exception handling here.
         while (!glfwWindowShouldClose(m_pWindow))
         {
-            float currentTime = Cme::time();
+            float currentTime = glfwGetTime();
             m_fDeltaTime = currentTime - m_fLastTime;
             m_fLastTime = currentTime;
 
@@ -437,4 +467,23 @@ namespace Cme
         }
     }
 
-}  // namespace Cme
+    void Window::glfwErrorCallback(int error, const char* description)
+    {
+        if (m_bGlfwErrorLoggingEnabled)
+        {
+            fprintf(stderr, "GLFW ERROR: %s [error code %d]\n", description, error);
+        }
+    }
+
+    void GLAPIENTRY Window::DebugCallback(GLenum source, GLenum type, GLuint id,
+                                            GLenum severity, GLsizei length,
+                                            const GLchar* message, const void* userParam)
+    {
+        if (m_bGlErrorLoggingEnabled && type == GL_DEBUG_TYPE_ERROR)
+        {
+            fprintf(stderr, "GL ERROR: %s [error type = 0x%x, severity = 0x%x]\n",
+                message, type, severity);
+        }
+    }
+
+} 

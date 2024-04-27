@@ -1,11 +1,7 @@
 #ifndef QUARKGL_CAMERA_H_
 #define QUARKGL_CAMERA_H_
 
-// clang-format off
-// Must precede glfw/glad, to include OpenGL functions.
-#include "core.h"
-// clang-format on
-
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 #include "lighting/light.h"

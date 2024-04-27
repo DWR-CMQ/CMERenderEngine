@@ -1,6 +1,8 @@
 #pragma once
-#include "../quarkgl.h"
 #include "../framebuffer.h"
+#include "../model.h"
+#include "../deferred.h"
+#include "../cme_defs.h"
 
 namespace Cme
 {

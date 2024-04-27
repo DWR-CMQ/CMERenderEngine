@@ -1,4 +1,3 @@
-#include "../core.h"
 #include "shader.h"
 #include "shader_loader.h"
 #include <fstream>

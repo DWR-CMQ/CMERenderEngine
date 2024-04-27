@@ -1,11 +1,9 @@
 #ifndef QUARKGL_WINDOW_H_
 #define QUARKGL_WINDOW_H_
 
-// clang-format off
 // Must precede glfw/glad, to include OpenGL functions.
-#include "core.h"
-// clang-format on
-
+// OpenGL included by glad, so disable GLFW's attempts to load extensions.
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 #include "camera.h"
@@ -200,7 +198,11 @@ namespace Cme
 
         void loop(std::function<void(float)> callback);
 
-        // TODO: Allow setting window icon.
+        static void glfwErrorCallback(int error, const char* description);
+
+        static void GLAPIENTRY DebugCallback(GLenum source, GLenum type, GLuint id,
+                                        GLenum severity, GLsizei length,
+                                        const GLchar* message, const void* userParam);
 
     private:
         void processInput(float deltaTime);
@@ -239,6 +241,13 @@ namespace Cme
 
         std::shared_ptr<Camera> m_spBoundCamera = nullptr;
         std::shared_ptr<CameraControls> m_spBoundCameraControls = nullptr;
+
+        static bool m_bGlfwErrorLoggingEnabled;
+
+        /** Whether or not to automatically print OpenGL debug messages. */
+        static bool m_bGlErrorLoggingEnabled;
+
+        bool m_bInitialized = false;
     };
 }  // namespace Cme
 
