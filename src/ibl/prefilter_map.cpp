@@ -30,11 +30,6 @@ namespace Cme
         }
     }
 
-    void PrefilterMap::updateUniforms(Shader& shader)
-    {
-        shader.setFloat("qrk_ggxPrefilteredEnvMapMaxLOD", static_cast<float>(m_CubemapInstance.m_iNumMips - 1.0));
-    }
-
     unsigned int PrefilterMap::bindTexture(unsigned int nextTextureUnit, Shader& shader)
     {
         m_CubemapInstance.Transform2Texture()->BindToUnit(nextTextureUnit, TextureBindType::CUBEMAP);

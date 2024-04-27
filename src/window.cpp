@@ -67,15 +67,6 @@ namespace Cme
 
     void Window::activate() { glfwMakeContextCurrent(m_pWindow); }
 
-    void Window::updateUniforms(Shader& shader) 
-    {
-        shader.setFloat("qrk_deltaTime", m_fDeltaTime);
-
-        ImageSize size = getSize();
-        shader.setInt("qrk_windowWidth", size.width);
-        shader.setInt("qrk_windowHeight", size.height);
-    }
-
     ImageSize Window::getSize() const 
     {
         ImageSize size;

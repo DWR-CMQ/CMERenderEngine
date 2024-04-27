@@ -10,9 +10,11 @@ out VS_OUT
     vec3 delta_position;
 } primitive;
 
+uniform mat4 modelMatrix;
+
 void main()
 {
-    gl_Position = vec4(pos, 1.0f);
+    gl_Position = modelMatrix * vec4(pos, 1.0f);
 
     primitive.alpha = life;
     primitive.delta_position = delta_position;

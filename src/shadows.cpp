@@ -28,12 +28,6 @@ namespace Cme
             m_fCuboidExtents, m_fNear, m_fFar);
     }
 
-    void ShadowMapCamera::updateUniforms(Shader& shader)
-    {
-        shader.setMat4("lightViewProjection",
-                        getProjectionTransform() * getViewTransform());
-    }
-
     ShadowMap::ShadowMap(int width, int height) : Framebuffer(width, height)
     {
         // Attach the depth texture used for the shadow map.

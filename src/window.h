@@ -49,7 +49,7 @@ namespace Cme
         CAPTURE_MOUSE,
     };
 
-    class Window : public UniformSource 
+    class Window 
     {
     public:
         Window(int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT,
@@ -145,8 +145,6 @@ namespace Cme
 
         void cullFrontFaces() { glCullFace(GL_FRONT); }
         void cullBackFaces() { glCullFace(GL_BACK); }
-
-        void updateUniforms(Shader& shader);
 
         ImageSize getSize() const;
         void setSize(int width, int height);

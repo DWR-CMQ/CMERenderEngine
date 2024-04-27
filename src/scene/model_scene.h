@@ -10,8 +10,8 @@ namespace Cme
         ModelScene();
         ~ModelScene() {};
 
-        void Init(std::shared_ptr<Cme::Camera> spCamera, ImageSize windowSize);
-        void Render(ModelRenderOptions stModelRenderOptions, std::shared_ptr<Cme::DeferredGeometryPassShader> spGeometryPassShader = nullptr, bool bShowNormal = false);
+        void Init(ImageSize windowSize);
+        void Render(ModelRenderOptions stModelRenderOptions, std::shared_ptr<Cme::Camera> spCamera, std::shared_ptr<Cme::DeferredGeometryPassShader> spGeometryPassShader = nullptr, bool bShowNormal = false);
         void Update();
 
         std::unique_ptr<Cme::Model> LoadModelOrDefault();

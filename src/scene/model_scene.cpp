@@ -7,7 +7,7 @@ namespace Cme
 
 	}
 
-	void ModelScene::Init(std::shared_ptr<Cme::Camera> spCamera, ImageSize windowSize)
+	void ModelScene::Init(ImageSize windowSize)
 	{
         m_Size = windowSize;
 
@@ -29,10 +29,8 @@ namespace Cme
         m_spNormalShader = std::make_shared<Cme::Shader>(Cme::ShaderPath("assets//model_shaders//model.vert"),
             Cme::ShaderInline(normalShaderSource),
             Cme::ShaderPath("assets//model_shaders//model_normals.geom"));
-        m_spNormalShader->addUniformSource(spCamera);
 
         m_spLampShader = std::make_shared<Cme::Shader>(Cme::ShaderPath("assets//model_shaders//model.vert"), Cme::ShaderInline(lampShaderSource));
-        m_spLampShader->addUniformSource(spCamera);
 
         // Load primary model.
         m_upModel = LoadModelOrDefault();
@@ -41,7 +39,7 @@ namespace Cme
 	/// @brief 由App中传递编辑器参数选项
 	/// @param spCamera 
 	/// @param stModelRenderOptions 
-	void ModelScene::Render(ModelRenderOptions stModelRenderOptions,
+	void ModelScene::Render(ModelRenderOptions stModelRenderOptions, std::shared_ptr<Cme::Camera> spCamera,
                             std::shared_ptr<Cme::DeferredGeometryPassShader> spGeometryPassShader,
                             bool bShowNormal)
 	{
@@ -55,7 +53,8 @@ namespace Cme
         }
         else
         {
-            m_spNormalShader->updateUniforms();
+            m_spNormalShader->setMat4("view", spCamera->getViewTransform());
+            m_spNormalShader->setMat4("projection", spCamera->getProjectionTransform());
             m_upModel->draw(*m_spNormalShader);
         }
 	}

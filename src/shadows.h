@@ -18,7 +18,7 @@ namespace Cme
         using QuarkException::QuarkException;
     };
 
-    class ShadowMapCamera : public UniformSource 
+    class ShadowMapCamera 
     {
     public:
         // TODO: Currently only renders the origin. Make this more dynamic, and have
@@ -46,8 +46,6 @@ namespace Cme
 
         glm::mat4 getViewTransform();
         glm::mat4 getProjectionTransform();
-
-        void updateUniforms(Shader& shader) override;
 
     private:
         std::shared_ptr<DirectionalLight> m_spLight;

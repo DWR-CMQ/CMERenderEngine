@@ -71,8 +71,6 @@ namespace Cme
         m_spMainFb = std::make_shared<Cme::Framebuffer>(m_pWindow->getSize(), Cme::BufferType::COLOR_HDR_ALPHA, params);
         m_spMainFb->attachRenderbuffer(Cme::BufferType::DEPTH_AND_STENCIL);
 
-        m_spFinalFb = std::make_shared<Cme::Framebuffer>(m_pWindow->getSize(), Cme::BufferType::COLOR_ALPHA, params);
-
         // Build the G-Buffer and prepare deferred shading.
         m_spGeometryPassShader = std::make_shared<Cme::DeferredGeometryPassShader>();           
 
@@ -111,7 +109,7 @@ namespace Cme
         m_spSkyboxShader = std::make_shared<Cme::SkyboxShader>();
 
         // 模型
-        m_ModelSceneObj.Init(m_spCamera, m_pWindow->getSize());
+        m_ModelSceneObj.Init(m_pWindow->getSize());
 
         // 粒子
         m_pWaterFountainPS = new WaterFountainParticleSystem;
@@ -119,7 +117,8 @@ namespace Cme
         m_pWaterFountainPS->birth_rate = m_pWaterFountainPS->max_particles * 1000;
         m_pWaterFountainPS->InitPS(nullptr, 0);
 
-        m_pWindow->enableFaceCull();
+        // 目前把这段代码加上后 粒子始终渲染不出来 暂不知道原因
+        // m_pWindow->enableFaceCull();
 	}
 
 	bool App::Run()
@@ -211,10 +210,6 @@ namespace Cme
                 m_spSkybox->LoadSkyboxImage(m_OptsObj.skyboxImage);
             }
 
-            // 渲染粒子
-            m_pWaterFountainPS->SetCamera(m_spCamera);
-            m_pWaterFountainPS->Render();
-
             // G-Buffer步骤1 Geometry Pass. 符合Opengl教程的逻辑
             {
                 Cme::DebugGroup debugGroup("Geometry pass");
@@ -234,7 +229,7 @@ namespace Cme
                 }
                 // 渲染模型 
 
-                m_ModelSceneObj.Render(m_OptsObj, m_spGeometryPassShader);
+                m_ModelSceneObj.Render(m_OptsObj, m_spCamera, m_spGeometryPassShader);
                 if (m_OptsObj.wireframe)
                 {
                     m_pWindow->disableWireframe();
@@ -331,7 +326,7 @@ namespace Cme
                 if (m_OptsObj.drawNormals)
                 {
                     // Draw the normals.
-                    m_ModelSceneObj.Render(m_OptsObj, nullptr, true);
+                    m_ModelSceneObj.Render(m_OptsObj, m_spCamera, nullptr, true);
                 }
 
                 //// Draw light source.
@@ -344,9 +339,7 @@ namespace Cme
             // 后处理
             {
                 Cme::DebugGroup debugGroup("Tonemap & gamma");
-                // m_spFinalFb的id为2
-                m_spFinalFb->activate();
-                m_spFinalFb->clear();
+                m_spMainFb->activate();
 
                 // Draw to the final FB using the post process shader.
                 m_spPostprocessShader->setBool("bloom", m_OptsObj.bloom);
@@ -359,7 +352,7 @@ namespace Cme
                 // 后处理有纹理更新 
                 m_spScreenQuad->draw(*m_spPostprocessShader);
 
-                m_spFinalFb->deactivate();
+                m_spMainFb->deactivate();
             }
 
             m_pWindow->setViewport();
@@ -374,9 +367,16 @@ namespace Cme
             //}
             //else
             //{
-            m_spFinalFb->blitToDefault(GL_COLOR_BUFFER_BIT);
+            m_spMainFb->blitToDefault(GL_COLOR_BUFFER_BIT);
 
             //}
+
+            // 渲染粒子 输入正向渲染
+            // 按照Opengl教程中延迟着色法的章节中的----结合延迟渲染和正向渲染
+            // 可知粒子渲染一定要在glBlitFramebuffer之后
+            // 还有就是要注释Init中的enableFaceCull()
+            m_pWaterFountainPS->SetCamera(m_spCamera);
+            m_pWaterFountainPS->Render();
 
             // Finally, draw ImGui data.
             {

@@ -53,12 +53,6 @@ namespace Cme
         return glm::perspective(glm::radians(getFov()), m_fAspectRatio, m_fNear, m_fFar);
     }
 
-    void Camera::updateUniforms(Shader& shader)
-    {
-        shader.setMat4("view", getViewTransform());
-        shader.setMat4("projection", getProjectionTransform());
-    }
-
     void Camera::move(CameraDirection direction, float velocity)
     {
         switch (direction) 

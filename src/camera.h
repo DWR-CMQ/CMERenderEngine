@@ -38,11 +38,11 @@ namespace Cme
     constexpr float MIN_FOV = 1.0f;
     constexpr float MAX_FOV = 135.0f;
 
-    class Camera : public UniformSource 
+    class Camera 
     {
     public:
         // Constructs a new Camera. Angular values should be provided in degrees.
-        Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, -1.0f),
+        Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, -10.0f),
                 glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f),
                 float yaw = DEFAULT_YAW, float pitch = DEFAULT_PITCH,
                 float fov = DEFAULT_FOV, float aspectRatio = DEFAULT_ASPECT_RATIO,
@@ -82,8 +82,6 @@ namespace Cme
 
         glm::mat4 getViewTransform() const;
         glm::mat4 getProjectionTransform() const;
-
-        void updateUniforms(Shader& shader) override;
 
         // Moves the camera in the given direction by the given amount.
         void move(CameraDirection direction, float velocity);

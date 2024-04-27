@@ -8,7 +8,7 @@ namespace Cme
     // Calculates the prefiltered env map based on the GGX microfacet model. The map
     // contains multiple mip level, which each mip level representing a different
     // material roughness (mip0 -> roughness 0).
-	class PrefilterMap : public UniformSource
+	class PrefilterMap
 	{
     public:
         PrefilterMap(int width, int height, int maxNumMips = -1);
@@ -26,7 +26,6 @@ namespace Cme
 
         std::shared_ptr<Texture> getPrefilteredEnvMap() { return m_CubemapInstance.Transform2Texture(); }
 
-        void updateUniforms(Shader & shader) override;
         unsigned int bindTexture(unsigned int nextTextureUnit, Shader & shader);
 
     private:

@@ -120,20 +120,19 @@ namespace Cme
 
 	void WaterFountainParticleSystem::Render(GLenum gl_draw_mode)
 	{
-		//glDisable(GL_DEPTH_TEST);
-		//glEnable(GL_BLEND);
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-		
 		glDisable(GL_DEPTH_TEST);
-		glDepthMask(0);
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_ONE, GL_ONE);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 		draw_shader->activate();
-		draw_shader->setVec3("baseColor", glm::vec3(1.0f, 0.0f, 0.0f));
+		draw_shader->setVec3("baseColor", glm::vec3(0.0f, 1.0f, 0.0f));
 		draw_shader->setMat4("view", m_spCamera->getViewTransform());
 		draw_shader->setMat4("proj", m_spCamera->getProjectionTransform());
 		draw_shader->setVec3("cam_pos", m_spCamera->getPosition());
+
+		auto modelMatrix = glm::mat4(1.0f);
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -2.5f, 0.0f));
+		draw_shader->setMat4("modelMatrix", modelMatrix);
 
 		//CommonHelper::PrintMat4(m_spCamera->getViewTransform());
 		//CommonHelper::PrintMat4(m_spCamera->getProjectionTransform());
@@ -148,11 +147,10 @@ namespace Cme
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(0);
 		draw_shader->deactivate();
-		//glDisable(GL_BLEND);
-		
+
 		glDisable(GL_BLEND);
-		glDepthMask(1);
-		glEnable(GL_DEPTH_TEST);
+		// 上面禁用深度测试后 此时一定要开启深度测试 否则头盔(模型)渲染不出来
+		glEnable(GL_DEPTH_TEST);     
 	}
 
 	unsigned int WaterFountainParticleSystem::total() const noexcept

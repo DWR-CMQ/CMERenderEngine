@@ -15,6 +15,9 @@
 #include <string>
 #include <iostream>
 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform2.hpp>
+
 #include "../imguizmo_quat/imGuIZMOquat.h"
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_glfw.h"

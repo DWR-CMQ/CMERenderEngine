@@ -8,7 +8,7 @@
 #include <vector>
 namespace Cme
 {
-    class LightControl : public UniformSource
+    class LightControl
     {
     public:
         LightControl(glm::mat4 mat4View);

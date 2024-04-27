@@ -127,23 +127,6 @@ namespace Cme
     }
     void Shader::deactivate() { glUseProgram(0); }
 
-    // TODO: Is shared_ptr really the best approach here?
-    void Shader::addUniformSource(std::shared_ptr<UniformSource> source) 
-    {
-        m_vecUniformSources.push_back(source);
-    }
-
-    void Shader::updateUniforms() 
-    {
-        // Update core uniforms.
-        // setFloat("qrk_time", Cme::time());
-
-        // 更新相机
-        for (auto item : m_vecUniformSources)
-        {
-            item->updateUniforms(*this);
-        }
-    }
 
     void Shader::setBool(const char* name, bool value) 
     {

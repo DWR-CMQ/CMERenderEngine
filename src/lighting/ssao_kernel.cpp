@@ -56,17 +56,6 @@ namespace Cme
         //m_NoiseTextureObj = Texture::createFromData(noiseTextureSideLength, noiseTextureSideLength, GL_RGB16F, vecNoiseData, params);
     }
 
-    void SsaoKernel::updateUniforms(Shader& shader)
-    {
-        shader.setFloat("qrk_ssaoSampleRadius", m_fRadius);
-        shader.setFloat("qrk_ssaoSampleBias", m_fBias);
-        shader.setInt("qrk_ssaoKernelSize", m_vecKernel.size());
-        for (unsigned int i = 0; i < m_vecKernel.size(); ++i)
-        {
-            shader.setVec3("qrk_ssaoKernel[" + std::to_string(i) + "]", m_vecKernel[i]);
-        }
-    }
-
     unsigned int SsaoKernel::bindTexture(unsigned int nextTextureUnit, Shader& shader)
     {
         m_NoiseTextureObj.BindToUnit(nextTextureUnit);

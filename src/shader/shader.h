@@ -22,15 +22,6 @@ namespace Cme
         using QuarkException::QuarkException;
     };
 
-    // An interface for a unified way of configuring shader uniforms.
-    // TODO: Extract to a "UniformContext" class that is used by the shader, rather
-    // than the shader collecting UniformSources directly.
-    class UniformSource
-    {
-    public:
-        virtual void updateUniforms(Shader& shader) = 0;
-    };
-
     class Shader 
     {
     public:
@@ -43,9 +34,6 @@ namespace Cme
 
         virtual void activate();
         virtual void deactivate();
-
-        void addUniformSource(std::shared_ptr<UniformSource> source);
-        void updateUniforms();
 
         // Functions for uniforms.
 
@@ -96,8 +84,6 @@ namespace Cme
         int safeGetUniformLocation(const char* name);
 
         unsigned int m_uiShaderProgramID;
-        std::vector<std::shared_ptr<UniformSource>> m_vecUniformSources;
-
     private:
         void CheckCompileErrors(unsigned int shader, std::string type);
     };
