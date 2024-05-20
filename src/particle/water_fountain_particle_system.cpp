@@ -129,13 +129,11 @@ namespace Cme
 		draw_shader->setMat4("view", m_spCamera->getViewTransform());
 		draw_shader->setMat4("proj", m_spCamera->getProjectionTransform());
 		draw_shader->setVec3("cam_pos", m_spCamera->getPosition());
+		draw_shader->setVec3("particleColor", m_vec3ParticleColor);
 
 		auto modelMatrix = glm::mat4(1.0f);
 		modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -2.5f, 0.0f));
 		draw_shader->setMat4("modelMatrix", modelMatrix);
-
-		//CommonHelper::PrintMat4(m_spCamera->getViewTransform());
-		//CommonHelper::PrintMat4(m_spCamera->getProjectionTransform());
 
 		auto& tm = TextureManager::GetInstance();
 

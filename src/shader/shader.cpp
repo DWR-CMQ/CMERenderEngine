@@ -154,14 +154,25 @@ namespace Cme
     void Shader::setVec3(const char* name, const glm::vec3& vector)
     {
         activate();
-        glUniform3fv(safeGetUniformLocation(name), /*count=*/1,
-                    glm::value_ptr(vector));
+        glUniform3fv(safeGetUniformLocation(name), 1, glm::value_ptr(vector));
     }
 
     void Shader::setVec3(const char* name, float v0, float v1, float v2) 
     {
         activate();
         glUniform3f(safeGetUniformLocation(name), v0, v1, v2);
+    }
+
+    void Shader::setVec4(const char* name, const glm::vec4& vector)
+    {
+        activate();
+        glUniform4fv(safeGetUniformLocation(name), 1, glm::value_ptr(vector));
+    }
+
+    void Shader::setVec4(const char* name, float v0, float v1, float v2, float w)
+    {
+        activate();
+        glUniform4f(safeGetUniformLocation(name), v0, v1, v2, w);
     }
 
     void Shader::setMat4(const char* name, const glm::mat4& matrix) 

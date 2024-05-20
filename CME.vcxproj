@@ -186,12 +186,17 @@
     <ClCompile Include="src\shader\shader_primitives.cpp" />
     <ClCompile Include="src\shadows.cpp" />
     <ClCompile Include="src\shape\cube_mesh.cpp" />
+    <ClCompile Include="src\shape\cylinder.cpp" />
+    <ClCompile Include="src\shape\line.cpp" />
     <ClCompile Include="src\shape\mesh.cpp" />
+    <ClCompile Include="src\shape\pipe.cpp" />
+    <ClCompile Include="src\shape\plane.cpp" />
     <ClCompile Include="src\shape\plane_mesh.cpp" />
     <ClCompile Include="src\shape\room_mesh.cpp" />
     <ClCompile Include="src\shape\screenquad_mesh.cpp" />
     <ClCompile Include="src\shape\skybox.cpp" />
     <ClCompile Include="src\shape\sphere_mesh.cpp" />
+    <ClCompile Include="src\UI\ui.cpp" />
     <ClCompile Include="src\vertex_array.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
@@ -245,7 +250,11 @@
     <ClInclude Include="src\shader\shader_primitives.h" />
     <ClInclude Include="src\shadows.h" />
     <ClInclude Include="src\shape\cube_mesh.h" />
+    <ClInclude Include="src\shape\cylinder.h" />
+    <ClInclude Include="src\shape\line.h" />
     <ClInclude Include="src\shape\mesh.h" />
+    <ClInclude Include="src\shape\pipe.h" />
+    <ClInclude Include="src\shape\plane.h" />
     <ClInclude Include="src\shape\plane_mesh.h" />
     <ClInclude Include="src\shape\room_mesh.h" />
     <ClInclude Include="src\shape\screenquad_mesh.h" />
@@ -254,6 +263,7 @@
     <ClInclude Include="src\stb_image.h" />
     <ClInclude Include="src\texture_map.h" />
     <ClInclude Include="src\common_helper.h" />
+    <ClInclude Include="src\UI\ui.h" />
     <ClInclude Include="src\vertex_array.h" />
     <ClInclude Include="src\window.h" />
   </ItemGroup>

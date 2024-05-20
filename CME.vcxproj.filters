@@ -151,6 +151,21 @@
     <ClCompile Include="src\shadows.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\UI\ui.cpp">
+      <Filter>src\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shape\cylinder.cpp">
+      <Filter>src\shape</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shape\pipe.cpp">
+      <Filter>src\shape</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shape\plane.cpp">
+      <Filter>src\shape</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shape\line.cpp">
+      <Filter>src\shape</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -333,6 +348,21 @@
     <ClInclude Include="src\particle\base_particle.h">
       <Filter>src\particle</Filter>
     </ClInclude>
+    <ClInclude Include="src\UI\ui.h">
+      <Filter>src\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shape\cylinder.h">
+      <Filter>src\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shape\pipe.h">
+      <Filter>src\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shape\plane.h">
+      <Filter>src\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shape\line.h">
+      <Filter>src\shape</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -364,6 +394,9 @@
     </Filter>
     <Filter Include="src\particle">
       <UniqueIdentifier>{084c70ce-78d3-4cf7-bd95-bf10007ce4b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI">
+      <UniqueIdentifier>{f37063f6-bfc7-444a-bb0a-3b735a427153}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

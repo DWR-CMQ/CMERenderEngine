@@ -25,9 +25,9 @@ namespace Cme
         void Update(float dt, glm::vec3* cam_pos = nullptr) override;
         void Render(GLenum gl_draw_mode = GL_POINT) override;
 
-        void SetBaseColorInParticleSystem(glm::vec3 Color)
+        void SetParticleColor(glm::vec3 Color)
         {
-            m_vec3BaseColorRGBInParticleSystem = Color;
+            m_vec3ParticleColor = Color;
         };
 
         unsigned int total() const noexcept override;
@@ -45,7 +45,7 @@ namespace Cme
         Shader* compute_shader = nullptr;
         Shader* draw_shader = nullptr;
 
-        glm::vec3 m_vec3BaseColorRGBInParticleSystem = glm::vec3(0.0f, 1.0f, 0.0f);
+        glm::vec3 m_vec3ParticleColor = glm::vec3(0.0f, 1.0f, 0.0f);
         std::shared_ptr<Camera> m_spCamera;
 	};
 }

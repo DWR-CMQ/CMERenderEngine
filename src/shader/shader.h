@@ -67,6 +67,10 @@ namespace Cme
             setVec3(name.c_str(), v0, v1, v2);
         }
 
+        void setVec4(const char* name, const glm::vec4& vector);
+
+        void setVec4(const char* name, float v0, float v1, float v2, float w);
+
         virtual void setMat4(const char* name, const glm::mat4& matrix);
         void setMat4(std::string name, const glm::mat4& matrix) 
         {

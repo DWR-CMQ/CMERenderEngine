@@ -1,6 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <glm/fwd.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform2.hpp>
 
 #include <random>
 #define M_PI 3.14159265358979323846
@@ -62,6 +64,12 @@ namespace Cme
         LOG,
     };
 
+    enum class ParticleShape
+    {
+        Love = 0,
+        Fire
+    };
+
     // Options for the model render UI. The defaults here are used at startup.
     struct ModelRenderOptions
     {
@@ -113,16 +121,24 @@ namespace Cme
         float far = 0;
         bool captureMouse = false;
 
-        // Debug.
+        // 调试
         GBufferVis gBufferVis = GBufferVis::DISABLED;
         bool wireframe = false;
         bool drawNormals = false;
 
-        // Performance.
+        // 性能
         const float* frameDeltas = nullptr;
         int numFrameDeltas = 0;
         int frameDeltasOffset = 0;
         float avgFPS = 0;
         bool enableVsync = true;
+
+        // 粒子属性
+        glm::vec3 vec3ParticleLocation = glm::vec3(0.0f, 0.0f, 0.0f);
+        glm::vec3 vec3ParticleColor = glm::vec3(1.0f, 0.0f, 0.0f);
+
+        // 爱心属性
+        glm::vec3 vec3LoveColor = glm::vec3(1.0f, 0.0f, 0.0f);
+        float fLoveThickness = 0.1f;
     };
 }

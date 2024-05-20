@@ -20,6 +20,8 @@
 #include "shape/mesh.h"
 #include "shape/screenquad_mesh.h"
 #include "shape/sphere_mesh.h"
+#include "shape/cylinder.h"
+#include "shape/pipe.h"
 
 #include "model.h"
 #include "random.h"
@@ -38,6 +40,7 @@
 #include "window.h"
 #include "cme_defs.h"
 #include "core/texture_manager.h"
+#include "UI/ui.h"
 
 #include "particle/water_fountain_particle_system.h"
 
@@ -65,8 +68,6 @@ namespace Cme
 		bool Run();
 		void Restart();
 		void Close();
-
-        void RenderImGuiUI(ModelRenderOptions& opts, Cme::Camera camera);
 
     public:
         App();
@@ -124,6 +125,12 @@ namespace Cme
 
         // 粒子系统
         WaterFountainParticleSystem* m_pWaterFountainPS;
+
+        // 圆柱体
+        std::shared_ptr<Cylinder> m_spCylinder;
+
+        // 管道
+        std::shared_ptr<Pipe> m_spPipe;
 	};
 }
 

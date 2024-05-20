@@ -54,7 +54,7 @@ namespace Cme
                 const char* title = DEFAULT_TITLE, bool fullscreen = false,
                 int samples = 0);
         virtual ~Window();
-        GLFWwindow* getGlfwRef() const { return m_pWindow; }
+        GLFWwindow* GetWindow() const { return m_pWindow; }
 
         // TODO: Should this be called something different, and 'activate' be used for
         // setViewport?
