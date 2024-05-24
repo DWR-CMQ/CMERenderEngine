@@ -130,7 +130,8 @@ namespace Cme
         std::shared_ptr<Cylinder> m_spCylinder;
 
         // ¹ÜµÀ
-        std::shared_ptr<Pipe> m_spPipe;
+        std::shared_ptr<Pipe> m_spPipeFirst;
+        std::shared_ptr<Pipe> m_spPipeSecond;
 	};
 }
 

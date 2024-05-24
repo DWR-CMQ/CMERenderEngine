@@ -120,7 +120,8 @@ namespace Cme
         m_spCylinder = std::make_shared<Cylinder>(1, 1, 2, 36, 1, true, 2);
 
         // 管道
-        m_spPipe = std::make_shared<Pipe>();
+        m_spPipeFirst = std::make_shared<Pipe>(0.0f, glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+        m_spPipeSecond = std::make_shared<Pipe>(3.4f, glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0));
 	}
 
 	bool App::Run()
@@ -195,8 +196,17 @@ namespace Cme
             m_pWaterFountainPS->Update(deltaTime);
 
             // 管道更新
-            m_spPipe->SetThickness(m_OptsObj.fLoveThickness);
-            m_spPipe->Update(static_cast<float>(glfwGetTime()));
+            m_spPipeFirst->SetThickness(m_OptsObj.fLoveThickness);
+            m_spPipeFirst->SetLightPosition(m_OptsObj.vec3LoveLightPosition);
+            m_spPipeFirst->SetLightAmbient(m_OptsObj.vec3LoveLightAmbient);
+            m_spPipeFirst->SetLightDiffuse(m_OptsObj.vec3LoveLightDiffuse);
+            m_spPipeFirst->SetLightSpecular(m_OptsObj.vec3LoveLightSpecular);
+            m_spPipeFirst->SetMaterialAmbient(m_OptsObj.vec3LoveMaterialAmbient);
+            m_spPipeFirst->SetMaterialDiffuse(m_OptsObj.vec3LoveMaterialDiffuse);
+            m_spPipeFirst->SetMaterialSpecular(m_OptsObj.vec3LoveMaterialSpecular);
+            m_spPipeFirst->Update(static_cast<float>(glfwGetTime()));
+
+            m_spPipeSecond->Update(static_cast<float>(glfwGetTime()));
 
             if (m_OptsObj.enableVsync != prevOpts.enableVsync)
             {
@@ -387,9 +397,8 @@ namespace Cme
 
             m_spCylinder->Render(m_spCamera);
 
-            m_spPipe->SetColor(m_OptsObj.vec3LoveColor);
-            m_spPipe->Render(m_spCamera);
-
+            m_spPipeFirst->Render(m_spCamera, m_OptsObj.directionalDirection);
+            m_spPipeSecond->Render(m_spCamera, m_OptsObj.directionalDirection);
             // Finally, draw ImGui data.
             {
                 Cme::DebugGroup debugGroup("Imgui pass");

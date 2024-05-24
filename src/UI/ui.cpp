@@ -207,12 +207,16 @@ namespace Cme
         // 爱心颜色
         if (ImGui::CollapsingHeader("Love"))
         {
-            // 引用可直接修改粒子颜色
-            ImGui::ColorEdit3("Love Color", reinterpret_cast<float*>(&opts.vec3LoveColor), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
             ImGui::Separator();
             // 修改粗细
             CommonHelper::imguiFloatSlider("Love Thickness", &opts.fLoveThickness, 0.05f, 0.2f, nullptr, Scale::LINEAR);
-
+            ImGui::ColorEdit3("Light Position", reinterpret_cast<float*>(&opts.vec3LoveLightPosition), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            ImGui::ColorEdit3("Light Ambient", reinterpret_cast<float*>(&opts.vec3LoveLightAmbient), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            ImGui::ColorEdit3("Light Diffuse", reinterpret_cast<float*>(&opts.vec3LoveLightDiffuse), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            ImGui::ColorEdit3("Light Specular", reinterpret_cast<float*>(&opts.vec3LoveLightSpecular), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            ImGui::ColorEdit3("Material Ambient", reinterpret_cast<float*>(&opts.vec3LoveMaterialAmbient), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            ImGui::ColorEdit3("Material Diffuse", reinterpret_cast<float*>(&opts.vec3LoveMaterialDiffuse), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            ImGui::ColorEdit3("Material Specular", reinterpret_cast<float*>(&opts.vec3LoveMaterialSpecular), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
         }
 
         ImGui::EndChild();

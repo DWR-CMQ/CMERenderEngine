@@ -140,5 +140,14 @@ namespace Cme
         // ∞Æ–ƒ Ù–‘
         glm::vec3 vec3LoveColor = glm::vec3(1.0f, 0.0f, 0.0f);
         float fLoveThickness = 0.1f;
+        glm::vec3 vec3LoveLightPosition = glm::vec3(0.0f, 0.0f, 1.0f);
+        glm::vec3 vec3LoveLightAmbient = glm::vec3(0.3f, 0.3f, 0.3f);
+        glm::vec3 vec3LoveLightDiffuse = glm::vec3(0.7f, 0.7f, 0.7f);
+        glm::vec3 vec3LoveLightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
+        glm::vec3 vec3LoveMaterialAmbient = glm::vec3(0.5f, 0.5f, 0.5f);
+        glm::vec3 vec3LoveMaterialDiffuse = glm::vec3(0.7f, 0.7f, 0.7f);
+        glm::vec3 vec3LoveMaterialSpecular = glm::vec3(0.4f, 0.4f, 0.4f);
+        float vec3LoveMaterialShininess = 16.0f;
+
     };
 }
