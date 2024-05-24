@@ -17,7 +17,7 @@ const float radius = 0.5;
 
 namespace Cme
 {
-	Pipe::Pipe()
+	Pipe::Pipe(float fOffset, glm::vec3 vec3RimLight, glm::vec3 vec3Ambient)
 	{
         // m_vecSpiralPath.clear();
         //m_vecSpiralPath = BuildSpiralPath(4, 1, -3, 3, PATH_TURNS, PATH_POINTS);
@@ -31,6 +31,10 @@ namespace Cme
         m_vecContour = BuildCircle(0.1f, CIRCLE_SECTORS);
         GenerateContours();
 
+        m_fOffset = fOffset;
+        vec3LoveRimLight = vec3RimLight;
+        vec3LoveAmbient = vec3Ambient;
+
         m_VAO = 0;
         m_VBO = 0;
         m_EBO = 0;
@@ -43,10 +47,6 @@ namespace Cme
         InitializeData();
 	}
 
-	Pipe::Pipe(const std::vector<glm::vec3>& pathPoints, const std::vector<glm::vec3>& contourPoints)
-	{
-	}
-
     void Pipe::InitializeData()
     {
         glGenVertexArrays(1, &m_VAO);
@@ -55,23 +55,19 @@ namespace Cme
 
         glBindVertexArray(m_VAO);
 
-        int contourCount = 101;                               // total # of contours
-        int vertexCount = 300;                                // # of vertices per contour
+        BuildSegment(1.0f, m_fOffset);
+        m_vecContour = BuildCircle(m_fThickness, CIRCLE_SECTORS);
+        GenerateContours();
+
+        int contourCount = getContourCount();            // total # of contours
+        int vertexCount = (int)getContour(0).size();     // # of vertices per contour
         int vertexSize = sizeof(float) * 3 * vertexCount;     // # of bytes per contour
         int offset = vertexSize * contourCount;               // offset where normals begin
-        int bufferCount = 2 * 3 * vertexCount * contourCount; // total # of floats (vertex + normal)
-        int bufferSize = sizeof(float) * bufferCount;         // total # of bytes
-        std::vector<float> buffer(bufferCount);
 
-        // copy to VBO using glBufferData()
-        glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-        glBufferData(GL_ARRAY_BUFFER, bufferSize, buffer.data(), GL_DYNAMIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
         glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, (void*)offset);
-
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
     }
@@ -80,7 +76,7 @@ namespace Cme
     {
         // 重新计算会非常耗时
         m_vecContour.clear();
-        BuildSegment(dt, 0.0);
+        BuildSegment(dt, m_fOffset);
         m_vecContour = BuildCircle(m_fThickness, CIRCLE_SECTORS);
         GenerateContours();
 
@@ -92,9 +88,21 @@ namespace Cme
         int bufferSize = sizeof(float) * bufferCount;         // total # of bytes
         std::vector<float> buffer(bufferCount);
 
-        glBindVertexArray(m_VAO);
+        for (int i = 0; i < contourCount; ++i)
+        {
+            std::vector<glm::vec3> contour = m_vecContours[i]; // vertices per contour
+            std::vector<glm::vec3> normal = m_vecNormals[i];   // normals per contours
+            int vIndex = i * 3 * vertexCount;
+            int nIndex = (3 * vertexCount * contourCount) + vIndex;
+            // copy # of bytes per contour
+            std::memcpy(&buffer[vIndex], &contour[0].x, vertexSize);
+            std::memcpy(&buffer[nIndex], &normal[0].x, vertexSize);
+        }
+
+        // copy to VBO using glBufferData()
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-        //glBufferData(GL_ARRAY_BUFFER, bufferSize, buffer.data(), GL_DYNAMIC_DRAW); // alloc
+        glBufferData(GL_ARRAY_BUFFER, bufferSize, buffer.data(), GL_DYNAMIC_DRAW);
+
         for (int i = 0; i < contourCount; ++i)
         {
             std::vector<glm::vec3> contour = m_vecContours[i]; // vertices per contour
@@ -103,7 +111,6 @@ namespace Cme
             glBufferSubData(GL_ARRAY_BUFFER, offset + (i * vertexSize), vertexSize, &normal[0].x);
         }
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 
         // build indices for triangle strip
         int k1 = 0, k2 = vertexCount;
@@ -119,17 +126,32 @@ namespace Cme
 
         // copy indices to IBO
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-    void Pipe::Render(std::shared_ptr<Cme::Camera> spCamera)
+    void Pipe::Render(std::shared_ptr<Cme::Camera> spCamera, glm::vec3 vec3LightDir)
     {
         m_pShader->activate();
         auto modelMatrix = glm::mat4(1.0f);
         modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -8.0f));
-        m_pShader->setMat4("matrixModelViewProjection", spCamera->getProjectionTransform() * spCamera->getViewTransform() * modelMatrix);
-        m_pShader->setVec3("color", m_vec3Color);
+        m_pShader->setMat4("projection", spCamera->getProjectionTransform());
+        m_pShader->setMat4("view", spCamera->getViewTransform());
+        m_pShader->setMat4("model", modelMatrix);
+        m_pShader->setVec3("lightDirection", vec3LightDir);
+        m_pShader->setVec3("viewPos", spCamera->getPosition());
+
+        m_pShader->setVec3("rimlight", vec3LoveRimLight);
+        m_pShader->setVec3("ambient", vec3LoveAmbient);
+
+        //m_pShader->setVec4("lightPosition", glm::vec4(vec3LoveLightPosition, 0.0f));
+        //m_pShader->setVec4("lightAmbient", glm::vec4(vec3LoveLightAmbient, 1.0f));
+        //m_pShader->setVec4("lightDiffuse", glm::vec4(vec3LoveLightDiffuse, 1.0f));
+        //m_pShader->setVec4("lightSpecular", glm::vec4(vec3LoveLightSpecular, 1.0f));
+        //m_pShader->setVec4("materialAmbient", glm::vec4(vec3LoveMaterialAmbient, 1.0f));
+        //m_pShader->setVec4("materialDiffuse", glm::vec4(vec3LoveMaterialDiffuse, 1.0f));
+        //m_pShader->setVec4("materialSpecular", glm::vec4(vec3LoveMaterialSpecular, 1.0f));
+        //m_pShader->setFloat("materialShininess", 16.0f);
 
         glBindVertexArray(m_VAO);
         int indexSize = 2 * (getContourCount() - 1) * getContour(0).size();

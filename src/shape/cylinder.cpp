@@ -236,7 +236,7 @@ namespace Cme
         m_pShader->setMat4("matrixModelViewProjection", spCamera->getProjectionTransform() * spCamera->getViewTransform() * modelMatrix);
         m_pShader->setMat4("matrixModelView", spCamera->getViewTransform() * modelMatrix);
         m_pShader->setMat4("matrixNormal", spCamera->getViewTransform() * modelMatrix);
-
+        m_pShader->setMat4("u_vm", spCamera->getViewTransform());
 
         m_pShader->setVec4("lightPosition", glm::vec4(0.0f, 0.0f, 1.0f, 0.0f));
         m_pShader->setVec4("lightAmbient", glm::vec4(0.3f, 0.3f, 0.3f, 1.0f));
