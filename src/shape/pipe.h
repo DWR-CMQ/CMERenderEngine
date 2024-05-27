@@ -10,7 +10,7 @@ namespace Cme
 	class Pipe
 	{
 	public:
-		Pipe(float fOffset, glm::vec3 vec3RimLight, glm::vec3 vec3Ambient);
+		Pipe(float fOffset, glm::vec3 vec3RimColor);
 
 		std::vector<glm::vec3> BuildSpiralPath(float r1, float r2, float h1, float h2, float turns, int points);
 		std::vector<glm::vec3> BuildCircle(float radius, int steps);
@@ -35,44 +35,33 @@ namespace Cme
 			m_fThickness = fValue;
 		}
 
-		void SetLightPosition(glm::vec3 value)
+		void UpdateMaterial(glm::vec3 vec3Ambient, glm::vec3 vec3Diffuse, glm::vec3 vec3Specular, float fShininess)
 		{
-			vec3LoveLightPosition = value;
+			m_vec3LoveMaterialAmbient = vec3Ambient;
+			m_vec3LoveMaterialDiffuse = vec3Diffuse;
+			m_vec3LoveMaterialSpecular = vec3Specular;
+			m_fLoveMaterialShiniess = fShininess;
 		}
 
-		void SetLightAmbient(glm::vec3 value)
+		void UpdateLight(glm::vec3 vec3Position, glm::vec3 vec3Ambient, glm::vec3 vec3Diffuse, glm::vec3 vec3Specular)
 		{
-			vec3LoveLightAmbient = value;
-		};
-
-		void SetLightDiffuse(glm::vec3 value)
-		{
-			vec3LoveLightDiffuse = value;
+			m_vec3LoveLightPosition = vec3Position;
+			m_vec3LoveLightaAmbient = vec3Ambient;
+			m_vec3LoveLightDiffuse = vec3Diffuse;
+			m_vec3LoveLightSpecular = vec3Specular;
 		}
 
-		void SetLightSpecular(glm::vec3 value)
+		void UpdateRim(glm::vec3 vec3Color, float fWidth, float fStrength)
 		{
-			vec3LoveLightSpecular = value;
+			m_vec3LoveRimColor = vec3Color;
+			m_fLoveRimWidth = fWidth;
+			m_fLoveRimStrength = fStrength;
 		}
 
-		void SetMaterialAmbient(glm::vec3 value)
-		{
-			vec3LoveMaterialAmbient = value;
-		}
-
-		void SetMaterialDiffuse(glm::vec3 value)
-		{
-			vec3LoveMaterialDiffuse = value;
-		}
-
-		void SetMaterialSpecular(glm::vec3 value)
-		{
-			vec3LoveMaterialSpecular = value;
-		}
 
 	public:
 		void InitializeData();
-		void Render(std::shared_ptr<Cme::Camera> spCamera, glm::vec3 vec3LightDir);
+		void Render(std::shared_ptr<Cme::Camera> spCamera);
 		void Update(float dt);
 
 	private:
@@ -94,18 +83,24 @@ namespace Cme
 		GLuint m_EBO;
 		Shader* m_pShader = nullptr;
 		float m_fOffset;
-
-		glm::vec3 m_vec3Color = glm::vec3(0.0f, 1.0f, 0.0f);;
+		
 		float m_fThickness = 0.1f;
-		glm::vec3 vec3LoveLightPosition = glm::vec3(0.0f, 0.0f, 1.0f);
-		glm::vec3 vec3LoveLightAmbient = glm::vec3(0.3f, 0.3f, 0.3f);
-		glm::vec3 vec3LoveLightDiffuse = glm::vec3(0.7f, 0.7f, 0.7f);
-		glm::vec3 vec3LoveLightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
-		glm::vec3 vec3LoveMaterialAmbient = glm::vec3(0.5f, 0.5f, 0.5f);
-		glm::vec3 vec3LoveMaterialDiffuse = glm::vec3(0.7f, 0.7f, 0.7f);
-		glm::vec3 vec3LoveMaterialSpecular = glm::vec3(0.4f, 0.4f, 0.4f);
+		float m_fTime = 0.0f;
 
-		glm::vec3 vec3LoveRimLight = glm::vec3(1.0f, 0.0f, 0.0f);
-		glm::vec3 vec3LoveAmbient = glm::vec3(0.0f, 1.0f, 0.4f);
+		// Light
+		glm::vec3 m_vec3LoveLightPosition = glm::vec3(0.0f, 0.0f, 1.0f);
+		glm::vec3 m_vec3LoveLightaAmbient = glm::vec3(0.7f, 0.7f, 0.7f);
+		glm::vec3 m_vec3LoveLightDiffuse = glm::vec3(0.7f, 0.7f, 0.7f);
+		glm::vec3 m_vec3LoveLightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
+		
+		// Material
+		glm::vec3 m_vec3LoveMaterialAmbient = glm::vec3(0.0f, 0.0f, 1.0f);
+		glm::vec3 m_vec3LoveMaterialDiffuse = glm::vec3(0.7f, 0.7f, 0.7f);
+		glm::vec3 m_vec3LoveMaterialSpecular = glm::vec3(0.7f, 0.7f, 0.7f);
+		float m_fLoveMaterialShiniess = 32.0f;
+
+		float m_fLoveRimWidth = 1.0f;
+		float m_fLoveRimStrength = 2.0f;
+		glm::vec3 m_vec3LoveRimColor = glm::vec3(1.0f, 1.0f, 1.0f);
 	};
 }

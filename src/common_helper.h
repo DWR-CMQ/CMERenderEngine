@@ -115,6 +115,9 @@ namespace Cme
         // Helper for a float slider value.
         static bool imguiFloatSlider(const char* desc, float* value, float min, float max, const char* fmt = nullptr,  Scale scale = Scale::LINEAR);
 
+        // Helper for a int slider value.
+        static bool imguiIntSlider(const char* desc, int* value, int min, int max, const char* fmt = nullptr, Scale scale = Scale::LINEAR);
+
         // Helper for an image control.
         static void imguiImage(const Cme::Texture& texture, glm::vec2 size);
 

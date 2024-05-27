@@ -14,7 +14,6 @@
 
 namespace Cme 
 {
-
     class Shader;
 
     class ShaderException : public QuarkException

@@ -37,7 +37,7 @@ namespace Cme
         virtual void ActivateAtlas(bool atlas = false) {};
         virtual void Restart() = 0;
         virtual void Upload() {};
-        virtual void Update(float dt, glm::vec3* cam_pos = nullptr) = 0;
+        virtual void Update(float fDelta, float fTime) = 0;
         virtual void Render(GLenum gl_draw_mode = GL_POINT) = 0;
 
         virtual unsigned int const& count() const noexcept { return m_uiParticleCount; }

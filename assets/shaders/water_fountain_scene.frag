@@ -4,6 +4,8 @@ in vec2 gTextureCoord;
 
 uniform sampler2D sprite;
 uniform vec3 particleColor;
+uniform float time;         // 累计时间
+
 out vec4 color;
 
 void main()

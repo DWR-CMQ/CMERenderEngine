@@ -17,14 +17,8 @@ const float radius = 0.5;
 
 namespace Cme
 {
-	Pipe::Pipe(float fOffset, glm::vec3 vec3RimLight, glm::vec3 vec3Ambient)
+	Pipe::Pipe(float fOffset, glm::vec3 vec3RimColor)
 	{
-        // m_vecSpiralPath.clear();
-        //m_vecSpiralPath = BuildSpiralPath(4, 1, -3, 3, PATH_TURNS, PATH_POINTS);
-        //m_vecPath = m_vecSpiralPath;
-        //m_vecContour = BuildCircle(0.1f, CIRCLE_SECTORS);
-        //GenerateContours();
-
         m_vecLovePath.clear();
         //BuildSegment(2.0f, 0.0);
         //m_vecPath = m_vecLovePath;
@@ -32,8 +26,7 @@ namespace Cme
         GenerateContours();
 
         m_fOffset = fOffset;
-        vec3LoveRimLight = vec3RimLight;
-        vec3LoveAmbient = vec3Ambient;
+        m_vec3LoveRimColor = vec3RimColor;
 
         m_VAO = 0;
         m_VBO = 0;
@@ -74,6 +67,7 @@ namespace Cme
 
     void Pipe::Update(float dt)
     {
+        m_fTime = dt;
         // 重新计算会非常耗时
         m_vecContour.clear();
         BuildSegment(dt, m_fOffset);
@@ -130,7 +124,7 @@ namespace Cme
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-    void Pipe::Render(std::shared_ptr<Cme::Camera> spCamera, glm::vec3 vec3LightDir)
+    void Pipe::Render(std::shared_ptr<Cme::Camera> spCamera)
     {
         m_pShader->activate();
         auto modelMatrix = glm::mat4(1.0f);
@@ -138,20 +132,26 @@ namespace Cme
         m_pShader->setMat4("projection", spCamera->getProjectionTransform());
         m_pShader->setMat4("view", spCamera->getViewTransform());
         m_pShader->setMat4("model", modelMatrix);
-        m_pShader->setVec3("lightDirection", vec3LightDir);
+
         m_pShader->setVec3("viewPos", spCamera->getPosition());
 
-        m_pShader->setVec3("rimlight", vec3LoveRimLight);
-        m_pShader->setVec3("ambient", vec3LoveAmbient);
+        // material
+        m_pShader->setVec3("material.ambient", m_vec3LoveMaterialAmbient);
+        m_pShader->setVec3("material.diffuse", m_vec3LoveMaterialDiffuse);
+        m_pShader->setVec3("material.specular", m_vec3LoveMaterialSpecular); 
+        m_pShader->setFloat("material.shininess", m_fLoveMaterialShiniess);
 
-        //m_pShader->setVec4("lightPosition", glm::vec4(vec3LoveLightPosition, 0.0f));
-        //m_pShader->setVec4("lightAmbient", glm::vec4(vec3LoveLightAmbient, 1.0f));
-        //m_pShader->setVec4("lightDiffuse", glm::vec4(vec3LoveLightDiffuse, 1.0f));
-        //m_pShader->setVec4("lightSpecular", glm::vec4(vec3LoveLightSpecular, 1.0f));
-        //m_pShader->setVec4("materialAmbient", glm::vec4(vec3LoveMaterialAmbient, 1.0f));
-        //m_pShader->setVec4("materialDiffuse", glm::vec4(vec3LoveMaterialDiffuse, 1.0f));
-        //m_pShader->setVec4("materialSpecular", glm::vec4(vec3LoveMaterialSpecular, 1.0f));
-        //m_pShader->setFloat("materialShininess", 16.0f);
+        // light
+        m_pShader->setVec3("light.position", m_vec3LoveLightPosition);
+        m_pShader->setVec3("light.ambient", m_vec3LoveLightaAmbient);
+        m_pShader->setVec3("light.diffuse", m_vec3LoveLightDiffuse);
+        m_pShader->setVec3("light.specular", m_vec3LoveLightSpecular);
+
+        // rim
+        m_pShader->setVec3("rimColor", m_vec3LoveRimColor);
+        m_pShader->setFloat("rimWidth", m_fLoveRimWidth);
+        m_pShader->setFloat("rimStrength", m_fLoveRimStrength);
+        m_pShader->setFloat("time", m_fTime);
 
         glBindVertexArray(m_VAO);
         int indexSize = 2 * (getContourCount() - 1) * getContour(0).size();

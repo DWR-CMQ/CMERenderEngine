@@ -27,13 +27,13 @@ namespace Cme
 	void WaterFountainParticleSystem::InitPS(float*, unsigned int v_count,
 											unsigned int tex, float* uv, bool atlas)
 	{
-		if (compute_shader == nullptr)
+		if (m_pComputeShader == nullptr)
 		{
-			compute_shader = new Shader(Cme::ShaderPath("assets//shaders//water_fountain_scene.comp"));
+			m_pComputeShader = new Shader(Cme::ShaderPath("assets//shaders//water_fountain_scene.comp"));
 		}
-		if (draw_shader == nullptr)
+		if (m_pDrawShader == nullptr)
 		{
-			draw_shader = new Shader(Cme::ShaderPath("assets//shaders//water_fountain_scene.vert"),
+			m_pDrawShader = new Shader(Cme::ShaderPath("assets//shaders//water_fountain_scene.vert"),
 									 Cme::ShaderPath("assets//shaders//water_fountain_scene.frag"),
 									 Cme::ShaderPath("assets//shaders//water_fountain_scene.geom"));
 		}
@@ -41,9 +41,9 @@ namespace Cme
 		glGenVertexArrays(1, &m_uiVao);
 		glGenBuffers(1, &m_uiVbo);
 
-		draw_shader->activate();
+		m_pDrawShader->activate();
 		// draw_shader->bind("GlobalAttributes", 0);
-		draw_shader->setInt("sprite", 0);
+		m_pDrawShader->setInt("sprite", 0);
 		glBindVertexArray(m_uiVao);
 		glBindBuffer(GL_ARRAY_BUFFER, m_uiVbo);
 		glEnableVertexAttribArray(0);   // position
@@ -52,7 +52,7 @@ namespace Cme
 		glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 12 * sizeof(float), (void*)(3 * sizeof(float)));
 		glEnableVertexAttribArray(2);   // delta position
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(float), (void*)(8 * sizeof(float)));
-		draw_shader->deactivate();
+		m_pDrawShader->deactivate();
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
@@ -87,17 +87,18 @@ namespace Cme
 		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12 * max_particles, nullptr, GL_STATIC_DRAW);
 
 		m_uiParticleCount = max_particles;
-		Update(-1.f);
+		Update(-1.f, 0.0f);
 		m_uiParticleCount = 0;
 
 		upload = false;
 	}
 
-	void WaterFountainParticleSystem::Update(float dt, glm::vec3* cam_pos)
+	void WaterFountainParticleSystem::Update(float fDelta, float fTime)
 	{
+		m_fTime = fTime;
 		if (m_uiParticleCount != total())
 		{
-			debt += std::min(0.05f, dt) * birth_rate;
+			debt += std::min(0.05f, fDelta) * birth_rate;
 			auto new_particles = static_cast<int>(debt);
 			debt -= new_particles;
 			m_uiParticleCount += new_particles;
@@ -109,13 +110,13 @@ namespace Cme
 
 		// std::cout << "dt count(): " << dt  << " "  << count() << std::endl;
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_uiVbo);
-		compute_shader->activate();
-		compute_shader->setFloat("dt", dt);
-		compute_shader->setVec3("acceleration", acceleration);
-		compute_shader->setInt("n_particles", static_cast<int>(count()));
+		m_pComputeShader->activate();
+		m_pComputeShader->setFloat("dt", fDelta);
+		m_pComputeShader->setVec3("acceleration", acceleration);
+		m_pComputeShader->setInt("n_particles", static_cast<int>(count()));
 		// 此处报错
 		glDispatchCompute(256, 1, 1);
-		compute_shader->deactivate();
+		m_pComputeShader->deactivate();
 	}
 
 	void WaterFountainParticleSystem::Render(GLenum gl_draw_mode)
@@ -124,16 +125,16 @@ namespace Cme
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-		draw_shader->activate();
-		draw_shader->setVec3("baseColor", glm::vec3(0.0f, 1.0f, 0.0f));
-		draw_shader->setMat4("view", m_spCamera->getViewTransform());
-		draw_shader->setMat4("proj", m_spCamera->getProjectionTransform());
-		draw_shader->setVec3("cam_pos", m_spCamera->getPosition());
-		draw_shader->setVec3("particleColor", m_vec3ParticleColor);
+		m_pDrawShader->activate();
+		m_pDrawShader->setMat4("view", m_spCamera->getViewTransform());
+		m_pDrawShader->setMat4("proj", m_spCamera->getProjectionTransform());
+		m_pDrawShader->setVec3("cam_pos", m_spCamera->getPosition());
+		m_pDrawShader->setVec3("particleColor", m_vec3ParticleColor);
+		m_pDrawShader->setFloat("time", m_fTime);
 
 		auto modelMatrix = glm::mat4(1.0f);
 		modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -2.5f, 0.0f));
-		draw_shader->setMat4("modelMatrix", modelMatrix);
+		m_pDrawShader->setMat4("modelMatrix", modelMatrix);
 
 		auto& tm = TextureManager::GetInstance();
 
@@ -144,7 +145,7 @@ namespace Cme
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(0);
-		draw_shader->deactivate();
+		m_pDrawShader->deactivate();
 
 		glDisable(GL_BLEND);
 		// 上面禁用深度测试后 此时一定要开启深度测试 否则头盔(模型)渲染不出来

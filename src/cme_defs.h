@@ -134,20 +134,48 @@ namespace Cme
         bool enableVsync = true;
 
         // 粒子属性
+        bool bChangeParticleColorByTime = true;
         glm::vec3 vec3ParticleLocation = glm::vec3(0.0f, 0.0f, 0.0f);
         glm::vec3 vec3ParticleColor = glm::vec3(1.0f, 0.0f, 0.0f);
 
-        // 爱心属性
-        glm::vec3 vec3LoveColor = glm::vec3(1.0f, 0.0f, 0.0f);
-        float fLoveThickness = 0.1f;
-        glm::vec3 vec3LoveLightPosition = glm::vec3(0.0f, 0.0f, 1.0f);
-        glm::vec3 vec3LoveLightAmbient = glm::vec3(0.3f, 0.3f, 0.3f);
-        glm::vec3 vec3LoveLightDiffuse = glm::vec3(0.7f, 0.7f, 0.7f);
-        glm::vec3 vec3LoveLightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
-        glm::vec3 vec3LoveMaterialAmbient = glm::vec3(0.5f, 0.5f, 0.5f);
-        glm::vec3 vec3LoveMaterialDiffuse = glm::vec3(0.7f, 0.7f, 0.7f);
-        glm::vec3 vec3LoveMaterialSpecular = glm::vec3(0.4f, 0.4f, 0.4f);
-        float vec3LoveMaterialShininess = 16.0f;
+        // 管道1属性
+        float fFirstLoveThickness = 0.1f;
+        // Material
+        glm::vec3 vec3FirstLoveMaterialAmbient = glm::vec3(0.0f, 0.0f, 1.0f);
+        glm::vec3 vec3FirstLoveMaterialDiffuse = glm::vec3(1.0f, 0.05f, 0.3f);
+        glm::vec3 vec3FirstLoveMaterialSpecular = glm::vec3(1.0f, 0.05f, 0.3f);
+        float fFirstShininess = 8.0f;
+        // Light
+        //glm::vec3 vec3FirstLoveLightPosition = glm::vec3(0.0f, 0.0f, 1.0f);
+        glm::vec3 vec3FirstLoveLightAmbient = glm::vec3(1.0f, 0.05f, 0.3f);
+        glm::vec3 vec3FirstLoveLightDiffuse = glm::vec3(1.0f, 0.05f, 0.3f);
+        glm::vec3 vec3FirstLoveLightSpecular = glm::vec3(1.0f, 0.05f, 0.3f);
+        // Rim
+        glm::vec3 vec3FirstLoveRimColor = glm::vec3(1.0f, 0.05f, 0.3f);
+        float fFirstLoveRimWidth = 1.0f;
+        float fFirstLoveRimStrength = 2.0f;
 
+        // 管道2属性
+        float fSecLoveThickness = 0.1f;
+        // Material
+        glm::vec3 vec3SecLoveMaterialAmbient = glm::vec3(0.0f, 0.0f, 1.0f);
+        glm::vec3 vec3SecLoveMaterialDiffuse = glm::vec3(1.0f, 0.05f, 0.3f);
+        glm::vec3 vec3SecLoveMaterialSpecular = glm::vec3(1.0f, 0.05f, 0.3f);
+        float fSecShininess = 8.0f;
+        // Light
+        //glm::vec3 vec3SecLoveLightPosition = glm::vec3(0.0f, 0.0f, 1.0f);
+        glm::vec3 vec3SecLoveLightAmbient = glm::vec3(0.1f, 0.4f, 1.0f);
+        glm::vec3 vec3SecLoveLightDiffuse = glm::vec3(1.0f, 0.05f, 0.3f);
+        glm::vec3 vec3SecLoveLightSpecular = glm::vec3(1.0f, 0.05f, 0.3f);
+        // Rim
+        glm::vec3 vec3SecLoveRimColor = glm::vec3(1.0f, 0.05f, 0.3f);
+        float fSecLoveRimWidth = 1.0f;
+        float fSecLoveRimStrength = 2.0f;
+
+        // 字体属性
+        int iFontX = 500;
+        int iFontY = 500;
+        int iScale = 3;
+        glm::vec3 vec3FontColor = glm::vec3(1.0f, 0.0f, 0.0f);
     };
 }

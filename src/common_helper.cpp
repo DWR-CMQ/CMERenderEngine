@@ -28,6 +28,16 @@ namespace Cme
         return ImGui::SliderScalar(desc, ImGuiDataType_Float, value, &min, &max, fmt, flags);
     }
 
+    bool CommonHelper::imguiIntSlider(const char* desc, int* value, int min, int max, const char* fmt, Scale scale)
+    {
+        ImGuiSliderFlags flags = ImGuiSliderFlags_None;
+        if (scale == Scale::LOG)
+        {
+            flags = ImGuiSliderFlags_Logarithmic;
+        }
+        return ImGui::SliderScalar(desc, ImGuiDataType_S32, value, &min, &max, fmt, flags);
+    }
+
     // Helper for an image control.
     void CommonHelper::imguiImage(const Cme::Texture& texture, glm::vec2 size)
     {

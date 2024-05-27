@@ -120,8 +120,14 @@ namespace Cme
         m_spCylinder = std::make_shared<Cylinder>(1, 1, 2, 36, 1, true, 2);
 
         // 管道
-        m_spPipeFirst = std::make_shared<Pipe>(0.0f, glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-        m_spPipeSecond = std::make_shared<Pipe>(3.4f, glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0));
+        m_spPipeFirst = std::make_shared<Pipe>(0.0f, glm::vec3(0.0, 1.0, 0.0));
+        m_spPipeSecond = std::make_shared<Pipe>(3.4f, glm::vec3(0.0, 0.0, 1.0));
+
+        // 字体
+        m_spText = std::make_shared<Text>();
+        m_spText->setFontHeight(static_cast<std::size_t>(40));
+        // 10是随便写的
+        m_spText->addFont("assets//font//Just_My_Type.otf", 10);
 	}
 
 	bool App::Run()
@@ -193,20 +199,24 @@ namespace Cme
             }
 
             // 粒子更新
-            m_pWaterFountainPS->Update(deltaTime);
+            m_pWaterFountainPS->Update(deltaTime, static_cast<float>(glfwGetTime()));
 
-            // 管道更新
-            m_spPipeFirst->SetThickness(m_OptsObj.fLoveThickness);
-            m_spPipeFirst->SetLightPosition(m_OptsObj.vec3LoveLightPosition);
-            m_spPipeFirst->SetLightAmbient(m_OptsObj.vec3LoveLightAmbient);
-            m_spPipeFirst->SetLightDiffuse(m_OptsObj.vec3LoveLightDiffuse);
-            m_spPipeFirst->SetLightSpecular(m_OptsObj.vec3LoveLightSpecular);
-            m_spPipeFirst->SetMaterialAmbient(m_OptsObj.vec3LoveMaterialAmbient);
-            m_spPipeFirst->SetMaterialDiffuse(m_OptsObj.vec3LoveMaterialDiffuse);
-            m_spPipeFirst->SetMaterialSpecular(m_OptsObj.vec3LoveMaterialSpecular);
+            // 管道1更新
+            m_spPipeFirst->SetThickness(m_OptsObj.fFirstLoveThickness);
+            //m_spPipeFirst->UpdateMaterial(m_OptsObj.vec3FirstLoveMaterialAmbient, m_OptsObj.vec3FirstLoveMaterialDiffuse, m_OptsObj.vec3FirstLoveMaterialSpecular, m_OptsObj.fFirstShininess);
+            m_spPipeFirst->UpdateLight(m_spCamera->getPosition(), m_OptsObj.vec3FirstLoveLightAmbient, m_OptsObj.vec3FirstLoveLightDiffuse, m_OptsObj.vec3FirstLoveLightSpecular);
+            m_spPipeFirst->UpdateRim(m_OptsObj.vec3FirstLoveRimColor, m_OptsObj.fFirstLoveRimWidth, m_OptsObj.fFirstLoveRimStrength);
             m_spPipeFirst->Update(static_cast<float>(glfwGetTime()));
 
+            // 管道2更新
+            m_spPipeSecond->SetThickness(m_OptsObj.fSecLoveThickness);
+            //m_spPipeSecond->UpdateMaterial(m_OptsObj.vec3SecLoveMaterialAmbient, m_OptsObj.vec3SecLoveMaterialDiffuse, m_OptsObj.vec3SecLoveMaterialSpecular, m_OptsObj.fSecShininess);
+            m_spPipeSecond->UpdateLight(m_spCamera->getPosition(), m_OptsObj.vec3SecLoveLightAmbient, m_OptsObj.vec3SecLoveLightDiffuse, m_OptsObj.vec3SecLoveLightSpecular);
+            m_spPipeSecond->UpdateRim(m_OptsObj.vec3SecLoveRimColor, m_OptsObj.fSecLoveRimWidth, m_OptsObj.fSecLoveRimStrength);
             m_spPipeSecond->Update(static_cast<float>(glfwGetTime()));
+
+            // 字体更新
+            m_spText->UpdateFont(m_OptsObj.iFontX, m_OptsObj.iFontY, m_OptsObj.iScale, m_OptsObj.vec3FontColor);
 
             if (m_OptsObj.enableVsync != prevOpts.enableVsync)
             {
@@ -392,13 +402,33 @@ namespace Cme
             // 可知粒子渲染一定要在glBlitFramebuffer之后
             // 还有就是要注释Init中的enableFaceCull()
             m_pWaterFountainPS->SetCamera(m_spCamera);
-            m_pWaterFountainPS->SetParticleColor(m_OptsObj.vec3ParticleColor);
+            if (!m_OptsObj.bChangeParticleColorByTime)
+            {
+                m_pWaterFountainPS->SetParticleColor(m_OptsObj.vec3ParticleColor);
+            }
+            else
+            {
+                // 根据时间变化颜色
+                auto fT = glfwGetTime();
+                float r = (sin(fT) / 2.0f + 0.5f);
+                float g = (cos(fT) / 2.0f + 0.5f);
+                float b = (sin(fT / 2.0) / 2.0f + 0.5f);
+                m_pWaterFountainPS->SetParticleColor(glm::vec3(r, g, b));
+            }
+            
+            // 喷泉
             m_pWaterFountainPS->Render();
 
+            // 圆柱体
             m_spCylinder->Render(m_spCamera);
 
-            m_spPipeFirst->Render(m_spCamera, m_OptsObj.directionalDirection);
-            m_spPipeSecond->Render(m_spCamera, m_OptsObj.directionalDirection);
+            // 管道
+            m_spPipeFirst->Render(m_spCamera);
+            m_spPipeSecond->Render(m_spCamera);
+
+            // 字体
+            m_spText->Render("DWR:  CMQ", Anchor::LeftTop, m_spCamera);
+
             // Finally, draw ImGui data.
             {
                 Cme::DebugGroup debugGroup("Imgui pass");

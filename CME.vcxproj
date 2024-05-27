@@ -79,7 +79,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>3dparty\include;$(IncludePath)</IncludePath>
+    <IncludePath>3dparty\include;3dparty\include\FreeStyle;$(IncludePath)</IncludePath>
     <LibraryPath>3dparty\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -124,7 +124,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32s.lib;glfw3.lib;glfw3dll.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32s.lib;glfw3.lib;glfw3dll.lib;assimp-vc142-mtd.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -160,6 +160,7 @@
     <ClCompile Include="src\core\texture.cpp" />
     <ClCompile Include="src\core\texture_manager.cpp" />
     <ClCompile Include="src\core\vertex_buffer_object.cpp" />
+    <ClCompile Include="src\font\text.cpp" />
     <ClCompile Include="src\fxaa.cpp" />
     <ClCompile Include="src\blur.cpp" />
     <ClCompile Include="src\camera.cpp" />
@@ -222,6 +223,7 @@
     <ClInclude Include="src\core\texture.h" />
     <ClInclude Include="src\core\texture_manager.h" />
     <ClInclude Include="src\core\vertex_buffer_object.h" />
+    <ClInclude Include="src\font\text.h" />
     <ClInclude Include="src\fxaa.h" />
     <ClInclude Include="src\blur.h" />
     <ClInclude Include="src\camera.h" />

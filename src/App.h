@@ -41,6 +41,7 @@
 #include "cme_defs.h"
 #include "core/texture_manager.h"
 #include "UI/ui.h"
+#include "font/text.h"
 
 #include "particle/water_fountain_particle_system.h"
 
@@ -132,6 +133,9 @@ namespace Cme
         // ¹ÜµÀ
         std::shared_ptr<Pipe> m_spPipeFirst;
         std::shared_ptr<Pipe> m_spPipeSecond;
+
+        // ×ÖÌå
+        std::shared_ptr<Text> m_spText;
 	};
 }
 

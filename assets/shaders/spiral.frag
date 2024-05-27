@@ -1,3 +1,5 @@
+
+//////////// Rim Light
 #version 330 core
 
 in vec3 Normal;
@@ -5,35 +7,59 @@ in vec3 FragPos;
 
 out vec4 FragColor;
 
-//uniform vec3 lightPos;
-vec3 lightPos = vec3(0.0f, 0.0f, -10.0f);
-uniform vec3 viewPos;
-uniform vec3 rimlight;    // 边缘光
-uniform vec3 ambient;     // 图形光
+uniform vec3 viewPos;     // 相机位置
+uniform vec3 rimColor;    // 边缘颜色
+uniform float rimWidth;   // 设置边缘照明宽度
+uniform float rimStrength;  // 设置边缘照明强度
+uniform float time;         // 累计时间
+
+struct Material
+{
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float shininess;
+};
+
+struct Light
+{
+    vec3 position;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
+//uniform Material material;
+uniform Light light;
 
 void main()
 {
     float ambientStrength = 0.8;
-    vec3 ambientColor = ambientStrength * ambient;
+    // vec3 ambientColor = light.ambient * material.ambient;
+    vec3 ambientColor = light.ambient * ambientStrength;
 	
-    vec3 lightDir = normalize(lightPos - FragPos);
+    vec3 lightDir = normalize(light.position - FragPos);
     vec3 viewDir = normalize(viewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, Normal);
 
-    float specularStrength = 0.5;
-    float shininess = 32.0;
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
-    vec3 specular = specularStrength * spec * vec3(1.0, 1.0, 1.0);
+    // diffuse
+    vec3 norm = normalize(Normal);
+    float diff = max(dot(norm, lightDir), 0.0);
+    //vec3 diffuseColor = light.diffuse * (diff * material.diffuse);
 
-    float rimStrength = 2.0; // 设置边缘照明强度
-    float rimWidth = 1.0; // 设置边缘照明宽度
+    // float specularStrength = 0.5;
+    // float shininess = 32.0;
+    //float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    //vec3 specularColor = light.specular * (spec * material.specular);
+
     float rim = rimStrength * max(0.0, 1.0 - dot(Normal, viewDir)) / rimWidth;
-    vec3 rimColor = rimlight;    // 设置边缘照明颜色
+    //FragColor = vec4(ambientColor + diffuseColor + specularColor + rim * rimColor, 1.0);
 
-    FragColor = vec4(ambientColor + rim * rimColor, 1.0);
+    FragColor = vec4(ambientColor * (sin(time * 5) + 0.5f) + rim * rimColor, 1.0);
 }
 
 
+//////////////// Other
 // #version 330 core
 
 // in VS_OUT 
@@ -96,37 +122,3 @@ void main()
 // }
 
 
-
-
-// #version 430 core
-
-// uniform vec4 lightPosition;             // should be in the eye space
-// uniform vec4 lightAmbient;              // light ambient color
-// uniform vec4 lightDiffuse;              // light diffuse color
-// uniform vec4 lightSpecular;             // light specular color
-// uniform vec4 materialAmbient;           // material ambient color
-// uniform vec4 materialDiffuse;           // material diffuse color
-// uniform vec4 materialSpecular;          // material specular color
-// uniform float materialShininess;        // material specular shininess
-// uniform mat4 u_vm;
-
-// // In
-// in vec3 esVertex;
-// in vec3 esNormal;
-
-// // output
-// out vec4 fragColor;
-
-// void main()
-// {
-	// // vec3 n = normalize(mat3(u_vm) * esNormal);      // convert normal to view space, u_vm (view matrix), is a rigid body transform.
-	// // vec3 p = vec3(u_vm * vec4(esVertex, 1.0));                   // position in view space
-	// vec3 n = esNormal;
-	// vec3 p = esVertex;
-	// vec3 v = normalize(-p);                       // eye vector
-	// float vdn = 1.0 - max(dot(v, n), 0.0);        // the rim contribution
-	 
-	// fragColor.a = 1.0;
-	// fragColor.rgb = vec3(smoothstep(0.8, 1.0, vdn));
-
-// }

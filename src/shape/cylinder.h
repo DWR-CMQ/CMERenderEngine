@@ -64,14 +64,6 @@ namespace Cme
         unsigned int getTopStartIndex() const { return topIndex; }
         unsigned int getSideStartIndex() const { return 0; }   // side starts from the begining
 
-        // draw in VertexArray mode
-        void draw() const;          // draw all
-        void drawBase() const;      // draw base cap only
-        void drawTop() const;       // draw top cap only
-        void drawSide() const;      // draw side only
-        void drawLines(const float lineColor[4]) const;     // draw lines only
-        void drawWithLines(const float lineColor[4]) const; // draw surface and lines
-
     public:
         void InitializeData();
         void Render(std::shared_ptr<Cme::Camera> spCamera);

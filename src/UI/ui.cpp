@@ -201,22 +201,65 @@ namespace Cme
         if (ImGui::CollapsingHeader("ParticleSystem"))
         {
             // 引用可直接修改粒子颜色
+            static bool bTemp = true;
+            ImGui::BeginDisabled(bTemp);
             ImGui::ColorEdit3("Particle color", reinterpret_cast<float*>(&opts.vec3ParticleColor), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            ImGui::EndDisabled();
+            ImGui::Checkbox("ChangeParticleColorByTime", &bTemp);
+            opts.bChangeParticleColorByTime = bTemp;
         }
 
         // 爱心颜色
         if (ImGui::CollapsingHeader("Love"))
         {
-            ImGui::Separator();
+            ImGui::Text("First Love");
+            // 第一个管道
             // 修改粗细
-            CommonHelper::imguiFloatSlider("Love Thickness", &opts.fLoveThickness, 0.05f, 0.2f, nullptr, Scale::LINEAR);
-            ImGui::ColorEdit3("Light Position", reinterpret_cast<float*>(&opts.vec3LoveLightPosition), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
-            ImGui::ColorEdit3("Light Ambient", reinterpret_cast<float*>(&opts.vec3LoveLightAmbient), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
-            ImGui::ColorEdit3("Light Diffuse", reinterpret_cast<float*>(&opts.vec3LoveLightDiffuse), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
-            ImGui::ColorEdit3("Light Specular", reinterpret_cast<float*>(&opts.vec3LoveLightSpecular), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
-            ImGui::ColorEdit3("Material Ambient", reinterpret_cast<float*>(&opts.vec3LoveMaterialAmbient), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
-            ImGui::ColorEdit3("Material Diffuse", reinterpret_cast<float*>(&opts.vec3LoveMaterialDiffuse), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
-            ImGui::ColorEdit3("Material Specular", reinterpret_cast<float*>(&opts.vec3LoveMaterialSpecular), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            CommonHelper::imguiFloatSlider("First Love Thickness", &opts.fFirstLoveThickness, 0.05f, 0.2f, nullptr, Scale::LINEAR);
+
+            // Material影响不大 暂不考虑
+            //ImGui::ColorEdit3("First Material Ambient", reinterpret_cast<float*>(&opts.vec3FirstLoveMaterialAmbient), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            //ImGui::ColorEdit3("First Material Diffuse", reinterpret_cast<float*>(&opts.vec3FirstLoveMaterialDiffuse), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            //ImGui::ColorEdit3("First Material Specular", reinterpret_cast<float*>(&opts.vec3FirstLoveMaterialSpecular), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            //CommonHelper::imguiFloatSlider("First Material Shininess", &opts.fFirstShininess, 2.0f, 32.0f, nullptr, Scale::LINEAR);
+
+            // 光的位置由摄像机控制
+            // ImGui::ColorEdit3("Light Position", reinterpret_cast<float*>(&opts.vec3FirstLoveLightPosition), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            ImGui::ColorEdit3("First Light Ambient", reinterpret_cast<float*>(&opts.vec3FirstLoveLightAmbient), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            ImGui::ColorEdit3("First Light Diffuse", reinterpret_cast<float*>(&opts.vec3FirstLoveLightDiffuse), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            ImGui::ColorEdit3("First Light Specular", reinterpret_cast<float*>(&opts.vec3FirstLoveLightSpecular), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+
+            ImGui::ColorEdit3("First Rim Color", reinterpret_cast<float*>(&opts.vec3FirstLoveRimColor), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            CommonHelper::imguiFloatSlider("First Rim Width", &opts.fFirstLoveRimWidth, 1.0f, 5.0f, nullptr, Scale::LINEAR);
+            CommonHelper::imguiFloatSlider("First Rim Strength", &opts.fFirstLoveRimStrength, 2.0f, 8.0f, nullptr, Scale::LINEAR);
+
+            ImGui::Separator();
+            // 第二个管道
+            ImGui::Text("Second Love");
+            CommonHelper::imguiFloatSlider("Sec Love Thickness", &opts.fSecLoveThickness, 0.05f, 0.2f, nullptr, Scale::LINEAR);
+
+            //ImGui::ColorEdit3("Sec Material Ambient", reinterpret_cast<float*>(&opts.vec3SecLoveMaterialAmbient), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            //ImGui::ColorEdit3("Sec Material Diffuse", reinterpret_cast<float*>(&opts.vec3SecLoveMaterialDiffuse), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            //ImGui::ColorEdit3("Sec Material Specular", reinterpret_cast<float*>(&opts.vec3SecLoveMaterialSpecular), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            //CommonHelper::imguiFloatSlider("Sec Material Shininess", &opts.fSecShininess, 2.0f, 32.0f, nullptr, Scale::LINEAR);
+
+            // 光的位置由摄像机控制
+            ImGui::ColorEdit3("Sec Light Ambient", reinterpret_cast<float*>(&opts.vec3SecLoveLightAmbient), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            ImGui::ColorEdit3("Sec Light Diffuse", reinterpret_cast<float*>(&opts.vec3SecLoveLightDiffuse), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            ImGui::ColorEdit3("Sec Light Specular", reinterpret_cast<float*>(&opts.vec3SecLoveLightSpecular), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+
+            ImGui::ColorEdit3("Sec Rim Color", reinterpret_cast<float*>(&opts.vec3SecLoveRimColor), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+            CommonHelper::imguiFloatSlider("Sec Rim Width", &opts.fSecLoveRimWidth, 1.0f, 5.0f, nullptr, Scale::LINEAR);
+            CommonHelper::imguiFloatSlider("Sec Rim Strength", &opts.fSecLoveRimStrength, 2.0f, 8.0f, nullptr, Scale::LINEAR);
+        }
+
+        // 字体编辑
+        if (ImGui::CollapsingHeader("Font"))
+        {
+            CommonHelper::imguiIntSlider("Font X", &opts.iFontX, 1, 1920, nullptr, Scale::LINEAR);
+            CommonHelper::imguiIntSlider("Font Y", &opts.iFontY, 1, 1080, nullptr, Scale::LINEAR);
+            CommonHelper::imguiIntSlider("Font Scale", &opts.iScale, 3, 6, nullptr, Scale::LINEAR);
+            ImGui::ColorEdit3("Font Color", reinterpret_cast<float*>(&opts.vec3FontColor), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
         }
 
         ImGui::EndChild();

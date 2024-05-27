@@ -166,6 +166,9 @@
     <ClCompile Include="src\shape\line.cpp">
       <Filter>src\shape</Filter>
     </ClCompile>
+    <ClCompile Include="src\font\text.cpp">
+      <Filter>src\font</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -363,6 +366,9 @@
     <ClInclude Include="src\shape\line.h">
       <Filter>src\shape</Filter>
     </ClInclude>
+    <ClInclude Include="src\font\text.h">
+      <Filter>src\font</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -397,6 +403,9 @@
     </Filter>
     <Filter Include="src\UI">
       <UniqueIdentifier>{f37063f6-bfc7-444a-bb0a-3b735a427153}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\font">
+      <UniqueIdentifier>{bcf1300d-131c-4102-9969-9170af60513c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
